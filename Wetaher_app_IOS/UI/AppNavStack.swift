@@ -31,57 +31,13 @@ struct AppNavStack: View{
             switch weatherUIState {
                 case .Loading:
                     ProgressView()
-                case .Success(let weatherUI): //TODO: Вынести Succes и Fail случаи в отдельные структуры?
-                    VStack(spacing: 12) {
-                        HStack {
-                            Button {
-                                showSettingsSheet = true
-                            } label: {
-                                Image(systemName: "gearshape")
-                                    .font(.body)
-                                    .foregroundStyle(.primary)
-                                    .padding(8)
-                                    .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
-                                    .clipShape(Circle())
-                            }
-
-                            Spacer()
-
-                            Button {
-                                showCityListSheet = true
-                            } label: {
-                                Image(systemName: "list.bullet")
-                                    .font(.body)
-                                    .foregroundStyle(.primary)
-                                    .padding(8)
-                                    .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
-                                    .clipShape(Circle())
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.top, 4)
-                        
-                        WeatherMainView()
-                    }
+                case .Success(let weatherUI):
+                    WeatherSuccess(
+                        showSettingsSheet: $showSettingsSheet,
+                        showCityListSheet: $showCityListSheet
+                    )
                 case .Fail(let weatherErrorUI):
-                    VStack(spacing: 12) {
-                        Image(systemName: "exclamationmark.triangle")
-                            .font(.largeTitle)
-                            .foregroundStyle(.orange)
-
-                        Text(weatherErrorUI.errorDescription)
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
-
-                        Button("Повторить") {
-    //                            Task {
-    //                                await weatherVM.loadWeather()
-    //                            }
-                        }
-                        .buttonStyle(.bordered)
-                    }
+                    WeatherError(weatherErrorUI: weatherErrorUI)
                 
             }
         }
