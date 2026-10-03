@@ -4,4 +4,12 @@
 //
 //  Created by Roman Zyuzin on 02.10.2026.
 //
+import Observation
 
+@MainActor
+@Observable
+public class WeatherMainViewModel{
+    public init(){
+        
+    }
+}

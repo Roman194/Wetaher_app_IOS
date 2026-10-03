@@ -4,4 +4,11 @@
 //
 //  Created by Roman Zyuzin on 02.10.2026.
 //
+import SwiftUI
 
+public struct WeatherBackground: View {
+    
+    public var body: some View {
+        
+    }
+}

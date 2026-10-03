@@ -5,3 +5,6 @@
 //  Created by Roman Zyuzin on 02.10.2026.
 //
 
+public class WeatherRepositoryImpl: WeatherRepository{
+    
+}
