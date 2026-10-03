@@ -10,7 +10,9 @@ import Observation
 @MainActor
 @Observable
 public class SettingsViewModel{
-    public init(){
-        
+    private let weatherRepository: WeatherRepository
+    
+    public init(weatherRepo: WeatherRepository){
+        weatherRepository = weatherRepo
     }
 }

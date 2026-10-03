@@ -8,20 +8,21 @@ import SwiftUI
 
 struct AppNavStack: View{
     
-    private let weatherRepo: WeatherRepository
-    
-    @State private var weatherVM = WeatherMainViewModel()//Передать репо
-    @State private var cityListVM = CityListViewModel()
-    @State private var settingsVM = SettingsViewModel()
+    @State private var weatherVM: WeatherMainViewModel
+    @State private var cityListVM : CityListViewModel
+    @State private var settingsVM : SettingsViewModel
     
     @State private var showCityListSheet = false
     @State private var showSettingsSheet = false
     
     @State private var weatherUIState: WeatherUIState
     
-    public init(weatherRepository: WeatherRepository) {
-        weatherRepo = weatherRepository
-        weatherUIState = .Loading
+    public init (weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
+        weatherVM = WeatherMainViewModel(weatherRepo: weatherRepo)
+        cityListVM = CityListViewModel(weatherRepo: weatherRepo)
+        settingsVM = SettingsViewModel(weatherRepo: weatherRepo)
+        
+        weatherUIState = .Loading //Здесь или во вьюмодели?
     }
     
     var body: some View{

@@ -9,7 +9,9 @@ import Observation
 @MainActor
 @Observable
 public class WeatherMainViewModel{
-    public init(){
-        
+    private let weatherRepository: WeatherRepository
+    
+    public init(weatherRepo: WeatherRepository){
+        weatherRepository = weatherRepo
     }
 }
