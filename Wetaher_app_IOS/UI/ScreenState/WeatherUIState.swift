@@ -5,7 +5,7 @@
 //  Created by Roman Zyuzin on 03.10.2026.
 //
 
-enum WeatherUIState{
+public enum WeatherUIState{
     case Loading
     case Success(WeatherUI)
     case Fail(WeatherErrorUI)

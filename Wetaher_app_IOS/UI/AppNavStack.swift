@@ -15,7 +15,7 @@ struct AppNavStack: View{
     @State private var showCityListSheet = false
     @State private var showSettingsSheet = false
     
-    @State private var weatherUIState: WeatherUIState
+    //@State private var weatherUIState: WeatherUIState
     
     public init (weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
         weatherVM = WeatherMainViewModel(weatherRepo: weatherRepo)

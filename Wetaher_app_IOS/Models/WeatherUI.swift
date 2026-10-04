@@ -6,9 +6,9 @@
 //
 import Foundation
 
-struct WeatherUI {
-    let id: Int
-    let title: String
-    let description: String
-    let createdAt: Date
+public struct WeatherUI: Equatable, Hashable {
+    let id: Int //А надо ли чтобы был ID?
+    let currentWeather: CurrentWeather
+    let hourlyWeather: HourlyWeather
+    let dailyWeather: DailyWeather
 }

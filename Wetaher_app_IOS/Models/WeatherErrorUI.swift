@@ -5,7 +5,7 @@
 //  Created by Roman Zyuzin on 03.10.2026.
 //
 
-struct WeatherErrorUI {
-    let errorId: Int
+public struct WeatherErrorUI: Equatable, Hashable, Error{
+    let errorCode: Int
     let errorDescription: String
 }
