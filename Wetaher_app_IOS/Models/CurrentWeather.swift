@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CurrentWeather: Equatable, Hashable {
+public struct CurrentWeather{
     let dateTime: String //Потом подумаю как это конвертировать в Date (если это вообще потребуется)
     let temperature: Double
     let apparentTemp: Double

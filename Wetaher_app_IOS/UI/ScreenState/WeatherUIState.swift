@@ -7,6 +7,6 @@
 
 public enum WeatherUIState{
     case Loading
-    case Success(WeatherUI)
+    case Success(ForecastUI)
     case Fail(WeatherErrorUI)
 }

@@ -19,7 +19,10 @@ public class WeatherMainViewModel{
         selectedCity = initalValue
         weatherUIState = .Loading
         
-        loadWeather()
+        Task{
+            await loadWeather()
+        }
+        
     }
     
     public func loadWeather() async {
@@ -29,13 +32,23 @@ public class WeatherMainViewModel{
         }
         weatherUIState = .Loading
 
-        do {
-            let weather = try await weatherService.fetchWeather(for: selectedCity)
-            self.currentWeather = weather
-            weatherUIState = .Success(<#T##WeatherUI#>)
+        //Пока что нет throws  в репо? поэтому кэтч не нужен. Если в будущем потребуется, то раскоментим
+        //do { try
+            let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
+            
+            switch weather{
+            case .success(let currentForecast) :
+                weatherUIState = .Success(currentForecast)
+            case .failure(let forecastError) :
+                weatherUIState = .Fail(forecastError)
+            }
+            
 
-        } catch {
-            weatherUIState = .Fail(<#T##WeatherErrorUI#>)
-        }
+//        } catch {
+//            weatherUIState = .Fail(<#T##WeatherErrorUI#>)
+//        }
     }
+    
+    
+    
 }

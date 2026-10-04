@@ -6,5 +6,5 @@
 //
 
 public protocol WeatherRepository{
-    func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherUI, WeatherErrorUI>
+    func GetWeatherForSelectedCity(for city: City) async -> Result<ForecastUI, WeatherErrorUI>
 }

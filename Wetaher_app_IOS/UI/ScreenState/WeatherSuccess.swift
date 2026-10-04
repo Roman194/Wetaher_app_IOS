@@ -9,8 +9,16 @@ import SwiftUI
 
 struct WeatherSuccess: View {
     
+    var currentForecast: ForecastUI
+    
     @Binding var showSettingsSheet: Bool
     @Binding var showCityListSheet: Bool
+    
+    public init(currentForecast: ForecastUI, showSettingsSheet: Binding<Bool>, showCityListSheet: Binding<Bool>) {
+        self.currentForecast = currentForecast
+        self._showSettingsSheet = showSettingsSheet
+        self._showCityListSheet = showCityListSheet
+    }
     
     var body: some View {
         VStack(spacing: 12) {
@@ -42,7 +50,7 @@ struct WeatherSuccess: View {
             .padding(.horizontal, 20)
             .padding(.top, 4)
             
-            WeatherMainView()
+            WeatherMainView(weatherUI: currentForecast)
         }
     }
 }

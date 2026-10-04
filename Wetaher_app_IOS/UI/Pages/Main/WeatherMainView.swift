@@ -2,10 +2,19 @@ import SwiftUI
 import Playgrounds
 
 struct WeatherMainView: View {
+    
+    var currentForecast: ForecastUI
+    
     private let columns = [ //Мб это можно сделать получше?
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
+    
+    public init(
+        weatherUI: ForecastUI
+    ) {
+        currentForecast = weatherUI
+    }
     
     var body: some View {
         
@@ -38,7 +47,7 @@ struct WeatherMainView: View {
 //                }
 
                 // Главный заголовок
-                CurrentWeatherHeader()
+                CurrentWeatherHeader(forecastData: currentForecast)
 
                 // Почасовой прогноз
                 //let timeZone = TimeZone(identifier: weather.city.timeZoneIdentifier) ?? .current
@@ -65,8 +74,8 @@ struct WeatherMainView: View {
                 .padding(.bottom, 24)
             }
         }
-        .refreshable {
-            //await weatherVM.refresh()
+        .refreshable {//Прокинуть это как событие в НавСтак!
+            //await weatherVM.loadWeather()
         }
     }
 }

@@ -21,19 +21,18 @@ struct AppNavStack: View{
         weatherVM = WeatherMainViewModel(weatherRepo: weatherRepo)
         cityListVM = CityListViewModel(weatherRepo: weatherRepo)
         settingsVM = SettingsViewModel(weatherRepo: weatherRepo)
-        
-        weatherUIState = .Loading //Здесь или во вьюмодели?
     }
     
     var body: some View{
         ZStack{
             WeatherBackground()
             
-            switch weatherUIState {
+            switch weatherVM.weatherUIState {
                 case .Loading:
                     ProgressView()
                 case .Success(let weatherUI):
                     WeatherSuccess(
+                        currentForecast: weatherUI,
                         showSettingsSheet: $showSettingsSheet,
                         showCityListSheet: $showCityListSheet
                     )

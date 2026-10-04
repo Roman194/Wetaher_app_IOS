@@ -21,7 +21,7 @@ struct WeatherError: View {
                 .font(.largeTitle)
                 .foregroundStyle(.orange)
 
-            Text(weatherErrorUI.errorDescription)
+            Text("\(weatherErrorUI.errorCode) " + weatherErrorUI.errorDescription)
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct HourlyWeather: Equatable, Hashable {
+public struct HourlyWeather {
     let hour: String
     let temperature: Double
     let weatherCondition: WeatherCondition
