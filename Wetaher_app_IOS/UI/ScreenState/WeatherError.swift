@@ -10,9 +10,11 @@ import SwiftUI
 struct WeatherError: View {
     
     var weatherErrorUI: WeatherErrorUI
+    let onReplayButtonClicked: () -> Void
     
-    init(weatherErrorUI: WeatherErrorUI) {
+    init(weatherErrorUI: WeatherErrorUI, onReplayButtonClicked: @escaping () -> Void) {
         self.weatherErrorUI = weatherErrorUI
+        self.onReplayButtonClicked = onReplayButtonClicked
     }
     
     var body: some View {
@@ -28,9 +30,7 @@ struct WeatherError: View {
                 .padding(.horizontal)
 
             Button("Повторить") {
-//                            Task {
-//                                await weatherVM.loadWeather()
-//                            }
+                onReplayButtonClicked()
             }
             .buttonStyle(.bordered)
         }

@@ -6,13 +6,18 @@
 //
 
 import Observation
+import SwiftUI
 
 @MainActor
 @Observable
 public class SettingsViewModel{
     private let weatherRepository: WeatherRepository
     
-    public init(weatherRepo: WeatherRepository){
-        weatherRepository = weatherRepo
+    public var appTheme: AppThemeProps
+    
+    init(weatherRepo: WeatherRepository) {
+        self.weatherRepository = weatherRepo
+        self.appTheme = .system
     }
+    
 }

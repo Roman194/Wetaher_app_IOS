@@ -15,12 +15,13 @@ struct AppNavStack: View{
     @State private var showCityListSheet = false
     @State private var showSettingsSheet = false
     
-    //@State private var weatherUIState: WeatherUIState
+    @State private var currentColorScheme: ColorScheme?
     
     public init (weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
         weatherVM = WeatherMainViewModel(weatherRepo: weatherRepo)
         cityListVM = CityListViewModel(weatherRepo: weatherRepo)
         settingsVM = SettingsViewModel(weatherRepo: weatherRepo)
+        currentColorScheme = settingsVM.appTheme.colorScheme //Не знаю будет ли он так корректно меняться
     }
     
     var body: some View{
@@ -35,17 +36,31 @@ struct AppNavStack: View{
                         currentForecast: weatherUI,
                         showSettingsSheet: $showSettingsSheet,
                         showCityListSheet: $showCityListSheet
-                    )
+                    ){
+                        Task{
+                            await weatherVM.refreshWeather()
+                        }
+                    }
                 case .Fail(let weatherErrorUI):
-                    WeatherError(weatherErrorUI: weatherErrorUI)
+                WeatherError(weatherErrorUI: weatherErrorUI){
+                    Task{
+                        await weatherVM.refreshWeather()
+                    }
+                }
+                .preferredColorScheme(currentColorScheme) //settingsVM.appTheme.colorScheme
                 
             }
         }
         .sheet(isPresented: $showCityListSheet) {
             CityListView(cityListViewModel: cityListVM)
+            .preferredColorScheme(currentColorScheme)
         }
         .sheet(isPresented: $showSettingsSheet) {
-            SettingsView(settingsViewModel: settingsVM)
+            SettingsView(currentColorScheme: currentColorScheme){ theme in
+                settingsVM.appTheme = theme
+            }
+            .preferredColorScheme(currentColorScheme)
         }
+        .preferredColorScheme(currentColorScheme)
     }
 }

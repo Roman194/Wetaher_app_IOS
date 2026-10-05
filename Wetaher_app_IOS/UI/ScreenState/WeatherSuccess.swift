@@ -10,14 +10,16 @@ import SwiftUI
 struct WeatherSuccess: View {
     
     var currentForecast: ForecastUI
+    let onPullToRefresh: () -> Void
     
     @Binding var showSettingsSheet: Bool
     @Binding var showCityListSheet: Bool
     
-    public init(currentForecast: ForecastUI, showSettingsSheet: Binding<Bool>, showCityListSheet: Binding<Bool>) {
+    public init(currentForecast: ForecastUI, showSettingsSheet: Binding<Bool>, showCityListSheet: Binding<Bool>, onPullToRefresh: @escaping () -> Void) {
         self.currentForecast = currentForecast
         self._showSettingsSheet = showSettingsSheet
         self._showCityListSheet = showCityListSheet
+        self.onPullToRefresh = onPullToRefresh
     }
     
     var body: some View {
@@ -50,7 +52,9 @@ struct WeatherSuccess: View {
             .padding(.horizontal, 20)
             .padding(.top, 4)
             
-            WeatherMainView(weatherUI: currentForecast)
+            WeatherMainView(currentForecast: currentForecast){
+                onPullToRefresh()
+            }
         }
     }
 }

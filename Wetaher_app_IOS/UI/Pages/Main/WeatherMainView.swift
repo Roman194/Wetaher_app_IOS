@@ -4,16 +4,16 @@ import Playgrounds
 struct WeatherMainView: View {
     
     var currentForecast: ForecastUI
+    let onPullToRefresh: () -> Void
     
     private let columns = [ //Мб это можно сделать получше?
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
     
-    public init(
-        weatherUI: ForecastUI
-    ) {
-        currentForecast = weatherUI
+    public init(currentForecast: ForecastUI, onPullToRefresh: @escaping () -> Void) {
+        self.currentForecast = currentForecast
+        self.onPullToRefresh = onPullToRefresh
     }
     
     var body: some View {
@@ -75,7 +75,7 @@ struct WeatherMainView: View {
             }
         }
         .refreshable {//Прокинуть это как событие в НавСтак!
-            //await weatherVM.loadWeather()
+            onPullToRefresh()
         }
     }
 }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CityListView: View {
+    @Environment(\.dismiss) private var dismiss
+    
     @Bindable var cityListVM: CityListViewModel
     
     public init(
@@ -17,6 +19,6 @@ struct CityListView: View {
     }
     
     var body: some View {
-        
+        Text("City list page")
     }
 }

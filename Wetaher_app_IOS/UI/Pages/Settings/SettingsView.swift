@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @Environment(\.dismiss) private var dismiss
+    var currentColorScheme: ColorScheme?
     
-    @Bindable var settingsVM: SettingsViewModel
+    let onColorThemeChange: (AppThemeProps) -> Void
 
-    public init(settingsViewModel: SettingsViewModel) {
-        settingsVM = settingsViewModel
+    init(currentColorScheme: ColorScheme?, onColorThemeChange: @escaping (AppThemeProps) -> Void) {
+        self.currentColorScheme = currentColorScheme
+        self.onColorThemeChange = onColorThemeChange
     }
     
     var body: some View {

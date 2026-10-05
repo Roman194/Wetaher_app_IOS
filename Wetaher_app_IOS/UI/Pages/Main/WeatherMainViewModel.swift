@@ -13,6 +13,7 @@ public class WeatherMainViewModel{
     
     public var selectedCity: City
     public var weatherUIState: WeatherUIState
+    public var isLoadingStarted: Bool = false
     
     public init(weatherRepo: WeatherRepository, initalValue: City = .moscow){
         weatherRepository = weatherRepo
@@ -27,12 +28,10 @@ public class WeatherMainViewModel{
     
     public func loadWeather() async {
         
-        if case .Loading = weatherUIState {
-            return
-        }
-        weatherUIState = .Loading
+        guard !isLoadingStarted else { return }
+        isLoadingStarted = true
 
-        //Пока что нет throws  в репо? поэтому кэтч не нужен. Если в будущем потребуется, то раскоментим
+        //Пока что нет throws  в репо, поэтому кэтч не нужен. Если в будущем потребуется, то раскоментим
         //do { try
             let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
             
@@ -42,6 +41,8 @@ public class WeatherMainViewModel{
             case .failure(let forecastError) :
                 weatherUIState = .Fail(forecastError)
             }
+        
+        isLoadingStarted = false
             
 
 //        } catch {
@@ -49,6 +50,19 @@ public class WeatherMainViewModel{
 //        }
     }
     
+    public func refreshWeather() async{
+        weatherUIState = .Loading
+        
+        await loadWeather()
+    }
     
+    public func selectCity(newCity: City) async {
+        guard newCity.id != selectedCity.id else { return } //Не очень понимаю как правильно читать guard
+        self.selectedCity = newCity
+        
+        weatherUIState = .Loading
+
+        await loadWeather()
+    }
     
 }
