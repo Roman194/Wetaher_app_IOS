@@ -119,6 +119,22 @@ extension City {
         .moscow,
         .saintPetersburg
     ]
+    
+    public static let avaliableCities: [City] = [
+        .moscow,
+        .saintPetersburg,
+        .hong_Kong,
+        .kaliningrad,
+        .kazan,
+        .krasnoyarsk,
+        .malmo,
+        .moscow,
+        .nizhnyNovgorod,
+        .novosibirsk,
+        .samara,
+        .vladivostok,
+        .yekaterinburg
+    ]
 }
 
 extension ForecastUI{

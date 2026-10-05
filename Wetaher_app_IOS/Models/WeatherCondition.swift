@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-public struct WeatherCondition {
+public struct WeatherCondition: Equatable, Hashable {
     let description: String
     let sfSymbolName: sfSymbolNameDayNNightDiff
     let iconColor: iconColorDayNNighntDiff
@@ -16,17 +16,17 @@ public struct WeatherCondition {
     let backgroundColorsLightTheme: ColorsDayNNightDiff
 }
 
-enum sfSymbolNameDayNNightDiff{
+enum sfSymbolNameDayNNightDiff: Equatable, Hashable{
     case same(String)
     case diff(String, String)
 }
 
-enum iconColorDayNNighntDiff {
+enum iconColorDayNNighntDiff: Equatable, Hashable {
     case same(Color)
     case diff(Color, Color)
 }
 
-enum ColorsDayNNightDiff {
+enum ColorsDayNNightDiff: Equatable, Hashable {
     case single([Color])
     case pair([Color], [Color])
 }

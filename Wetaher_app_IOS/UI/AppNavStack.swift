@@ -51,8 +51,21 @@ struct AppNavStack: View{
                 
             }
         }
-        .sheet(isPresented: $showCityListSheet) {
-            CityListView(cityListViewModel: cityListVM)
+        .sheet(isPresented: $showCityListSheet) { //Оптимизировать через enum!
+            CityListView(savedCitiesWeather: cityListVM.savedCitiesWeather, savedCitiesWeatherError: cityListVM.savedCitiesWeatherError, cityListWeatherUIState: cityListVM.cityListWeatherUIState,
+            searchQuery: cityListVM.searchQuery, searchResults: cityListVM.searchResults,
+            onSelectCity: { selectedCity in
+                showCityListSheet = false
+                Task {
+                    await weatherVM.selectCity(newCity: selectedCity)
+                }
+            },
+            onDeleteCity: {index in cityListVM.deleteCity(at: index)},
+            onCityAdd: {city in
+                Task{
+                    await cityListVM.addCity(city: city)
+                }},
+            isCitySaved: {city in cityListVM.isCitySaved(city: city)})
             .preferredColorScheme(currentColorScheme)
         }
         .sheet(isPresented: $showSettingsSheet) {
@@ -62,5 +75,12 @@ struct AppNavStack: View{
             .preferredColorScheme(currentColorScheme)
         }
         .preferredColorScheme(currentColorScheme)
+        .onChange(of: weatherVM.weatherUIState.kind) {
+            if weatherVM.weatherUIState.kind == .success{
+                Task{
+                    await cityListVM.loadSavedCitiesWeather()
+                }
+            }
+        }
     }
 }

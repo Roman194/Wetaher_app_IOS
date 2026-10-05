@@ -26,7 +26,7 @@ public class WeatherMainViewModel{
         
     }
     
-    public func loadWeather() async {
+    private func loadWeather() async {
         
         guard !isLoadingStarted else { return }
         isLoadingStarted = true
@@ -36,10 +36,10 @@ public class WeatherMainViewModel{
             let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
             
             switch weather{
-            case .success(let currentForecast) :
-                weatherUIState = .Success(currentForecast)
-            case .failure(let forecastError) :
-                weatherUIState = .Fail(forecastError)
+                case .success(let currentForecast) :
+                    weatherUIState = .Success(currentForecast)
+                case .failure(let forecastError) :
+                    weatherUIState = .Fail(forecastError)
             }
         
         isLoadingStarted = false

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct DailyWeather {
+public struct DailyWeather: Equatable, Hashable {
     let date: String
     let day: String //Научится определять день недели!
     let tempMax: Double

@@ -6,7 +6,7 @@
 //
 import Foundation
 
-public struct ForecastUI {
+public struct ForecastUI : Equatable, Hashable{
     let city: City
     let currentWeather: CurrentWeather
     let hourlyWeather: [HourlyWeather]

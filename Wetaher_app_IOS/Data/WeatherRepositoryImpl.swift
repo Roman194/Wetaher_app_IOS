@@ -4,6 +4,7 @@
 //
 //  Created by Roman Zyuzin on 02.10.2026.
 //
+import Foundation
 
 public class WeatherRepositoryImpl: WeatherRepository{
     private var currentForecast: ForecastUI
@@ -40,5 +41,19 @@ public class WeatherRepositoryImpl: WeatherRepository{
             return .failure(WeatherErrorUI(errorCode: 67 , errorDescription: "Trial error exception"))
         }
         
+    }
+    
+    public func LoadFavoriteCities() -> [City] {
+        return City.defaultFavorites
+    }
+    
+    public func SearchCities(query: String) async -> [City] {
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+        if trimmed.isEmpty { return [] }
+
+        return City.avaliableCities.filter { city in
+            city.name.lowercased().contains(trimmed) ||
+            city.country.lowercased().contains(trimmed)
+        }
     }
 }
