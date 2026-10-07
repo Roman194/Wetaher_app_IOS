@@ -1,23 +1,25 @@
 import SwiftUI
-import Playgrounds
 
-struct WeatherMainView: View {
-    
-    var currentForecast: ForecastUI
-    let onPullToRefresh: () -> Void
-    
+/// Главный экран погоды: заголовок, почасовой прогноз, 7-дневный прогноз и сетка метеорологических метрик
+public struct WeatherMainView: View {
+    public var currentForecast: ForecastUI
+    public let onPullToRefresh: () -> Void
+
     private let columns = [ //Мб это можно сделать получше?
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
-    
+
     public init(currentForecast: ForecastUI, onPullToRefresh: @escaping () -> Void) {
         self.currentForecast = currentForecast
         self.onPullToRefresh = onPullToRefresh
     }
-    
-    var body: some View {
-        
+
+    public var body: some View {
+        let current = currentForecast.currentWeather
+        let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
+        let todayDaily = currentForecast.dailyWeather.first
+
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
                 
@@ -50,25 +52,46 @@ struct WeatherMainView: View {
                 CurrentWeatherHeader(forecastData: currentForecast)
 
                 // Почасовой прогноз
-                //let timeZone = TimeZone(identifier: weather.city.timeZoneIdentifier) ?? .current
-                HourlyForecast()
+                //let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
+                HourlyForecast(
+                    hourly: currentForecast.hourlyWeather,
+                    timeZone: timeZone
+                )
 
                 // Прогноз на 7 дней
-                DailyForecast()
+                DailyForecast(
+                    daily: currentForecast.dailyWeather
+                )
 
                 // Сетка метрик в системе СИ
                 LazyVGrid(columns: columns, spacing: 12) {
-                    WindMetricCard()
+                    WindMetricCard(
+                        speedMps: current.windSpeed,
+                        directionDegrees: current.windDirection,
+                        gustMps: current.windGusts
+                    )
 
-                    PressureMetricCard()
+                    PressureMetricCard(
+                        pressureHpa: current.pressure
+                    )
 
-                    HumidityMetricCard()
+                    HumidityMetricCard(
+                        humidity: current.relativeHumidity,
+                        dewPoint: current.dewPoint
+                    )
 
-                    UVMetricCard()
+                    UVMetricCard(
+                        uvIndex: todayDaily?.uVIndex ?? 0.0
+                    )
 
-                    SunTimesMetricCard()
+                    SunTimesMetricCard(
+                        sunrise: todayDaily?.sunrise ?? "",
+                        sunset: todayDaily?.sunset ?? ""
+                    )
 
-                    VisibilityMetricCard()
+                    VisibilityMetricCard(
+                        visibilityMeters: current.visibility
+                    )
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
