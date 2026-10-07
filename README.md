@@ -93,7 +93,7 @@ Wetaher_app_IOS/
 │   ├── HourlyWeather.swift                 # Почасовой прогноз погоды
 │   ├── DailyWeather.swift                  # Дневной прогноз погоды (min/max, восход/закат)
 │   ├── ForecastUI.swift                    # Агрегирующая модель прогноза для UI
-│   ├── WeatherCondition.swift              # Коды погоды, описания, иконки SF Symbols, палитры цветов
+│   ├── WeatherCondition.swift              # Текущее состояние погоды (Код погоды, описание, иконки SF Symbols, палитры используемых фоновых цветов)
 │   ├── WeatherErrorUI.swift                # Модель ошибки (код, описание, протокол Error)
 │   └── AppThemeProps.swift                 # Модель выбора темы приложения (System, Light, Dark)
 │
