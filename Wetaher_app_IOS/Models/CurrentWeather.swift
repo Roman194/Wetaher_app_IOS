@@ -7,17 +7,17 @@
 
 import Foundation
 
-public struct CurrentWeather: Equatable, Hashable{
-    let dateTime: String //Потом подумаю как это конвертировать в Date (если это вообще потребуется)
-    let temperature: Double
-    let apparentTemp: Double
-    let weatherCondition: WeatherCondition
-    let isDay: Bool
-    let windSpeed: Double
-    let windDirection: Int
-    let windGusts: Double
-    let relativeHumidity: Int
-    let dewPoint: Double
-    let pressure: Double
-    let visibility: Double
+public struct CurrentWeather: Equatable, Hashable {
+    public let dateTime: String //Потом подумаю как это конвертировать в Date (если это вообще потребуется)
+    public let temperature: Double
+    public let apparentTemp: Double
+    public let weatherCondition: WeatherCondition
+    public let isDay: Bool
+    public let windSpeed: Double
+    public let windDirection: Int
+    public let windGusts: Double
+    public let relativeHumidity: Int
+    public let dewPoint: Double
+    public let pressure: Double
+    public let visibility: Double
 }

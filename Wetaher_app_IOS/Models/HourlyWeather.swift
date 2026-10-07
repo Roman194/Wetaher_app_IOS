@@ -8,9 +8,9 @@
 import Foundation
 
 public struct HourlyWeather: Equatable, Hashable {
-    let hour: String
-    let temperature: Double
-    let weatherCondition: WeatherCondition
-    let isDay: Bool
-    let precipProb: Int
+    public let hour: String
+    public let temperature: Double
+    public let weatherCondition: WeatherCondition
+    public let isDay: Bool
+    public let precipProb: Int
 }

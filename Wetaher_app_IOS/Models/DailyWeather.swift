@@ -8,13 +8,13 @@
 import Foundation
 
 public struct DailyWeather: Equatable, Hashable {
-    let date: String
-    let day: String //Научится определять день недели!
-    let tempMax: Double
-    let tempMin: Double
-    let weatherCondition: WeatherCondition
-    let uVIndex: Double
-    let sunrise: String
-    let sunset: String
-    let precipProbabilityMean: Int
+    public let date: String
+    public let day: String //Научится определять день недели!
+    public let tempMax: Double
+    public let tempMin: Double
+    public let weatherCondition: WeatherCondition
+    public let uVIndex: Double
+    public let sunrise: String
+    public let sunset: String
+    public let precipProbabilityMean: Int
 }
