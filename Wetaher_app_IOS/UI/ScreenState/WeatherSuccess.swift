@@ -7,23 +7,24 @@
 
 import SwiftUI
 
-struct WeatherSuccess: View {
+public struct WeatherSuccess: View {
+
+    public var currentForecast: ForecastUI
+    public let onPullToRefresh: () -> Void
     
-    var currentForecast: ForecastUI
-    let onPullToRefresh: () -> Void
-    
-    @Binding var showSettingsSheet: Bool
-    @Binding var showCityListSheet: Bool
-    
+    @Binding public var showSettingsSheet: Bool
+    @Binding public var showCityListSheet: Bool
+
     public init(currentForecast: ForecastUI, showSettingsSheet: Binding<Bool>, showCityListSheet: Binding<Bool>, onPullToRefresh: @escaping () -> Void) {
         self.currentForecast = currentForecast
         self._showSettingsSheet = showSettingsSheet
         self._showCityListSheet = showCityListSheet
         self.onPullToRefresh = onPullToRefresh
     }
-    
-    var body: some View {
+
+    public var body: some View {
         VStack(spacing: 12) {
+            // Верхняя панель управления
             HStack {
                 Button {
                     showSettingsSheet = true
@@ -51,8 +52,9 @@ struct WeatherSuccess: View {
             }
             .padding(.horizontal, 20)
             .padding(.top, 4)
-            
-            WeatherMainView(currentForecast: currentForecast){
+
+            // Основной контент погоды
+            WeatherMainView(currentForecast: currentForecast) {
                 onPullToRefresh()
             }
         }

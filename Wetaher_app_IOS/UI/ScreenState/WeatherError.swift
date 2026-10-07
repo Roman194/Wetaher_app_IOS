@@ -7,32 +7,49 @@
 
 import SwiftUI
 
-struct WeatherError: View {
+public struct WeatherError: View {
     
-    var weatherErrorUI: WeatherErrorUI
-    let onReplayButtonClicked: () -> Void
-    
-    init(weatherErrorUI: WeatherErrorUI, onReplayButtonClicked: @escaping () -> Void) {
+    public let weatherErrorUI: WeatherErrorUI
+    public let onReplayButtonClicked: () -> Void
+
+    public init(weatherErrorUI: WeatherErrorUI, onReplayButtonClicked: @escaping () -> Void) {
         self.weatherErrorUI = weatherErrorUI
         self.onReplayButtonClicked = onReplayButtonClicked
     }
-    
-    var body: some View {
+
+    public var body: some View {
         VStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.largeTitle)
                 .foregroundStyle(.orange)
 
-            Text("\(weatherErrorUI.errorCode) " + weatherErrorUI.errorDescription)
-                .font(.body)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+            VStack(spacing: 6) {
+                Text("Ошибка загрузки погоды")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
 
-            Button("Повторить") {
-                onReplayButtonClicked()
+                Text(weatherErrorUI.errorDescription.isEmpty ? "Код ошибки: \(weatherErrorUI.errorCode)" : "\(weatherErrorUI.errorDescription) (код: \(weatherErrorUI.errorCode))")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
-            .buttonStyle(.bordered)
+            .padding(.horizontal)
+
+            Button {
+                onReplayButtonClicked()
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.clockwise")
+                    Text("Повторить")
+                }
+                .fontWeight(.medium)
+            }
+            .buttonStyle(.borderedProminent)
+            .padding(.top, 4)
         }
+        .padding(24)
+        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding(.horizontal, 24)
     }
 }
