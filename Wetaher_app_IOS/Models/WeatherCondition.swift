@@ -22,8 +22,8 @@ enum sfSymbolNameDayNNightDiff: Equatable, Hashable{
 }
 
 enum iconColorDayNNighntDiff: Equatable, Hashable {
-    case same(Color)
-    case diff(Color, Color)
+    case same([Color])
+    case diff([Color], [Color])
 }
 
 enum ColorsDayNNightDiff: Equatable, Hashable {
@@ -37,7 +37,7 @@ extension WeatherCondition{
     public static let defaultWeatherCondition = WeatherCondition( //Clear
         description: "Ясно",
         sfSymbolName: .diff("sun.max.fill", "moon.stars.fill"),
-        iconColor: .diff(.orange, .indigo),
+        iconColor: .diff([.orange], [.indigo, .yellow]),
         backgroundColorsDarkTheme: .pair(
             [Color(red: 0.13, green: 0.17, blue: 0.24), Color(red: 0.08, green: 0.10, blue: 0.15)],
             [Color(red: 0.08, green: 0.10, blue: 0.18), Color(red: 0.05, green: 0.06, blue: 0.11)]),
@@ -52,7 +52,7 @@ extension WeatherCondition{
         2: WeatherCondition( //Partly cloudy
             description: "Переменная облачность",
             sfSymbolName: .diff("cloud.sun.fill", "cloud.moon.fill"),
-            iconColor: .diff(.orange.opacity(0.9), .indigo.opacity(0.9)),
+            iconColor: .diff([.gray, .orange.opacity(0.9)], [.gray, .indigo.opacity(0.9)]),
             backgroundColorsDarkTheme: .pair(
                 [Color(red: 0.14, green: 0.17, blue: 0.22), Color(red: 0.09, green: 0.11, blue: 0.15)],
                 [Color(red: 0.10, green: 0.11, blue: 0.18), Color(red: 0.06, green: 0.07, blue: 0.12)]),
@@ -63,56 +63,56 @@ extension WeatherCondition{
         3: WeatherCondition( //Overcast
             description: "Облачно",
             sfSymbolName: .same("smoke.fill"),
-            iconColor: .same(.secondary),
+            iconColor: .same([.gray]),
             backgroundColorsDarkTheme: .single(reusableBackgroundColors.overcastColors(for: .dark)),
             backgroundColorsLightTheme: .single(reusableBackgroundColors.overcastColors(for: .light))),
         
         45: WeatherCondition( //Fog
             description: "Туман",
             sfSymbolName: .same("cloud.fog.fill"),
-            iconColor: .same(.secondary),
+            iconColor: .same([.gray, .secondary]),
             backgroundColorsDarkTheme: .single(reusableBackgroundColors.overcastColors(for: .dark)),
             backgroundColorsLightTheme: .single(reusableBackgroundColors.overcastColors(for: .light))),
         
         50: WeatherCondition( //Drizzle
             description: "Моросящий дождь",
             sfSymbolName: .same("cloud.drizzle.fill"),
-            iconColor: .same(.blue),
+            iconColor: .same([.gray, .cyan]),
             backgroundColorsDarkTheme: .single(reusableBackgroundColors.rainColors(for: .dark)),
             backgroundColorsLightTheme: .single(reusableBackgroundColors.rainColors(for: .light))),
         
         60: WeatherCondition( //Rain
             description: "Дождь",
             sfSymbolName: .same("cloud.rain.fill"),
-            iconColor: .same(.blue),
+            iconColor: .same([.gray, .blue]),
             backgroundColorsDarkTheme: .single(reusableBackgroundColors.rainColors(for: .dark)),
             backgroundColorsLightTheme: .single(reusableBackgroundColors.rainColors(for: .light))),
         
         65: WeatherCondition( //Heavy Rain
             description: "Ливень",
             sfSymbolName: .same("cloud.heavyrain.fill"),
-            iconColor: .same(.blue),
+            iconColor: .same([.gray, .blue]),
             backgroundColorsDarkTheme: .single(reusableBackgroundColors.rainColors(for: .dark)),
             backgroundColorsLightTheme: .single(reusableBackgroundColors.rainColors(for: .light))),
         
         67: WeatherCondition( //Sleet
             description: "Мокрый снег",
             sfSymbolName: .same("cloud.sleet.fill"),
-            iconColor: .same(.blue),
+            iconColor: .same([.gray, .teal]),
             backgroundColorsDarkTheme: .single(reusableBackgroundColors.snowColors(for: .dark)),
             backgroundColorsLightTheme: .single(reusableBackgroundColors.snowColors(for: .light))),
         
         70: WeatherCondition( //Snow
             description: "Снег",
             sfSymbolName: .same("snowflake"),
-            iconColor: .same(.cyan),
+            iconColor: .same([.cyan]),
             backgroundColorsDarkTheme: .single(reusableBackgroundColors.snowColors(for: .dark)),
             backgroundColorsLightTheme: .single(reusableBackgroundColors.snowColors(for: .light))),
         
         95: WeatherCondition( //Thunderstorm
             description: "Гроза",
             sfSymbolName: .same("cloud.bolt.rain.fill"),
-            iconColor: .same(.yellow),
+            iconColor: .same([.gray, .yellow, .blue]),
             backgroundColorsDarkTheme: .single(
                 [Color(red: 0.14, green: 0.13, blue: 0.20), Color(red: 0.08, green: 0.07, blue: 0.13)]),
             backgroundColorsLightTheme: .single(
@@ -143,6 +143,22 @@ extension WeatherCondition{
             } else{
                 return [Color(red: 0.91, green: 0.95, blue: 0.99), Color(red: 0.96, green: 0.98, blue: 1.0)]
             }
+        }
+    }
+}
+
+extension Image {
+    @ViewBuilder
+    public func applyColors(_ colors: [Color]) -> some View {
+        switch colors.count {
+        case 0:
+            self
+        case 1:
+            self.foregroundStyle(colors[0])
+        case 2:
+            self.foregroundStyle(colors[0], colors[1])
+        default:
+            self.foregroundStyle(colors[0], colors[1], colors[2])
         }
     }
 }
