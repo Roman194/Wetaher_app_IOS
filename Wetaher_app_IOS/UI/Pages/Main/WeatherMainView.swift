@@ -63,7 +63,7 @@ public struct WeatherMainView: View {
                     daily: currentForecast.dailyWeather
                 )
 
-                // Сетка метрик в системе СИ
+                // Сетка метрик в системе
                 LazyVGrid(columns: columns, spacing: 12) {
                     WindMetricCard(
                         speedMps: current.windSpeed,

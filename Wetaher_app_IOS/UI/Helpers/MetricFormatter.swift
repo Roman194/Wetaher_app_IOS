@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Единицы измерения Международной системы единиц (СИ)
+/// Единицы измерения
 public enum MetricFormatter {
     /// Форматирование температуры в градусах Цельсия (°C)
     public static func temperature(_ celsius: Double, showSign: Bool = true) -> String {
