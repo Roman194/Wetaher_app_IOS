@@ -44,22 +44,13 @@ public struct HourlyForecast: View {
                                 return item.isDay ? day : night
                             }
                         }()
-                        let iconColor: Color = {
-                            switch item.weatherCondition.iconColor {
-                            case .same(let color):
-                                return color
-                            case .diff(let day, let night):
-                                return item.isDay ? day : night
-                            }
-                        }()
-
                         VStack(spacing: 8) {
                             Text(index == 0 ? "Сейчас" : WeatherUIHelper.formatTimeString(item.hour))
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
 
                             Image(systemName: symbolName)
-                                .foregroundStyle(iconColor)
+                                .symbolRenderingMode(.multicolor)
                                 .font(.body)
                                 .frame(height: 22)
 

@@ -56,18 +56,9 @@ public struct CityCard: View {
                             return forecast.currentWeather.isDay ? day : night
                         }
                     }()
-                    let iconColor: Color = {
-                        switch forecast.currentWeather.weatherCondition.iconColor {
-                        case .same(let color):
-                            return color
-                        case .diff(let day, let night):
-                            return forecast.currentWeather.isDay ? day : night
-                        }
-                    }()
-
                     HStack(spacing: 6) {
                         Image(systemName: symbolName)
-                            .foregroundStyle(iconColor)
+                            .symbolRenderingMode(.multicolor)
                             .font(.caption)
 
                         Text(forecast.currentWeather.weatherCondition.description)
