@@ -12,6 +12,7 @@ public struct CityListView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showAddCitySheet: Bool = false
 
+    public var savedCities: [City]
     public var savedCitiesWeather: [ForecastUI]
     public var savedCitiesWeatherError: [String: WeatherErrorUI]
     public var cityListWeatherUIState: CityListUIState
@@ -22,8 +23,17 @@ public struct CityListView: View {
     public var onDeleteCity: (IndexSet) -> Void
     public var onCityAdd: (City) -> Void
     public var isCitySaved: (City) -> Bool
+    public var onRefresh: (() async -> Void)?
+
+    private var citiesToDisplay: [City] {
+        if !savedCities.isEmpty {
+            return savedCities
+        }
+        return savedCitiesWeather.map { $0.city }
+    }
 
     public init(
+        savedCities: [City] = [],
         savedCitiesWeather: [ForecastUI] = [],
         savedCitiesWeatherError: [String: WeatherErrorUI] = [:],
         cityListWeatherUIState: CityListUIState = .Success,
@@ -32,8 +42,10 @@ public struct CityListView: View {
         onSelectCity: @escaping (City) -> Void,
         onDeleteCity: @escaping (IndexSet) -> Void,
         onCityAdd: @escaping (City) -> Void,
-        isCitySaved: @escaping (City) -> Bool
+        isCitySaved: @escaping (City) -> Bool,
+        onRefresh: (() async -> Void)? = nil
     ) {
+        self.savedCities = savedCities
         self.savedCitiesWeather = savedCitiesWeather
         self.savedCitiesWeatherError = savedCitiesWeatherError
         self.cityListWeatherUIState = cityListWeatherUIState
@@ -43,6 +55,7 @@ public struct CityListView: View {
         self.onDeleteCity = onDeleteCity
         self.onCityAdd = onCityAdd
         self.isCitySaved = isCitySaved
+        self.onRefresh = onRefresh
     }
 
 
@@ -54,7 +67,7 @@ public struct CityListView: View {
                     loadingView
 
                 case .Fail:
-                    failView
+                        failView
 
                 case .Success:
                     successView
@@ -107,53 +120,59 @@ public struct CityListView: View {
 
     @ViewBuilder
     private var failView: some View {
-        VStack(spacing: 12) {
-            ContentUnavailableView(
-                "Ошибка загрузки",
-                systemImage: "exclamationmark.triangle",
-                description: Text("Не удалось загрузить данные о погоде для сохранённых городов.")
-            )
+        if citiesToDisplay.isEmpty {
+            VStack(spacing: 12) {
+                ContentUnavailableView(
+                    "Ошибка загрузки",
+                    systemImage: "exclamationmark.triangle",
+                    description: Text("Не удалось загрузить данные о погоде для сохранённых городов.")
+                )
 
-            if !savedCitiesWeatherError.isEmpty {
-                VStack(spacing: 4) {
-                    ForEach(Array(savedCitiesWeatherError.keys.sorted()), id: \.self) { cityName in
-                        if let error = savedCitiesWeatherError[cityName] {
-                            Text("\(cityName): \(error.errorDescription)")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                if !savedCitiesWeatherError.isEmpty {
+                    VStack(spacing: 4) {
+                        ForEach(Array(savedCitiesWeatherError.keys.sorted()), id: \.self) { cityName in
+                            if let error = savedCitiesWeatherError[cityName] {
+                                Text("\(cityName): \(error.errorDescription)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
             }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    @ViewBuilder
-    private var successView: some View {
-        if savedCitiesWeather.isEmpty {
-            ContentUnavailableView(
-                "Нет избранных городов",
-                systemImage: "star.slash",
-                description: Text("Нажмите на кнопку «+» внизу, чтобы найти и добавить города.")
-            )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             List {
-                ForEach(savedCitiesWeather, id: \.city.id) { forecast in
-                    CityCard(forecast: forecast)
+                Section {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                        Text("Не удалось обновить данные о погоде")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .padding(.vertical, 4)
+                }
+
+                ForEach(citiesToDisplay, id: \.id) { city in
+                    let forecast = savedCitiesWeather.first(where: { $0.city.id == city.id || $0.city.name == city.name })
+                    let error = savedCitiesWeatherError[city.name]
+
+                    CityCard(city: city, forecast: forecast, error: error)
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            onSelectCity(forecast.city)
+                            onSelectCity(city)
                             dismiss()
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                if let index = savedCitiesWeather.firstIndex(where: { $0.city.id == forecast.city.id }) {
+                                if let index = citiesToDisplay.firstIndex(where: { $0.id == city.id }) {
                                     onDeleteCity(IndexSet(integer: index))
                                 }
                             } label: {
@@ -163,6 +182,51 @@ public struct CityListView: View {
                 }
             }
             .listStyle(.plain)
+            .refreshable {
+                await onRefresh?()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var successView: some View {
+        if citiesToDisplay.isEmpty {
+            ContentUnavailableView(
+                "Нет избранных городов",
+                systemImage: "star.slash",
+                description: Text("Нажмите на кнопку «+» внизу, чтобы найти и добавить города.")
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            List {
+                ForEach(citiesToDisplay, id: \.id) { city in
+                    let forecast = savedCitiesWeather.first(where: { $0.city.id == city.id || $0.city.name == city.name })
+                    let error = savedCitiesWeatherError[city.name]
+
+                    CityCard(city: city, forecast: forecast, error: error)
+                        .listRowSeparator(.hidden)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            onSelectCity(city)
+                            dismiss()
+                        }
+                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                            Button(role: .destructive) {
+                                if let index = citiesToDisplay.firstIndex(where: { $0.id == city.id }) {
+                                    onDeleteCity(IndexSet(integer: index))
+                                }
+                            } label: {
+                                Label("Удалить", systemImage: "trash")
+                            }
+                        }
+                }
+            }
+            .listStyle(.plain)
+            .refreshable {
+                await onRefresh?()
+            }
         }
     }
 

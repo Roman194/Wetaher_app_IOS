@@ -8,24 +8,34 @@ import SwiftUI
 
 public struct AppNavStack: View {
     @State private var weatherVM: WeatherMainViewModel
-    @State private var cityListVM : CityListViewModel
-    @State private var settingsVM : SettingsViewModel
+    @State private var cityListVM: CityListViewModel
+    @State private var settingsVM: SettingsViewModel
 
     @State private var showCityListSheet = false
     @State private var showSettingsSheet = false
 
     @State private var currentColorScheme: ColorScheme?
 
-    public init (weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
-        weatherVM = WeatherMainViewModel(weatherRepo: weatherRepo)
-        cityListVM = CityListViewModel(weatherRepo: weatherRepo)
-        settingsVM = SettingsViewModel(weatherRepo: weatherRepo)
-        currentColorScheme = settingsVM.appTheme.colorScheme //Не знаю будет ли он так корректно меняться
+    public init(weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
+        let wVM = WeatherMainViewModel(weatherRepo: weatherRepo)
+        let cVM = CityListViewModel(weatherRepo: weatherRepo)
+        let sVM = SettingsViewModel(weatherRepo: weatherRepo)
+        _weatherVM = State(initialValue: wVM)
+        _cityListVM = State(initialValue: cVM)
+        _settingsVM = State(initialValue: sVM)
+        _currentColorScheme = State(initialValue: sVM.appTheme.colorScheme)
     }
 
-    var body: some View{
-        ZStack{
-            WeatherBackground()
+    public var body: some View {
+        ZStack {
+            if case .Success(let weatherUI) = weatherVM.weatherUIState {
+                WeatherBackground(
+                    condition: weatherUI.currentWeather.weatherCondition,
+                    isDay: weatherUI.currentWeather.isDay
+                )
+            } else {
+                WeatherBackground()
+            }
 
             switch weatherVM.weatherUIState {
             case .Loading:
@@ -46,30 +56,39 @@ public struct AppNavStack: View {
                         await weatherVM.refreshWeather()
                     }
                 }
-                .preferredColorScheme(currentColorScheme) //settingsVM.appTheme.colorScheme
-                
             }
         }
         .sheet(isPresented: $showCityListSheet) { //Оптимизировать через enum!
-            CityListView(savedCitiesWeather: cityListVM.savedCitiesWeather, savedCitiesWeatherError: cityListVM.savedCitiesWeatherError, cityListWeatherUIState: cityListVM.cityListWeatherUIState,
-            searchQuery: cityListVM.searchQuery, searchResults: cityListVM.searchResults,
+            CityListView(
+                savedCities: cityListVM.savedCities,
+                savedCitiesWeather: cityListVM.savedCitiesWeather,
+                savedCitiesWeatherError: cityListVM.savedCitiesWeatherError,
+                cityListWeatherUIState: cityListVM.cityListWeatherUIState,
+                searchQuery: cityListVM.searchQuery,
+                searchResults: cityListVM.searchResults,
                 onSelectCity: { selectedCity in
                     showCityListSheet = false
                     Task {
                         await weatherVM.selectCity(newCity: selectedCity)
                     }
-            },
-            onDeleteCity: {index in cityListVM.deleteCity(at: index)},
-            onCityAdd: {city in
-                Task{
-                    await cityListVM.addCity(city: city)
-                }},
-            isCitySaved: {city in cityListVM.isCitySaved(city: city)})
+                },
+                onDeleteCity: { index in cityListVM.deleteCity(at: index) },
+                onCityAdd: { city in
+                    Task {
+                        await cityListVM.addCity(city: city)
+                    }
+                },
+                isCitySaved: { city in cityListVM.isCitySaved(city: city) },
+                onRefresh: {
+                    await cityListVM.loadSavedCitiesWeather()
+                }
+            )
             .preferredColorScheme(currentColorScheme)
         }
         .sheet(isPresented: $showSettingsSheet) {
             SettingsView(currentColorScheme: currentColorScheme) { theme in
                 settingsVM.appTheme = theme
+                currentColorScheme = theme.colorScheme
             }
             .preferredColorScheme(currentColorScheme)
         }

@@ -49,13 +49,12 @@ public class CityListViewModel{
             }
         }
 
+        self.savedCitiesWeather = updatedList
         if !updatedList.isEmpty {
-            self.savedCitiesWeather = updatedList
             cityListWeatherUIState = .Success
-        } else{
+        } else {
             cityListWeatherUIState = .Fail
         }
-        
     }
     
     public func searchCities() {
@@ -64,6 +63,9 @@ public class CityListViewModel{
         let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         if query.isEmpty {
             self.searchResults = []
+            if cityListWeatherUIState == .Search {
+                cityListWeatherUIState = savedCitiesWeather.isEmpty && !savedCities.isEmpty ? .Fail : .Success
+            }
             return
         }
         
