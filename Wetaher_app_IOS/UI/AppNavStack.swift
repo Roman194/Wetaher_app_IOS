@@ -72,7 +72,7 @@ public struct AppNavStack: View {
                         await weatherVM.selectCity(newCity: selectedCity)
                     }
                 },
-                onDeleteCity: { index in cityListVM.deleteCity(at: index) },
+                onDeleteCity: { city in cityListVM.deleteCity(city: city) },
                 onCityAdd: { city in
                     Task {
                         await cityListVM.addCity(city: city)

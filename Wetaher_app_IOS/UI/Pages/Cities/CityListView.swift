@@ -20,7 +20,7 @@ public struct CityListView: View {
     public var searchResults: [City]
 
     public var onSelectCity: (City) -> Void
-    public var onDeleteCity: (IndexSet) -> Void
+    public var onDeleteCity: (City) -> Void
     public var onCityAdd: (City) -> Void
     public var isCitySaved: (City) -> Bool
     public var onRefresh: (() async -> Void)?
@@ -40,7 +40,7 @@ public struct CityListView: View {
         searchQuery: String = "",
         searchResults: [City] = [],
         onSelectCity: @escaping (City) -> Void,
-        onDeleteCity: @escaping (IndexSet) -> Void,
+        onDeleteCity: @escaping (City) -> Void,
         onCityAdd: @escaping (City) -> Void,
         isCitySaved: @escaping (City) -> Bool,
         onRefresh: (() async -> Void)? = nil
@@ -98,6 +98,7 @@ public struct CityListView: View {
                         dismiss()
                     },
                     onCityAdd: onCityAdd,
+                    onCityDelete: onDeleteCity,
                     isCitySaved: isCitySaved
                 )
             }
@@ -172,9 +173,7 @@ public struct CityListView: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                if let index = citiesToDisplay.firstIndex(where: { $0.id == city.id }) {
-                                    onDeleteCity(IndexSet(integer: index))
-                                }
+                                onDeleteCity(city)
                             } label: {
                                 Label("Удалить", systemImage: "trash")
                             }
@@ -214,9 +213,7 @@ public struct CityListView: View {
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
                             Button(role: .destructive) {
-                                if let index = citiesToDisplay.firstIndex(where: { $0.id == city.id }) {
-                                    onDeleteCity(IndexSet(integer: index))
-                                }
+                                onDeleteCity(city)
                             } label: {
                                 Label("Удалить", systemImage: "trash")
                             }
