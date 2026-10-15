@@ -60,7 +60,7 @@ public struct WindMetricCard: View {
     public var body: some View {
         let directionName = WeatherUIHelper.degreesToDirection(directionDegrees)
 
-        WeatherMetricCard(icon: "wind", title: "Ветер (СИ)") {
+        WeatherMetricCard(icon: "wind", title: "Ветер") {
             VStack(alignment: .leading, spacing: 4) {
                 Text(MetricFormatter.windSpeed(speedMps))
                     .font(.title2)
@@ -92,7 +92,7 @@ public struct PressureMetricCard: View {
     }
 
     public var body: some View {
-        WeatherMetricCard(icon: "gauge.with.dots.needle.bottom.50percent", title: "Давление (СИ)") {
+        WeatherMetricCard(icon: "gauge.with.dots.needle.bottom.50percent", title: "Давление") {
             VStack(alignment: .leading, spacing: 4) {
                 Text(MetricFormatter.pressure(pressureHpa))
                     .font(.title2)

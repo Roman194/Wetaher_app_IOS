@@ -101,14 +101,11 @@ public class CityListViewModel{
         }
     }
         
-    /// Удаление города из избранного по индексу
-    public func deleteCity(at offsets: IndexSet) {
-        let citiesToDelete = offsets.map { savedCities[$0] }
-        if savedCities.count > 1{ //Должен быть хотя бы 1 сохранённый город!
-            for city in citiesToDelete{
-                savedCities.removeAll { $0.id == city.id }
-                savedCitiesWeather.removeAll { $0.city.id == city.id }
-            }
+    /// Удаление города из избранного
+    public func deleteCity(city: City) {
+        if savedCities.count > 1 { //Должен быть хотя бы 1 сохранённый город!
+            savedCities.removeAll { $0.id == city.id || ($0.name == city.name && $0.country == city.country) }
+            savedCitiesWeather.removeAll { $0.city.id == city.id || ($0.city.name == city.name && $0.city.country == city.country) }
         }
     }
 

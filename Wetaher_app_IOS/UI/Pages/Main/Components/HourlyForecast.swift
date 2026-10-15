@@ -44,10 +44,10 @@ public struct HourlyForecast: View {
                                 return item.isDay ? day : night
                             }
                         }()
-                        let iconColor: Color = {
+                        let iconColors: [Color] = {
                             switch item.weatherCondition.iconColor {
-                            case .same(let color):
-                                return color
+                            case .same(let colors):
+                                return colors
                             case .diff(let day, let night):
                                 return item.isDay ? day : night
                             }
@@ -59,14 +59,18 @@ public struct HourlyForecast: View {
                                 .foregroundStyle(.secondary)
 
                             Image(systemName: symbolName)
-                                .foregroundStyle(iconColor)
+                                .applyColors(iconColors)
                                 .font(.body)
                                 .frame(height: 22)
 
                             if item.precipProb > 0 {
-                                Text("\(item.precipProb)%")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundStyle(.blue)
+                                HStack(spacing: 2) {
+                                    Image(systemName: "drop.fill")
+                                        .font(.system(size: 8))
+                                    Text("\(item.precipProb)%")
+                                        .font(.system(size: 10, weight: .bold))
+                                }
+                                .foregroundStyle(.blue)
                             } else {
                                 Text(" ")
                                     .font(.system(size: 10))

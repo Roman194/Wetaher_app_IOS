@@ -41,10 +41,10 @@ public struct DailyForecast: View {
                             return day
                         }
                     }()
-                    let iconColor: Color = {
+                    let iconColors: [Color] = {
                         switch item.weatherCondition.iconColor {
-                        case .same(let color):
-                            return color
+                        case .same(let colors):
+                            return colors
                         case .diff(let day, _):
                             return day
                         }
@@ -69,7 +69,7 @@ public struct DailyForecast: View {
                         // Иконка погоды и вероятность осадков
                         HStack(spacing: 6) {
                             Image(systemName: symbolName)
-                                .foregroundStyle(iconColor)
+                                .applyColors(iconColors)
                                 .font(.title3)
 
                             if item.precipProbabilityMean > 0 {

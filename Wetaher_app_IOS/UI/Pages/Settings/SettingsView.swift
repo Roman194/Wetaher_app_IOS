@@ -72,5 +72,6 @@ public struct SettingsView: View {
             }
         }
         .preferredColorScheme(selectedTheme.colorScheme)
+        .id(selectedTheme)
     }
 }

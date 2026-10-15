@@ -20,6 +20,7 @@ public struct AddCityView: View {
 
     public var onSelectCity: ((City) -> Void)?
     public var onCityAdd: ((City) -> Void)?
+    public var onCityDelete: ((City) -> Void)?
     public var isCitySaved: ((City) -> Bool)?
     public var onSearch: ((String) async -> [City])?
 
@@ -48,6 +49,7 @@ public struct AddCityView: View {
         errorMessage: String? = nil,
         onSelectCity: ((City) -> Void)? = nil,
         onCityAdd: ((City) -> Void)? = nil,
+        onCityDelete: ((City) -> Void)? = nil,
         isCitySaved: ((City) -> Bool)? = nil,
         onSearch: ((String) async -> [City])? = nil
     ) {
@@ -55,6 +57,7 @@ public struct AddCityView: View {
         self.errorMessage = errorMessage
         self.onSelectCity = onSelectCity
         self.onCityAdd = onCityAdd
+        self.onCityDelete = onCityDelete
         self.isCitySaved = isCitySaved
         self.onSearch = onSearch
     }
@@ -188,27 +191,42 @@ public struct AddCityView: View {
         let saved = isCitySaved?(city) ?? false
 
         return HStack {
-            VStack(alignment: .leading, spacing: 3) {
-                Text(city.name)
-                    .font(.body)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(city.name)
+                        .font(.body)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.primary)
 
-                Text(city.country)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Spacer()
-
-            if saved {
-                HStack(spacing: 4) {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                    Text("В избранном")
+                    Text(city.country)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
+
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if !saved {
+                    onCityAdd?(city)
+                }
+                onSelectCity?(city)
+                dismiss()
+            }
+
+            if saved {
+                Button {
+                    onCityDelete?(city)
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundStyle(.secondary)
+                        Text("В избранном")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .buttonStyle(.borderless)
             } else {
                 Button {
                     onCityAdd?(city)
@@ -217,18 +235,10 @@ public struct AddCityView: View {
                         .font(.title3)
                         .foregroundStyle(.blue)
                 }
-                .buttonStyle(.plain)
+                .buttonStyle(.borderless)
             }
         }
         .padding(.vertical, 4)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if !saved {
-                onCityAdd?(city)
-            }
-            onSelectCity?(city)
-            dismiss()
-        }
     }
 
     // MARK: - Логика поиска
