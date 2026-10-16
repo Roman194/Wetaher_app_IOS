@@ -8,9 +8,13 @@ import Foundation
 
 public class WeatherRepositoryImpl: WeatherRepository{
     private var currentForecast: ForecastUI
+    private var networkClient: NetworkClient
+    private var checker: Bool
     
-    public init(currentWeather: ForecastUI = .moskowWeather) {
+    public init(currentWeather: ForecastUI = .moskowWeather, networkClient: NetworkClient = NetworkClient()) {
         self.currentForecast = currentWeather
+        self.networkClient = networkClient
+        checker = true
     }
     
     public func GetWeatherForSelectedCity(for city: City) async -> Result<ForecastUI, WeatherErrorUI>{
@@ -33,6 +37,13 @@ public class WeatherRepositoryImpl: WeatherRepository{
                 case .hong_Kong : .hongKongWeather
                 default : .moskowWeather
             }
+        
+        if (checker == true){
+            networkClient.getCityWeather(latitude: "52.52", longitude: "13.41", weatherResponse: { weather in
+                print(String(weather?.current.dewPoint2m  ?? 11.2))
+            })
+            checker = false
+        }
         
         if Int.random(in: 1...10) % 2 == 0{
             return .success(currentForecast)
