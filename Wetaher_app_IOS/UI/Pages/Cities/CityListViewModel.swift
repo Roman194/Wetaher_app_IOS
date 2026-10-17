@@ -75,8 +75,17 @@ public class CityListViewModel{
             guard !Task.isCancelled else { return }
             
             let results = await weatherRepository.SearchCities(query: query)
-            guard !Task.isCancelled else { return }
-            self.searchResults = results
+            //guard !Task.isCancelled else { return }
+            switch(results){
+            case .success(let possibleCities):
+                self.searchResults = possibleCities.map({ cities in
+                    cities.toUI()
+                })
+            case .failure(let cityError):
+                self.searchResults = cityError.reserveCities
+                
+            }
+            
             cityListWeatherUIState = .Success //Пока что здесь негативный сценарий не рассматривал
             
         }

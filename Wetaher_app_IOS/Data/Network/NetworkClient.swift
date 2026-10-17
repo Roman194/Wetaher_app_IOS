@@ -41,9 +41,34 @@ public class NetworkClient{
         }.resume()
     }
     
-    
-    
-    
-    
+    func getCityLatLongByName(cityName: String) async -> Result<PossibleCitiesResponse, CityResponseError>{
+        guard let url = URL(string: "https://geocoding-api.open-meteo.com/v1/search?name=\(cityName)&count=3&language=en&format=json")
+        else {
+            return .failure(CityResponseError(errorId: 13, errorDescription: "Ошибка конвертации URL-запроса"))
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            let httpResponse = response as? HTTPURLResponse
+            guard (200...299).contains(httpResponse!.statusCode)
+            else{
+                return .failure(CityResponseError(
+                    errorId: httpResponse!.statusCode,
+                    errorDescription: "Ошибка сервера: HTTP \(httpResponse!.statusCode)"
+                ))
+            }
+            
+            print(String(data: data, encoding: .utf8) ?? "No data")
+
+            let cities = try JSONDecoder().decode(PossibleCitiesResponse.self, from: data)
+            return .success(cities)
+            } catch {
+                return .failure(CityResponseError(errorId: 600, errorDescription: "\(error)"))
+            }
+    }
     
 }

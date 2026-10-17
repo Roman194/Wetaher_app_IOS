@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct City: Equatable, Hashable, Sendable, Identifiable, Codable {
+public struct City: Equatable, Hashable, Sendable, Identifiable {
     public let id: Int
     public let name: String
     public let country: String
@@ -15,3 +15,4 @@ public struct City: Equatable, Hashable, Sendable, Identifiable, Codable {
     public let longitude: Double
     public let timeZoneID: String
 }
+

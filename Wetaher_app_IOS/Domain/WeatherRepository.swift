@@ -10,5 +10,5 @@ public protocol WeatherRepository{
     
     func LoadFavoriteCities() -> [City]
     
-    func SearchCities(query: String) async -> [City] //Привести к Result!
+    func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError>
 }
