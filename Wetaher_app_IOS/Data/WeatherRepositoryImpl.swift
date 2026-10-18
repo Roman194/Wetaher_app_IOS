@@ -7,57 +7,69 @@
 import Foundation
 
 public class WeatherRepositoryImpl: WeatherRepository{
-    private var currentForecast: ForecastUI
+    //private var currentForecast: ForecastUI
     private var networkClient: NetworkClient
-    private var checker: Bool
+    //private var checker: Bool
     
-    public init(currentWeather: ForecastUI = .moskowWeather, networkClient: NetworkClient = NetworkClient()) {
-        self.currentForecast = currentWeather
+    public init(networkClient: NetworkClient = NetworkClient()) { //currentWeather: ForecastUI = .moskowWeather,
+        //self.currentForecast = currentWeather
         self.networkClient = networkClient
-        checker = true
+        //checker = true
     }
     
-    public func GetWeatherForSelectedCity(for city: City) async -> Result<ForecastUI, WeatherErrorUI>{
+    public func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherResponse, WeatherErrorResponse>{
         
-        try? await Task.sleep(nanoseconds: 100_000_000)
+//        try? await Task.sleep(nanoseconds: 100_000_000)
+//        
+//        currentForecast =
+//            switch city{
+//                case .moscow : .moskowWeather
+//                case .saintPetersburg : .saintPetersburgWeather
+//                case .kazan : .kazanWeather
+//                case .krasnoyarsk : .krasnoyarskWeather
+//                case .nizhnyNovgorod : .nizhnyNovgorodWeather
+//                case .novosibirsk : .novosibirskWeather
+//                case .kaliningrad : .kaliningradWeather
+//                case .samara : .samaraWeather
+//                case .vladivostok : .vladivostokWeather
+//                case .yekaterinburg : .yekaterinburgWeather
+//                case .malmo : .malmoWeather
+//                case .hong_Kong : .hongKongWeather
+//                default : .moskowWeather
+//            }
+//        
+        //if (checker == true){
+        //Требуется заменить написания городов через тире на пробелы? т.к. API понимает только " " и "_"
+        let cityInRightFormat = City(
+            id: city.id,
+            name: city.name.replacingOccurrences(of: "_", with: " "),
+            country: city.country,
+            latitude: city.latitude,
+            longitude: city.longitude,
+            timezone: city.timezone,
+            localTime: city.localTime
+        )
         
-        currentForecast =
-            switch city{
-                case .moscow : .moskowWeather
-                case .saintPetersburg : .saintPetersburgWeather
-                case .kazan : .kazanWeather
-                case .krasnoyarsk : .krasnoyarskWeather
-                case .nizhnyNovgorod : .nizhnyNovgorodWeather
-                case .novosibirsk : .novosibirskWeather
-                case .kaliningrad : .kaliningradWeather
-                case .samara : .samaraWeather
-                case .vladivostok : .vladivostokWeather
-                case .yekaterinburg : .yekaterinburgWeather
-                case .malmo : .malmoWeather
-                case .hong_Kong : .hongKongWeather
-                default : .moskowWeather
-            }
-        
-        if (checker == true){
-            let response  = await networkClient.getCityWeather(latitude: String(city.latitude), longitude: String(city.longitude))//"52.52""13.41"
+            let response  = await networkClient.getCityWeather(city: cityInRightFormat)
             switch(response){
                 case .success(let weatherResponse):
-                    print(weatherResponse)
+                    return .success(weatherResponse)
+                    //print(weatherResponse)
                 case .failure(let weatherErrorResponse):
-                    print(weatherErrorResponse)
+                    return .failure(weatherErrorResponse)
                 
-            }
+            //}
             
             
-            checker = false
+            //checker = false
         }
         
-        if Int.random(in: 1...10) % 2 == 0{
-            return .success(currentForecast)
-        }
-        else{
-            return .failure(WeatherErrorUI(errorCode: 67 , errorDescription: "Trial error exception"))
-        }
+//        if Int.random(in: 1...10) % 2 == 0{
+//            return .success(currentForecast)
+//        }
+//        else{
+//            return .failure(WeatherErrorUI(errorCode: 67 , errorDescription: "Trial error exception"))
+//        }
         
     }
     

@@ -58,7 +58,7 @@ public struct DailyForecast: View {
                                 .fontWeight(index == 0 ? .semibold : .medium)
                                 .foregroundStyle(.primary)
 
-                            Text(WeatherUIHelper.formatDateString(item.date))
+                            Text(item.date)
                                 .font(.caption2)
                                 .foregroundStyle(.secondary)
                         }

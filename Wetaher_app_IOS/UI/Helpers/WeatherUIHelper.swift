@@ -18,36 +18,36 @@ public enum WeatherUIHelper {
     }
 
     /// Описание статуса УФ-индекса
-    public static func uvStatus(for index: Double) -> String {
+    public static func uvStatus(for index: Double) -> UVStatus { //Color вообще используется хоть где-то?
         switch index {
         case ..<3.0:
-            return "Низкий"
+            return UVStatus(descripiton: "Низкий", color: .green)
         case 3.0..<6.0:
-            return "Умеренный"
+            return UVStatus(descripiton: "Умеренный", color: .yellow)
         case 6.0..<8.0:
-            return "Высокий"
+            return UVStatus(descripiton: "Высокий", color: .orange)
         case 8.0..<11.0:
-            return "Очень высокий"
+            return UVStatus(descripiton: "Очень высокий", color: .red)
         default:
-            return "Экстремальный"
+            return UVStatus(descripiton: "Экстремальный", color: .purple)
         }
     }
 
-    /// Цвет для значения УФ-индекса
-    public static func uvIndexColor(for index: Double) -> Color {
-        switch index {
-        case ..<3.0:
-            return .green
-        case 3.0..<6.0:
-            return .yellow
-        case 6.0..<8.0:
-            return .orange
-        case 8.0..<11.0:
-            return .red
-        default:
-            return .purple
-        }
-    }
+//    /// Цвет для значения УФ-индекса
+//    public static func uvIndexColor(for index: Double) -> Color {
+//        switch index {
+//        case ..<3.0:
+//            return .green
+//        case 3.0..<6.0:
+//            return .yellow
+//        case 6.0..<8.0:
+//            return .orange
+//        case 8.0..<11.0:
+//            return .red
+//        default:
+//            return .purple
+//        }
+//    }
 
     /// Описание статуса атмосферного давления
     public static func pressureStatus(for pressureHpa: Double) -> String {
@@ -59,10 +59,20 @@ public enum WeatherUIHelper {
             return "Пониженное"
         }
     }
+    
+    /// Форматирование давления в миллиметрах ртутного столба (мм рт. ст.)
+    public static func pressureMmHg(_ hPa: Double) -> Int {
+        return Int(round(hPa * 0.750062))
+    }
+    
+    /// Форматирование видимости в километрах
+    public static func visibility(_ metersOrKm: Double) -> Double {
+        let km = metersOrKm >= 1000 ? metersOrKm / 1000.0 : metersOrKm
+        return round(km)
+    }
 
     /// Описание статуса видимости
-    public static func visibilityStatus(for visibilityMetersOrKm: Double) -> String {
-        let km = visibilityMetersOrKm >= 1000 ? visibilityMetersOrKm / 1000.0 : visibilityMetersOrKm
+    public static func visibilityStatus(for km: Double) -> String {
         return km >= 10.0 ? "Отличная" : "Ограниченная"
     }
 
@@ -73,6 +83,14 @@ public enum WeatherUIHelper {
             return String(timeSubstring.prefix(5))
         }
         return dateString
+    }
+    
+    /// Извлечение даты "YYYY-MM-DD" из строки формата "YYYY-MM-DDTHH:mm"
+    public static func formatDayString(_ dayString: String) -> String {
+        if let tIndex = dayString.firstIndex(of: "T") {
+            return String(dayString[..<tIndex])
+        }
+        return dayString
     }
 
     /// Форматирование даты в локализованный вид "d MMM" (например, "4 окт")

@@ -42,9 +42,9 @@ public class CityListViewModel{
             let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
             switch weather{
                 case .success(let currentForecast) :
-                    updatedList.append(currentForecast)
+                    updatedList.append(currentForecast.ToUI(city: city))
                 case .failure(let forecastError) :
-                    savedCitiesWeatherError[city.name] = forecastError
+                    savedCitiesWeatherError[city.name] = forecastError.ToUI()
                     
             }
         }
@@ -58,6 +58,8 @@ public class CityListViewModel{
     }
     
     public func searchCities() {
+        //Предлагаю разрешать п-лю искать и добавлять новые города только когда у нас менее 9 избранных!
+        
         searchTask?.cancel()
 
         let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -95,16 +97,16 @@ public class CityListViewModel{
             return
         }
         
-        var newCity = city
+        let newCity = city
         savedCities.append(newCity)
         
         // Подгружаем сводку погоды для добавленного города
         let weather = await weatherRepository.GetWeatherForSelectedCity(for: newCity)
         switch weather{
             case .success(let currentForecast) :
-                savedCitiesWeather.append(currentForecast)
+                savedCitiesWeather.append(currentForecast.ToUI(city: city))
             case .failure(let forecastError) :
-                savedCitiesWeatherError[city.name] = forecastError
+                savedCitiesWeatherError[city.name] = forecastError.ToUI()
         }
     }
         

@@ -13,7 +13,8 @@ extension CityResponse{
             country: country,
             latitude: latitude,
             longitude: longitude,
-            timeZoneID: timezone
+            timezone: timezone,
+            localTime: CityUIHelper.localTime(timeZone: timezone)
         )
     }
 }

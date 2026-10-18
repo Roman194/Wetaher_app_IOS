@@ -17,7 +17,7 @@ public struct WeatherMainView: View {
 
     public var body: some View {
         let current = currentForecast.currentWeather
-        let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
+        let timeZone = TimeZone(identifier: currentForecast.city.timezone) ?? .current
         let todayDaily = currentForecast.dailyWeather.first
 
         ScrollView(showsIndicators: false) {
@@ -67,12 +67,14 @@ public struct WeatherMainView: View {
                 LazyVGrid(columns: columns, spacing: 12) {
                     WindMetricCard(
                         speedMps: current.windSpeed,
-                        directionDegrees: current.windDirection,
+                        directionString: current.windDirection,
                         gustMps: current.windGusts
                     )
 
                     PressureMetricCard(
-                        pressureHpa: current.pressure
+                        pressureHpa: current.pressure,
+                        pressureStatus: current.pressureStatus,
+                        pressureMmHg: current.pressureMmHg
                     )
 
                     HumidityMetricCard(
@@ -81,7 +83,9 @@ public struct WeatherMainView: View {
                     )
 
                     UVMetricCard(
-                        uvIndex: todayDaily?.uVIndex ?? 0.0
+                        uvIndex: todayDaily?.uVIndex ?? 0.0,
+                        uvStatus:  todayDaily?.uvStatus.descripiton ?? ""
+                        
                     )
 
                     SunTimesMetricCard(

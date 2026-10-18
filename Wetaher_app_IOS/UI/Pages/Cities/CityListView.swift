@@ -67,7 +67,7 @@ public struct CityListView: View {
                     loadingView
 
                 case .Fail:
-                        failView
+                    failView
 
                 case .Success:
                     successView

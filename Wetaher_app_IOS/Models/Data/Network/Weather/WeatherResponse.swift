@@ -7,7 +7,7 @@
 
 public struct WeatherResponse: Codable{
     
-    public let latitude: Double
+    public let latitude: Double //Не использовать! Эти lat lon в коде исключительно для теста того, на какой город выдала инфу API
     public let longitude: Double
     
     public let current: CurrentWeatherResponse

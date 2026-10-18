@@ -31,23 +31,17 @@ public class WeatherMainViewModel{
         guard !isLoadingStarted else { return }
         isLoadingStarted = true
 
-        //Пока что нет throws  в репо, поэтому кэтч не нужен. Если в будущем потребуется, то раскоментим
-        //do { try
             let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
             
             switch weather{
                 case .success(let currentForecast) :
-                    weatherUIState = .Success(currentForecast)
+                weatherUIState = .Success(currentForecast.ToUI(city: selectedCity)) //Нужен ли здесь City?
                 case .failure(let forecastError) :
-                    weatherUIState = .Fail(forecastError)
+                weatherUIState = .Fail(forecastError.ToUI())
             }
         
         isLoadingStarted = false
             
-
-//        } catch {
-//            weatherUIState = .Fail(<#T##WeatherErrorUI#>)
-//        }
     }
     
     public func refreshWeather() async{

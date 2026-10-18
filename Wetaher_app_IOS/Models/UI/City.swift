@@ -13,6 +13,7 @@ public struct City: Equatable, Hashable, Sendable, Identifiable {
     public let country: String
     public let latitude: Double
     public let longitude: Double
-    public let timeZoneID: String
+    public let timezone: String
+    public let localTime: String
 }
 

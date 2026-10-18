@@ -25,15 +25,6 @@ public struct CityCard: View {
         self.error = error
     }
 
-    private var localTime: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        if let timeZone = TimeZone(identifier: city.timeZoneID) {
-            formatter.timeZone = timeZone
-        }
-        return formatter.string(from: Date())
-    }
-
     public var body: some View {
         HStack(alignment: .center) {
             // Левая часть: название города, страна, локальное время и погодные условия
@@ -43,7 +34,7 @@ public struct CityCard: View {
                     .fontWeight(.bold)
                     .foregroundStyle(.primary)
 
-                Text("\(city.country) • \(localTime)")
+                Text("\(city.country) • \(city.localTime)")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
