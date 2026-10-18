@@ -39,19 +39,14 @@ public class WeatherRepositoryImpl: WeatherRepository{
             }
         
         if (checker == true){
-//            networkClient.getCityWeather(latitude: "52.52", longitude: "13.41", weatherResponse: { weather in
-//                print(String(weather?.current.dewPoint2m  ?? 11.2))
-//            })
-            
-//            let response = await networkClient.getCityLatLongByName(cityName: "Berlin") //trimmed
-//            
-//            switch(response){
-//                case .success(let possibleCities):
-//                    print(possibleCities.results.first?.name)
-//                case .failure(var cityError):
-//                    print(String(cityError.errorId))
-//            
-//            }
+            let response  = await networkClient.getCityWeather(latitude: String(city.latitude), longitude: String(city.longitude))//"52.52""13.41"
+            switch(response){
+                case .success(let weatherResponse):
+                    print(weatherResponse)
+                case .failure(let weatherErrorResponse):
+                    print(weatherErrorResponse)
+                
+            }
             
             
             checker = false
@@ -85,7 +80,7 @@ public class WeatherRepositoryImpl: WeatherRepository{
                 guard trimmed != "" else {return .failure(CityResponseError(errorId: 11, errorDescription: "Не получается конверитровать символы кириллицы"))}
             }
             
-            let response = await networkClient.getCityLatLongByName(cityName: trimmed) //"Berlin"
+            let response = await networkClient.getCityLatLongByName(cityName: trimmed, isLatinName: isOnlyLatinCharacters) //"Berlin"
             
             switch(response){
                 case .success(let possibleCities):
@@ -104,7 +99,7 @@ public class WeatherRepositoryImpl: WeatherRepository{
             
             
         }else{
-            return .failure(CityResponseError(errorId: 12, errorDescription: "В строке содержатся недопустимы символы или смешано кириллическое и латинское написания"))
+            return .failure(CityResponseError(errorId: 12, errorDescription: "В строке содержатся недопустимые символы или смешано кириллическое и латинское написания"))
         }
     }
 }

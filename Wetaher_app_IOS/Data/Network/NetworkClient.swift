@@ -12,37 +12,49 @@ public class NetworkClient{
         
     }
     
-    func getCityWeather(latitude: String, longitude: String, weatherResponse: @escaping (WeatherResponse?) -> Void){
+    func getCityWeather(latitude: String, longitude: String)async -> Result<WeatherResponse, WeatherErrorResponse>{
         
-        guard let url = URL(string: "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&hourly=temperature_2m,weather_code,is_day,precipitation_probability&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m,relative_humidity_2m,dew_point_2m,pressure_msl,visibility&daily=temperature_2m_max,temperature_2m_min,weather_code,uv_index_max,sunrise,sunset,precipitation_probability_mean") else {return}
+        guard let url = URL(string: "https://api.open-meteo.com/v1/forecast?latitude=\(latitude)&longitude=\(longitude)&hourly=temperature_2m,weather_code,is_day,precipitation_probability&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m,relative_humidity_2m,dew_point_2m,pressure_msl,visibility&daily=temperature_2m_max,temperature_2m_min,weather_code,uv_index_max,sunrise,sunset,precipitation_probability_mean") else {
+            return .failure(WeatherErrorResponse(errorCode: 13, errorDescription: "Ошибка конвертации URL-запроса"))
+        }
         
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
         
-        URLSession.shared.dataTask(with: request){data, _, error in
-            guard let data = data, error == nil else{
-                weatherResponse(nil)
-                return
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return .failure(WeatherErrorResponse(errorCode: -1, errorDescription: "Некорректный HTTP-ответ"))
+            }
+            let statusCode = httpResponse.statusCode
+            
+            guard (200...299).contains(statusCode)
+            else{
+                let standardDescription = HTTPURLResponse.localizedString(forStatusCode: statusCode)
+                //let bodyDescription = String(data: data, encoding: .utf8)
+                
+                return .failure(WeatherErrorResponse(
+                    errorCode: statusCode,
+                    errorDescription: "Ошибка сервера: HTTP \(statusCode) \(standardDescription)"
+                ))
             }
             
-            //print(String(data: data, encoding: .utf8) ?? "No data")
-            
-            do{
-                let decoder = JSONDecoder()
-                //decoder.keyDecodingStrategy = .convertFromSnakeCase
-                
-                let weather = try decoder.decode(WeatherResponse.self, from: data)
-                
-                weatherResponse(weather)
-            } catch{
-                print("Ошибка: \(error)")
-                weatherResponse(nil)
-            }
-        }.resume()
+            print(String(data: data, encoding: .utf8) ?? "No data")
+
+            let weather = try JSONDecoder().decode(WeatherResponse.self, from: data)
+            return .success(weather)
+        }
+        catch {
+            return .failure(WeatherErrorResponse(errorCode: 600, errorDescription: "\(error)"))
+        }
     }
     
-    func getCityLatLongByName(cityName: String) async -> Result<PossibleCitiesResponse, CityResponseError>{
-        guard let url = URL(string: "https://geocoding-api.open-meteo.com/v1/search?name=\(cityName)&count=3&language=en&format=json")
+    func getCityLatLongByName(cityName: String, isLatinName: Bool) async -> Result<PossibleCitiesResponse, CityResponseError>{
+        
+        var language = (isLatinName == true) ? "en": "ru"
+        
+        guard let url = URL(string: "https://geocoding-api.open-meteo.com/v1/search?name=\(cityName)&count=3&language=\(language)&format=json")
         else {
             return .failure(CityResponseError(errorId: 13, errorDescription: "Ошибка конвертации URL-запроса"))
         }
@@ -53,12 +65,19 @@ public class NetworkClient{
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
 
-            let httpResponse = response as? HTTPURLResponse
-            guard (200...299).contains(httpResponse!.statusCode)
+            guard let httpResponse = response as? HTTPURLResponse else {
+                return .failure(CityResponseError(errorId: -1, errorDescription: "Некорректный HTTP-ответ"))
+            }
+            let statusCode = httpResponse.statusCode
+            
+            guard (200...299).contains(statusCode)
             else{
+                let standardDescription = HTTPURLResponse.localizedString(forStatusCode: statusCode)
+                //let bodyDescription = String(data: data, encoding: .utf8)
+                
                 return .failure(CityResponseError(
-                    errorId: httpResponse!.statusCode,
-                    errorDescription: "Ошибка сервера: HTTP \(httpResponse!.statusCode)"
+                    errorId: statusCode,
+                    errorDescription: "Ошибка сервера: HTTP \(statusCode) \(standardDescription)"
                 ))
             }
             

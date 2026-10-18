@@ -81,13 +81,11 @@ public class CityListViewModel{
                 self.searchResults = possibleCities.map({ cities in
                     cities.toUI()
                 })
+                cityListWeatherUIState = .Success
             case .failure(let cityError):
                 self.searchResults = cityError.reserveCities
-                
+                cityListWeatherUIState = .Fail
             }
-            
-            cityListWeatherUIState = .Success //Пока что здесь негативный сценарий не рассматривал
-            
         }
     }
     

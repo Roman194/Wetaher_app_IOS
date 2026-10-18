@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-
+//ВЫзывать во ViewModel и пропихнуть в UI-структуру!
 /// Вспомогательные структуры и утилиты для презентации погоды в UI
 public enum WeatherUIHelper {
     /// Определение текстового направления ветра по градусам (0-360)
@@ -80,7 +80,7 @@ public enum WeatherUIHelper {
         let datePart = dateString.components(separatedBy: "T").first ?? dateString
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.timeZone = .gmt //Время по гринвичу!
         if let date = formatter.date(from: datePart) {
             let displayFormatter = DateFormatter()
             displayFormatter.locale = Locale(identifier: "ru_RU")
