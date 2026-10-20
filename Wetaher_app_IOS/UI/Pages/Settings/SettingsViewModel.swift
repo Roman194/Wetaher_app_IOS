@@ -10,14 +10,19 @@ import SwiftUI
 
 @MainActor
 @Observable
-public class SettingsViewModel{
+public class SettingsViewModel {
     private let weatherRepository: WeatherRepository
-    
-    public var appTheme: AppThemeProps
-    
-    init(weatherRepo: WeatherRepository) {
-        self.weatherRepository = weatherRepo
-        self.appTheme = .system
+    private static let themeStorageKey = "selected_app_theme"
+
+    public var appTheme: AppThemeProps {
+        didSet {
+            UserDefaults.standard.set(appTheme.id, forKey: Self.themeStorageKey)
+        }
     }
-    
+
+    public init(weatherRepo: WeatherRepository) {
+        self.weatherRepository = weatherRepo
+        let savedId = UserDefaults.standard.string(forKey: Self.themeStorageKey)
+        self.appTheme = AppThemeProps.from(id: savedId)
+    }
 }

@@ -9,47 +9,26 @@ import SwiftUI
 
 public struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTheme: AppThemeProps
-    public let onColorThemeChange: (AppThemeProps) -> Void
+    @Bindable var settingsVM: SettingsViewModel
 
-    public init(
-        currentColorScheme: ColorScheme? = nil,
-        onColorThemeChange: @escaping (AppThemeProps) -> Void
-    ) {
-        self.onColorThemeChange = onColorThemeChange
-        let initialTheme = AppThemeProps.allCases.first(where: { $0.colorScheme == currentColorScheme }) ?? .system
-        self._selectedTheme = State(initialValue: initialTheme)
-    }
-
-    public init(
-        settingsVM: SettingsViewModel,
-        onColorThemeChange: ((AppThemeProps) -> Void)? = nil
-    ) {
-        self.onColorThemeChange = onColorThemeChange ?? { theme in
-            settingsVM.appTheme = theme
-        }
-        self._selectedTheme = State(initialValue: settingsVM.appTheme)
+    public init(settingsVM: SettingsViewModel) {
+        self.settingsVM = settingsVM
     }
 
     public var body: some View {
         NavigationStack {
             Form {
-                // Внешний вид
                 Section {
-                    Picker("Тема оформления", selection: $selectedTheme) {
-                        ForEach(AppThemeProps.allCases, id: \.title) { theme in
-                            Text(theme.title).tag(theme)
-                        }
+                    Picker("Тема оформления", selection: $settingsVM.appTheme) {
+                        Text(AppThemeProps.system.title).tag(AppThemeProps.system)
+                        Text(AppThemeProps.light.title).tag(AppThemeProps.light)
+                        Text(AppThemeProps.dark.title).tag(AppThemeProps.dark)
                     }
                     .pickerStyle(.segmented)
-                    .onChange(of: selectedTheme) { _, newTheme in
-                        onColorThemeChange(newTheme)
-                    }
                 } header: {
                     Text("Тема")
                 }
 
-                // Единицы измерения
                 Section {
                     LabeledContent("Температура", value: "°C (Цельсий)")
                     LabeledContent("Скорость ветра", value: "м/с (Метры в секунду)")
@@ -58,7 +37,6 @@ public struct SettingsView: View {
                 } header: {
                     Text("Единицы измерения")
                 }
-
             }
             .navigationTitle("Настройки")
             .navigationBarTitleDisplayMode(.inline)
@@ -71,7 +49,6 @@ public struct SettingsView: View {
                 }
             }
         }
-        .preferredColorScheme(selectedTheme.colorScheme)
-        .id(selectedTheme)
+        .preferredColorScheme(settingsVM.appTheme.colorScheme)
     }
 }

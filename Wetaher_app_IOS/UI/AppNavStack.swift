@@ -14,8 +14,6 @@ public struct AppNavStack: View {
     @State private var showCityListSheet = false
     @State private var showSettingsSheet = false
 
-    @State private var currentColorScheme: ColorScheme?
-
     public init(weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
         let wVM = WeatherMainViewModel(weatherRepo: weatherRepo)
         let cVM = CityListViewModel(weatherRepo: weatherRepo)
@@ -23,7 +21,6 @@ public struct AppNavStack: View {
         _weatherVM = State(initialValue: wVM)
         _cityListVM = State(initialValue: cVM)
         _settingsVM = State(initialValue: sVM)
-        _currentColorScheme = State(initialValue: sVM.appTheme.colorScheme)
     }
 
     public var body: some View {
@@ -83,16 +80,12 @@ public struct AppNavStack: View {
                     await cityListVM.loadSavedCitiesWeather()
                 }
             )
-            .preferredColorScheme(currentColorScheme)
+            .preferredColorScheme(settingsVM.appTheme.colorScheme)
         }
         .sheet(isPresented: $showSettingsSheet) {
-            SettingsView(currentColorScheme: currentColorScheme) { theme in
-                settingsVM.appTheme = theme
-                currentColorScheme = theme.colorScheme
-            }
-            .preferredColorScheme(currentColorScheme)
+            SettingsView(settingsVM: settingsVM)
         }
-        .preferredColorScheme(currentColorScheme)
+        .preferredColorScheme(settingsVM.appTheme.colorScheme)
         .onChange(of: weatherVM.weatherUIState.kind) {
             if weatherVM.weatherUIState.kind == .success {
                 Task {
