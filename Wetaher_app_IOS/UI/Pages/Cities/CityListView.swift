@@ -19,7 +19,7 @@ public struct CityListView: View {
     public var searchQuery: String
     public var searchResults: [City]
 
-    public var onSelectCity: (City) -> Void
+    public var onSelectCity: (CityWeatherState) -> Void
     public var onDeleteCity: (City) -> Void
     public var onCityAdd: (City) -> Void
     public var isCitySaved: (City) -> Bool
@@ -39,7 +39,7 @@ public struct CityListView: View {
         cityListWeatherUIState: CityListUIState = .Success,
         searchQuery: String = "",
         searchResults: [City] = [],
-        onSelectCity: @escaping (City) -> Void,
+        onSelectCity: @escaping (CityWeatherState) -> Void,
         onDeleteCity: @escaping (City) -> Void,
         onCityAdd: @escaping (City) -> Void,
         isCitySaved: @escaping (City) -> Bool,
@@ -94,7 +94,7 @@ public struct CityListView: View {
                 AddCityView(
                     onSelectCity: { city in
                         showAddCitySheet = false
-                        onSelectCity(city)
+                        onSelectCity(.NewCity(city))
                         dismiss()
                     },
                     onCityAdd: onCityAdd,
@@ -158,6 +158,7 @@ public struct CityListView: View {
                     .padding(.vertical, 4)
                 }
 
+                //Оптимизировать!
                 ForEach(citiesToDisplay, id: \.id) { city in
                     let forecast = savedCitiesWeather.first(where: { $0.city.id == city.id || $0.city.name == city.name })
                     let error = savedCitiesWeatherError[city.name]
@@ -168,14 +169,19 @@ public struct CityListView: View {
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            onSelectCity(city)
-                            dismiss()
+                            if(forecast != nil){
+                                onSelectCity(.CityWithWeather(forecast!))
+                                dismiss()
+                            }
+                            
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                onDeleteCity(city)
-                            } label: {
-                                Label("Удалить", systemImage: "trash")
+                            if (citiesToDisplay.count > 1){
+                                Button(role: .destructive) {
+                                    onDeleteCity(city)
+                                } label: {
+                                    Label("Удалить", systemImage: "trash")
+                                }
                             }
                         }
                 }
@@ -189,7 +195,7 @@ public struct CityListView: View {
 
     @ViewBuilder
     private var successView: some View {
-        if citiesToDisplay.isEmpty {
+        if citiesToDisplay.isEmpty { //Есть такая заготовка на всякий случай, хотя п-лю запрещено оставаться без избранных городов
             ContentUnavailableView(
                 "Нет избранных городов",
                 systemImage: "star.slash",
@@ -208,14 +214,18 @@ public struct CityListView: View {
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            onSelectCity(city)
-                            dismiss()
+                            if(forecast != nil){
+                                onSelectCity(.CityWithWeather(forecast!))
+                                dismiss()
+                            }
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            Button(role: .destructive) {
-                                onDeleteCity(city)
-                            } label: {
-                                Label("Удалить", systemImage: "trash")
+                            if (citiesToDisplay.count > 1){
+                                Button(role: .destructive) {
+                                    onDeleteCity(city)
+                                } label: {
+                                    Label("Удалить", systemImage: "trash")
+                                }
                             }
                         }
                 }

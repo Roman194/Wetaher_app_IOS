@@ -18,6 +18,10 @@ public enum MetricFormatter {
             return "\(value)°"
         }
     }
+    
+    public static func dateInDaily( date: String) -> String{
+        return date.replacingOccurrences(of: "-", with: ".")
+    }
 
     /// Форматирование скорости ветра в метрах в секунду
     public static func windSpeed(_ mps: Double) -> String {
@@ -36,6 +40,6 @@ public enum MetricFormatter {
 
     /// Форматирование видимости в километрах (< 443)
     public static func visibility(_ km: Double) -> String {
-        return "\(Int(km))) км"
+        return "\(Int(km)) км"
     }
 }

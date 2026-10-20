@@ -33,31 +33,39 @@ public class CityListViewModel{
         cityListWeatherUIState = .Loading
     }
     
-    public func loadSavedCitiesWeather() async {
+    public func loadSavedCitiesWeather(selectedCityForecast: ForecastUI) {
+        
+        let selectedCity = selectedCityForecast.city
 
         var updatedList: [ForecastUI] = []
         savedCitiesWeatherError = [:]
 
-        for city in savedCities { //Как сюда прокинуть selectedCity, чтобы лишний раз не обновлять его?
-            let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
-            switch weather{
-                case .success(let currentForecast) :
-                    updatedList.append(currentForecast.ToUI(city: city))
-                case .failure(let forecastError) :
-                    savedCitiesWeatherError[city.name] = forecastError.ToUI()
+        Task{
+            for city in savedCities { //Cюда прокидывается selectedCity, чтобы лишний раз не запрашивать уже запрошенный город
+                if(city.id == selectedCity.id){
+                    updatedList.append(selectedCityForecast)
+                }else{
+                    let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
                     
+                    switch weather{
+                    case .success(let currentForecast) :
+                        updatedList.append(currentForecast.ToUI(city: city))
+                    case .failure(let forecastError) :
+                        savedCitiesWeatherError[city.name] = forecastError.ToUI()
+                    }
+                }
             }
-        }
-
-        self.savedCitiesWeather = updatedList
-        if !updatedList.isEmpty {
-            cityListWeatherUIState = .Success
-        } else {
-            cityListWeatherUIState = .Fail
+            
+            self.savedCitiesWeather = updatedList
+            if !updatedList.isEmpty {
+                cityListWeatherUIState = .Success
+            } else {
+                cityListWeatherUIState = .Fail
+            }
         }
     }
     
-    public func searchCities() {
+    public func searchCities() { //?????
         //Предлагаю разрешать п-лю искать и добавлять новые города только когда у нас менее 9 избранных!
         
         searchTask?.cancel()
@@ -76,23 +84,25 @@ public class CityListViewModel{
             try? await Task.sleep(nanoseconds: 300_000_000)
             guard !Task.isCancelled else { return }
             
+            cityListWeatherUIState = .Loading
+            
             let results = await weatherRepository.SearchCities(query: query)
             //guard !Task.isCancelled else { return }
             switch(results){
-            case .success(let possibleCities):
-                self.searchResults = possibleCities.map({ cities in
-                    cities.toUI()
-                })
-                cityListWeatherUIState = .Success
-            case .failure(let cityError):
-                self.searchResults = cityError.reserveCities
-                cityListWeatherUIState = .Fail
+                case .success(let possibleCities):
+                    self.searchResults = possibleCities.map({ cities in
+                        cities.toUI()
+                    })
+                    cityListWeatherUIState = .Success
+                case .failure(let cityError):
+                    self.searchResults = cityError.reserveCities
+                    cityListWeatherUIState = .Fail
             }
         }
     }
     
     /// Добавление города в избранное
-    public func addCity(city: City) async {
+    public func addCity(city: City) {
         guard !savedCities.contains(where: { $0.name == city.name && $0.country == city.country }) else {
             return
         }
@@ -100,13 +110,15 @@ public class CityListViewModel{
         let newCity = city
         savedCities.append(newCity)
         
-        // Подгружаем сводку погоды для добавленного города
-        let weather = await weatherRepository.GetWeatherForSelectedCity(for: newCity)
-        switch weather{
-            case .success(let currentForecast) :
-                savedCitiesWeather.append(currentForecast.ToUI(city: city))
-            case .failure(let forecastError) :
-                savedCitiesWeatherError[city.name] = forecastError.ToUI()
+        Task{
+            // Подгружаем сводку погоды для добавленного города
+            let weather = await weatherRepository.GetWeatherForSelectedCity(for: newCity)
+            switch weather{
+                case .success(let currentForecast) :
+                    savedCitiesWeather.append(currentForecast.ToUI(city: city))
+                case .failure(let forecastError) :
+                    savedCitiesWeatherError[city.name] = forecastError.ToUI()
+            }
         }
     }
         

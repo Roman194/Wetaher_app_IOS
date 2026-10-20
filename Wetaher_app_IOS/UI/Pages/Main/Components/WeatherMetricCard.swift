@@ -137,7 +137,7 @@ public struct HumidityMetricCard: View {
 
                 Spacer(minLength: 2)
 
-                Text("Точка росы \(MetricFormatter.temperature(dewPoint))")
+                Text("Точка росы \(MetricFormatter.temperature(dewPoint, showSign: false))")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

@@ -53,7 +53,7 @@ public struct DailyForecast: View {
                     HStack(alignment: .center) {
                         // День недели и дата
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(index == 0 ? "Сегодня" : item.day)
+                            Text(item.day) //index == 0 ? "Сегодня" :
                                 .font(.body)
                                 .fontWeight(index == 0 ? .semibold : .medium)
                                 .foregroundStyle(.primary)

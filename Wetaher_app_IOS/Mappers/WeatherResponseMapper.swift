@@ -11,8 +11,8 @@ extension WeatherResponse{
         ForecastUI(
             city: city,
             currentWeather: current.ToUI(),
-            hourlyWeather: hourly.ToUI(),
-            dailyWeather: daily.ToUI()
+            hourlyWeather: hourly.ToUI(currentTime: current.time),
+            dailyWeather: daily.ToUI(currentTime: current.time)
         )
     }
 }
@@ -43,12 +43,33 @@ extension CurrentWeatherResponse{
 }
 
 extension HourlyWeatherResponse{
-    func ToUI() -> [HourlyWeather]{
+    func ToUI(currentTime: String) -> [HourlyWeather]{
         var hourlyWeatherArray: [HourlyWeather] = []
-        for i in 0...(MinArrayCount() - 1) { //Предполагаем, что API выдаёт нам корректное количество данных для всех массивов, но всё же на всякий случай обрабатываем по минимальному по кол-ву элл-ов массиву
+        
+        //Определяем стартовый сдвиг для вывода почасовок в зав-ти от Гринвича
+        let timeOffset: Int
+        
+        let timePart = currentTime.components(separatedBy: "T").last ?? currentTime
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        formatter.timeZone = .gmt //Время по гринвичу!
+        formatter.locale = Locale(identifier: "ru_RU")
+        if let time = formatter.date(from: timePart) {
+            
+            var calendar = Calendar.current
+            calendar.timeZone = .gmt
+            let hour = calendar.component(.hour, from: time)
+            
+            timeOffset = hour
+        }else{
+            timeOffset = 0
+        }
+        
+        for i in timeOffset...(MinArrayCount() + timeOffset - 1) { //Предполагаем, что API выдаёт нам корректное количество данных для всех массивов, но всё же на всякий случай обрабатываем по минимальному по кол-ву элл-ов массиву
+            
             hourlyWeatherArray.append(
                 HourlyWeather(
-                    hour: WeatherUIHelper.formatTimeString(time[i]),
+                    hour: WeatherUIHelper.formatTimeString(time[i], index: i, timeOffset: timeOffset),
                     temperature: temperature2m[i],
                     weatherCondition: WeatherCondition.weatherConditionsDict[weatherCode[i]] ?? WeatherCondition.defaultWeatherCondition,
                     isDay: Bool(isDay[i] as NSNumber),
@@ -66,13 +87,13 @@ extension HourlyWeatherResponse{
 }
 
 extension DailyWeatherResponse{
-    func ToUI() -> [DailyWeather]{
+    func ToUI(currentTime: String) -> [DailyWeather]{
         var dailyWeatherArray: [DailyWeather] = []
         for i in 0...(MinArrayCount() - 1) {
             dailyWeatherArray.append(
                 DailyWeather(
-                    date: WeatherUIHelper.formatDateString(time[i]),
-                    day: WeatherUIHelper.formatDayString(time[i]),
+                    date: WeatherUIHelper.formatDateLocalizedString(time[i]),
+                    day: WeatherUIHelper.formatDayOfWeekString(time[i], currentDT: currentTime, index: i),
                     tempMax: temperature2mMax[i],
                     tempMin: temperature2mMin[i],
                     weatherCondition: WeatherCondition.weatherConditionsDict[weatherCode[i]] ?? WeatherCondition.defaultWeatherCondition,
