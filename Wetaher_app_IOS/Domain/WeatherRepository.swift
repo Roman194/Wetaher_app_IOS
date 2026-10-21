@@ -6,9 +6,9 @@
 //
 
 public protocol WeatherRepository{
-    func GetWeatherForSelectedCity(for city: City) async -> Result<ForecastUI, WeatherErrorUI>
+    func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherResponse, WeatherErrorResponse>
     
-    func LoadFavoriteCities() -> [City]
+    func LoadFavoriteCities() -> [City] //Переделать под Result когда появится БД!
     
-    func SearchCities(query: String) async -> [City] //Привести к Result!
+    func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError>
 }

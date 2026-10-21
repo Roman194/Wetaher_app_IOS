@@ -48,17 +48,17 @@ public struct WeatherMetricCard<Content: View>: View {
 // Ветер
 public struct WindMetricCard: View {
     public let speedMps: Double
-    public let directionDegrees: Int
+    public let direction: String
     public let gustMps: Double?
 
-    public init(speedMps: Double = 0.0, directionDegrees: Int = 0, gustMps: Double? = nil) {
+    public init(speedMps: Double = 0.0, directionString: String = "C", gustMps: Double? = nil) {
         self.speedMps = speedMps
-        self.directionDegrees = directionDegrees
+        self.direction = directionString
         self.gustMps = gustMps
     }
 
     public var body: some View {
-        let directionName = WeatherUIHelper.degreesToDirection(directionDegrees)
+        //let directionName = WeatherUIHelper.degreesToDirection(direction)
 
         WeatherMetricCard(icon: "wind", title: "Ветер") {
             VStack(alignment: .leading, spacing: 4) {
@@ -67,7 +67,7 @@ public struct WindMetricCard: View {
                     .fontWeight(.bold)
                     .foregroundStyle(.primary)
 
-                Text("Направление: \(directionName)")
+                Text("Направление: \(direction)")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
 
@@ -86,9 +86,13 @@ public struct WindMetricCard: View {
 // Давление
 public struct PressureMetricCard: View {
     public let pressureHpa: Double
+    public let pressureStatus: String
+    public let pressureMmHg: Int
 
-    public init(pressureHpa: Double = 1013.25) {
+    public init(pressureHpa: Double = 1013.25, pressureStatus: String = "", pressureMmHg: Int = 1012) {
         self.pressureHpa = pressureHpa
+        self.pressureMmHg = pressureMmHg
+        self.pressureStatus = pressureStatus
     }
 
     public var body: some View {
@@ -101,11 +105,11 @@ public struct PressureMetricCard: View {
 
                 Spacer(minLength: 2)
 
-                Text(WeatherUIHelper.pressureStatus(for: pressureHpa))
+                Text(pressureStatus)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
 
-                Text(MetricFormatter.pressureMmHg(pressureHpa))
+                Text(MetricFormatter.pressureMmHg(pressureMmHg))
                     .font(.caption2)
                     .foregroundStyle(.tertiary)
             }
@@ -133,7 +137,7 @@ public struct HumidityMetricCard: View {
 
                 Spacer(minLength: 2)
 
-                Text("Точка росы \(MetricFormatter.temperature(dewPoint))")
+                Text("Точка росы \(MetricFormatter.temperature(dewPoint, showSign: false))")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -144,9 +148,11 @@ public struct HumidityMetricCard: View {
 // УФ-индекс
 public struct UVMetricCard: View {
     public let uvIndex: Double
+    public let uvStatus: String
 
-    public init(uvIndex: Double = 0.0) {
+    public init(uvIndex: Double = 0.0, uvStatus: String = "") {
         self.uvIndex = uvIndex
+        self.uvStatus = uvStatus
     }
 
     public var body: some View {
@@ -159,7 +165,7 @@ public struct UVMetricCard: View {
 
                 Spacer(minLength: 2)
 
-                Text(WeatherUIHelper.uvStatus(for: uvIndex))
+                Text(uvStatus)
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
@@ -185,7 +191,7 @@ public struct SunTimesMetricCard: View {
                         Text("Восход")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
-                        Text(WeatherUIHelper.formatTimeString(sunrise))
+                        Text(sunrise)
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }
@@ -196,7 +202,7 @@ public struct SunTimesMetricCard: View {
                         Text("Закат")
                             .font(.caption2)
                             .foregroundStyle(.secondary)
-                        Text(WeatherUIHelper.formatTimeString(sunset))
+                        Text(sunset)
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }

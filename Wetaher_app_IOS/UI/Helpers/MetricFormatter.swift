@@ -18,10 +18,14 @@ public enum MetricFormatter {
             return "\(value)°"
         }
     }
+    
+    public static func dateInDaily( date: String) -> String{
+        return date.replacingOccurrences(of: "-", with: ".")
+    }
 
     /// Форматирование скорости ветра в метрах в секунду
     public static func windSpeed(_ mps: Double) -> String {
-        String(format: "%.1f м/с", mps)
+        String(format: "%.1f км/ч", mps)
     }
 
     /// Форматирование давления в гектопаскалях (1 гПа = 100 Па)
@@ -30,14 +34,12 @@ public enum MetricFormatter {
     }
 
     /// Форматирование давления в миллиметрах ртутного столба (мм рт. ст.)
-    public static func pressureMmHg(_ hPa: Double) -> String {
-        let mmHg = Int(round(hPa * 0.750062))
+    public static func pressureMmHg(_ mmHg: Int) -> String {
         return "\(mmHg) мм рт. ст."
     }
 
     /// Форматирование видимости в километрах (< 443)
-    public static func visibility(_ metersOrKm: Double) -> String {
-        let km = metersOrKm >= 1000 ? metersOrKm / 1000.0 : metersOrKm
-        return "\(Int(round(km))) км"
+    public static func visibility(_ km: Double) -> String {
+        return "\(Int(km)) км"
     }
 }

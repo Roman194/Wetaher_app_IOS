@@ -14,6 +14,7 @@ public class WeatherMainViewModel{
     public var selectedCity: City
     public var weatherUIState: WeatherUIState
     public var isLoadingStarted: Bool = false
+    public var isCascadeUpdateForbidden = false
     
     public init(weatherRepo: WeatherRepository, initalValue: City = .moscow){
         weatherRepository = weatherRepo
@@ -26,43 +27,56 @@ public class WeatherMainViewModel{
         
     }
     
-    private func loadWeather() async {
+    private func loadWeather(addNewCity: Bool = false) {
         
         guard !isLoadingStarted else { return }
+        isCascadeUpdateForbidden =
+            if(addNewCity){
+                true
+            }else{
+                false
+            }
+        
         isLoadingStarted = true
-
-        //Пока что нет throws  в репо, поэтому кэтч не нужен. Если в будущем потребуется, то раскоментим
-        //do { try
+        Task{
+            
             let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
             
             switch weather{
                 case .success(let currentForecast) :
-                    weatherUIState = .Success(currentForecast)
+                weatherUIState = .Success(currentForecast.ToUI(city: selectedCity)) //Нужен ли здесь City?
                 case .failure(let forecastError) :
-                    weatherUIState = .Fail(forecastError)
+                weatherUIState = .Fail(forecastError.ToUI())
             }
-        
-        isLoadingStarted = false
             
-
-//        } catch {
-//            weatherUIState = .Fail(<#T##WeatherErrorUI#>)
-//        }
+            isLoadingStarted = false
+        }
+            
     }
     
-    public func refreshWeather() async{
+    public func refreshWeather(){
         weatherUIState = .Loading
         
-        await loadWeather()
+        loadWeather()
     }
     
-    public func selectCity(newCity: City) async {
-        guard newCity.id != selectedCity.id else { return } //Не очень понимаю как правильно читать guard
-        self.selectedCity = newCity
-        
-        weatherUIState = .Loading
-
-        await loadWeather()
+    public func selectCity(newCity: CityWeatherState){
+        var city: City
+        switch(newCity){
+        case .CityWithWeather(let cityWeather):
+            city = cityWeather.city
+            guard city.id != selectedCity.id else { return } //Не очень понимаю как правильно читать guard
+            self.selectedCity = city
+            weatherUIState = .Success(cityWeather)
+            
+        case .NewCity(let addedCity):
+            city = addedCity
+            guard city.id != selectedCity.id else { return }
+            self.selectedCity = city
+            
+            weatherUIState = .Loading
+            loadWeather(addNewCity: true)
+        }
     }
     
 }
