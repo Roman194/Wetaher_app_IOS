@@ -84,6 +84,7 @@ public struct AppNavStack: View {
         }
         .sheet(isPresented: $showSettingsSheet) {
             SettingsView(settingsVM: settingsVM)
+                .preferredColorScheme(settingsVM.appTheme.colorScheme)
         }
         .preferredColorScheme(settingsVM.appTheme.colorScheme)
         .onChange(of: weatherVM.weatherUIState.kind) {
