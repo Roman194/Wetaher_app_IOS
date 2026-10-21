@@ -60,13 +60,19 @@ public struct AppNavStack: View {
                 savedCitiesWeather: cityListVM.savedCitiesWeather,
                 savedCitiesWeatherError: cityListVM.savedCitiesWeatherError,
                 cityListWeatherUIState: cityListVM.cityListWeatherUIState,
-                searchQuery: cityListVM.searchQuery,
-                searchResults: cityListVM.searchResults,
+                addCityUiState: cityListVM.addCityUIState,
+                //searchQuery: cityListVM.searchQuery,
+                //searchResults: cityListVM.searchResults,
                 onSelectCity: { selectedCity in
                     showCityListSheet = false
                     weatherVM.selectCity(newCity: selectedCity)
                 },
-                onDeleteCity: { city in cityListVM.deleteCity(city: city) },
+                onDeleteCity: { city in
+                    let potenialNewSelectedCity = cityListVM.deleteCity(city: city)
+                    if city.id == weatherVM.selectedCity.id{ //Если был удалён SelectedCity, то меняем его на рандомный сохранённый
+                        weatherVM.selectCity(newCity: .CityWithWeather(potenialNewSelectedCity))
+                    }
+                     },
                 onCityAdd: { city in
                     cityListVM.addCity(city: city)
                 },
@@ -75,6 +81,10 @@ public struct AppNavStack: View {
                     if case .Success(let weatherUI) = weatherVM.weatherUIState {
                         cityListVM.loadSavedCitiesWeather(selectedCityForecast: weatherUI)
                     }
+                },
+                onSearch: { query in
+                    cityListVM.searchCities(query: query)
+                    
                 }
             )
             .preferredColorScheme(currentColorScheme)
@@ -89,8 +99,7 @@ public struct AppNavStack: View {
         .preferredColorScheme(currentColorScheme)
         .onChange(of: weatherVM.weatherUIState.kind) {
             if weatherVM.weatherUIState.kind == .success && !weatherVM.isCascadeUpdateForbidden{
-                
-                if case .Success(let weatherUI) = weatherVM.weatherUIState { //!!!
+                if case .Success(let weatherUI) = weatherVM.weatherUIState {
                     cityListVM.loadSavedCitiesWeather(selectedCityForecast: weatherUI)
                 }
             }

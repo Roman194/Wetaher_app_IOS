@@ -15,15 +15,17 @@ public class CityListViewModel{
     public var savedCitiesWeather: [ForecastUI] = []
     public var savedCitiesWeatherError: [String : WeatherErrorUI] = [:]
     
-    public var searchQuery: String = "" {
-        didSet {
-            searchCities()
-        }
-    }
-    public var searchResults: [City] = []
+//    public var searchQuery: String = "" {
+//        didSet {
+//            searchCities()
+//        }
+//    }
+    //public var searchResults: [City] = []
     private var searchTask: Task<Void, Never>?
     
     public var cityListWeatherUIState: CityListUIState
+    public var addCityUIState: AddCityUIState
+    
     
     private let weatherRepository: WeatherRepository
     
@@ -31,6 +33,7 @@ public class CityListViewModel{
         weatherRepository = weatherRepo
         savedCities = weatherRepository.LoadFavoriteCities()
         cityListWeatherUIState = .Loading
+        addCityUIState = .Loading
     }
     
     public func loadSavedCitiesWeather(selectedCityForecast: ForecastUI) {
@@ -62,43 +65,51 @@ public class CityListViewModel{
             } else {
                 cityListWeatherUIState = .Fail
             }
+            
+            addCityUIState = .Success([])
         }
     }
     
-    public func searchCities() { //?????
+    public func searchCities(query: String) {
         //Предлагаю разрешать п-лю искать и добавлять новые города только когда у нас менее 9 избранных!
         
         searchTask?.cancel()
 
-        let query = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        if query.isEmpty {
-            self.searchResults = []
-            if cityListWeatherUIState == .Search {
-                cityListWeatherUIState = savedCitiesWeather.isEmpty && !savedCities.isEmpty ? .Fail : .Success
-            }
-            return
+        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.isEmpty {
+            //self.searchResults = []
+//            if cityListWeatherUIState == .Search {
+//                cityListWeatherUIState = savedCitiesWeather.isEmpty && !savedCities.isEmpty ? .Fail : .Success
+//            }
+            addCityUIState = .Success([])
+            //return searchResults
         }
         
-        cityListWeatherUIState = .Search
+        addCityUIState = .Search
         searchTask = Task {
             try? await Task.sleep(nanoseconds: 300_000_000)
             guard !Task.isCancelled else { return }
             
-            cityListWeatherUIState = .Loading
+            addCityUIState = .Loading
             
-            let results = await weatherRepository.SearchCities(query: query)
+            let results = await weatherRepository.SearchCities(query: trimmed)
             //guard !Task.isCancelled else { return }
             switch(results){
                 case .success(let possibleCities):
-                    self.searchResults = possibleCities.map({ cities in
-                        cities.toUI()
-                    })
-                    cityListWeatherUIState = .Success
-                case .failure(let cityError):
-                    self.searchResults = cityError.reserveCities
-                    cityListWeatherUIState = .Fail
+//                    self.searchResults = possibleCities.map({ cities in
+//                        cities.toUI()
+//                    })
+                addCityUIState = .Success(possibleCities.map({ cities in
+                    cities.toUI()
+                }))
+                
+                case .failure(let cityError): //Придумать как прокинуть ошибку в AddCity!
+                    //self.searchResults = cityError.reserveCities
+                addCityUIState = .Fail(cityError.ToUI())
             }
         }
+        
+        //return searchResults
     }
     
     /// Добавление города в избранное
@@ -123,11 +134,13 @@ public class CityListViewModel{
     }
         
     /// Удаление города из избранного
-    public func deleteCity(city: City) {
+    public func deleteCity(city: City) -> ForecastUI {
         if savedCities.count > 1 { //Должен быть хотя бы 1 сохранённый город!
             savedCities.removeAll { $0.id == city.id || ($0.name == city.name && $0.country == city.country) }
             savedCitiesWeather.removeAll { $0.city.id == city.id || ($0.city.name == city.name && $0.city.country == city.country) }
         }
+        //Возвращаем п-лю рандомный сохранённый город на случай, если был удалён SelectedCity
+        return savedCitiesWeather.randomElement()!
     }
 
     /// Проверка, добавлен ли уже город в список избранных

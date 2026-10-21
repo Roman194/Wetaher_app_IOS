@@ -16,14 +16,16 @@ public struct CityListView: View {
     public var savedCitiesWeather: [ForecastUI]
     public var savedCitiesWeatherError: [String: WeatherErrorUI]
     public var cityListWeatherUIState: CityListUIState
-    public var searchQuery: String
-    public var searchResults: [City]
+    public var addCityUiState: AddCityUIState
+    //public var searchQuery: String
+    //public var searchResults: [City]
 
     public var onSelectCity: (CityWeatherState) -> Void
     public var onDeleteCity: (City) -> Void
     public var onCityAdd: (City) -> Void
     public var isCitySaved: (City) -> Bool
     public var onRefresh: (() async -> Void)?
+    public var onSearch: ((String) -> Void)?
 
     private var citiesToDisplay: [City] {
         if !savedCities.isEmpty {
@@ -37,25 +39,29 @@ public struct CityListView: View {
         savedCitiesWeather: [ForecastUI] = [],
         savedCitiesWeatherError: [String: WeatherErrorUI] = [:],
         cityListWeatherUIState: CityListUIState = .Success,
-        searchQuery: String = "",
-        searchResults: [City] = [],
+        addCityUiState: AddCityUIState = .Success([]),
+        //searchQuery: String = "",
+        //searchResults: [City] = [],
         onSelectCity: @escaping (CityWeatherState) -> Void,
         onDeleteCity: @escaping (City) -> Void,
         onCityAdd: @escaping (City) -> Void,
         isCitySaved: @escaping (City) -> Bool,
-        onRefresh: (() async -> Void)? = nil
+        onRefresh: (() async -> Void)? = nil,
+        onSearch: ((String) -> Void)?
     ) {
         self.savedCities = savedCities
         self.savedCitiesWeather = savedCitiesWeather
         self.savedCitiesWeatherError = savedCitiesWeatherError
         self.cityListWeatherUIState = cityListWeatherUIState
-        self.searchQuery = searchQuery
-        self.searchResults = searchResults
+        self.addCityUiState = addCityUiState
+        //self.searchQuery = searchQuery
+        //self.searchResults = searchResults
         self.onSelectCity = onSelectCity
         self.onDeleteCity = onDeleteCity
         self.onCityAdd = onCityAdd
         self.isCitySaved = isCitySaved
         self.onRefresh = onRefresh
+        self.onSearch = onSearch
     }
 
 
@@ -92,6 +98,7 @@ public struct CityListView: View {
             }
             .sheet(isPresented: $showAddCitySheet) {
                 AddCityView(
+                    uiState: addCityUiState,
                     onSelectCity: { city in
                         showAddCitySheet = false
                         onSelectCity(.NewCity(city))
@@ -99,7 +106,8 @@ public struct CityListView: View {
                     },
                     onCityAdd: onCityAdd,
                     onCityDelete: onDeleteCity,
-                    isCitySaved: isCitySaved
+                    isCitySaved: isCitySaved,
+                    onSearch: onSearch
                 )
             }
         }
