@@ -24,18 +24,21 @@ public struct CurrentWeatherHeader: View {
             Text(forecastData.city.name)
                 .font(.system(size: 32, weight: .bold, design: .default))
                 .foregroundStyle(.primary)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.cityTitle)
 
             // Статус погоды
             Text(forecastData.currentWeather.weatherCondition.description)
                 .font(.headline)
                 .fontWeight(.medium)
                 .foregroundStyle(.secondary)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.condition)
 
             // Температура по шкале Цельсия
             Text(MetricFormatter.temperature(forecastData.currentWeather.temperature, showSign: false))
                 .font(.system(size: 84, weight: .thin, design: .rounded))
                 .foregroundStyle(.primary)
                 .padding(.vertical, -8)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.temperature)
 
             // Мин / Макс и Ощущается как
             HStack(spacing: 12) {
@@ -51,6 +54,7 @@ public struct CurrentWeatherHeader: View {
                 Text("Ощущается как \(MetricFormatter.temperature(forecastData.currentWeather.apparentTemp))")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Main.feelsLike)
             }
             .padding(.top, 2)
         }

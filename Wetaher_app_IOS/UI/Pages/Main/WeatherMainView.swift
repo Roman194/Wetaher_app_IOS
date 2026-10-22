@@ -70,37 +70,43 @@ public struct WeatherMainView: View {
                         directionString: current.windDirection,
                         gustMps: current.windGusts
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.wind)
 
                     PressureMetricCard(
                         pressureHpa: current.pressure,
                         pressureStatus: current.pressureStatus,
                         pressureMmHg: current.pressureMmHg
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.pressure)
 
                     HumidityMetricCard(
                         humidity: current.relativeHumidity,
                         dewPoint: current.dewPoint
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.humidity)
 
                     UVMetricCard(
                         uvIndex: todayDaily?.uVIndex ?? 0.0,
                         uvStatus:  todayDaily?.uvStatus.descripiton ?? ""
-                        
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.uv)
 
                     SunTimesMetricCard(
                         sunrise: todayDaily?.sunrise ?? "",
                         sunset: todayDaily?.sunset ?? ""
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.sun)
 
                     VisibilityMetricCard(
                         visibilityMeters: current.visibility
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.visibility)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
             }
         }
+        .accessibilityIdentifier(AccessibilityIdentifiers.Main.scrollView)
         .refreshable {//Прокинуть это как событие в НавСтак!
             onPullToRefresh()
         }

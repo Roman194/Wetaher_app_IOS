@@ -94,6 +94,7 @@ public struct AddCityView: View {
                         dismiss()
                     }
                     .fontWeight(.medium)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.doneButton)
                 }
             }
         }
@@ -235,6 +236,7 @@ public struct AddCityView: View {
                     }
                 }
                 .buttonStyle(.borderless)
+                .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.toggleButton(city.name))
             } else {
                 Button {
                     onCityAdd?(city)
@@ -244,8 +246,10 @@ public struct AddCityView: View {
                         .foregroundStyle(.blue)
                 }
                 .buttonStyle(.borderless)
+                .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.toggleButton(city.name))
             }
         }
+        .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.resultRow(city.name))
         .padding(.vertical, 4)
     }
     
