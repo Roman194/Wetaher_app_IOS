@@ -4,7 +4,6 @@
 //
 
 import XCTest
-@testable import Wetaher_app_IOS
 
 final class CityManagementTestsUI: XCTestCase {
 
@@ -13,14 +12,14 @@ final class CityManagementTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let cityListButton = app.buttons[AccessibilityIdentifiers.Main.cityListButton]
+        let cityListButton = app.buttons["main_city_list_button"]
         XCTAssertTrue(cityListButton.waitForExistence(timeout: 5.0), "Кнопка списка городов должна присутствовать на экране")
 
         // act
         cityListButton.tap()
-        let cityDoneButton = app.buttons[AccessibilityIdentifiers.CityList.doneButton]
+        let cityDoneButton = app.buttons["city_list_done_button"]
         let listOpened = cityDoneButton.waitForExistence(timeout: 5.0)
-        let saintPetersburgCard = app.otherElements[AccessibilityIdentifiers.CityList.cityCard("Санкт-Петербург")]
+        let saintPetersburgCard = app.otherElements["city_card_Санкт-Петербург"]
 
         if saintPetersburgCard.exists {
             saintPetersburgCard.tap()
@@ -30,7 +29,7 @@ final class CityManagementTestsUI: XCTestCase {
 
         // assert
         XCTAssertTrue(listOpened, "Шторка списка избранных городов должна успешно открыться")
-        let cityTitle = app.staticTexts[AccessibilityIdentifiers.Main.cityTitle]
+        let cityTitle = app.staticTexts["main_current_city_title"]
         XCTAssertTrue(cityTitle.waitForExistence(timeout: 5.0), "Главный экран должен отобразить прогноз после выбора города")
     }
 
@@ -39,16 +38,16 @@ final class CityManagementTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let cityListButton = app.buttons[AccessibilityIdentifiers.Main.cityListButton]
+        let cityListButton = app.buttons["main_city_list_button"]
         XCTAssertTrue(cityListButton.waitForExistence(timeout: 5.0), "Кнопка списка городов должна присутствовать")
         cityListButton.tap()
-        let addCityButton = app.buttons[AccessibilityIdentifiers.CityList.addButton]
+        let addCityButton = app.buttons["city_list_add_button"]
         XCTAssertTrue(addCityButton.waitForExistence(timeout: 5.0), "Кнопка добавления города должна присутствовать")
 
         // act
         addCityButton.tap()
-        let searchField = app.searchFields[AccessibilityIdentifiers.AddCity.searchField]
-        let addCityDoneButton = app.buttons[AccessibilityIdentifiers.AddCity.doneButton]
+        let searchField = app.searchFields["add_city_search_field"]
+        let addCityDoneButton = app.buttons["add_city_done_button"]
         let searchScreenOpened = addCityDoneButton.waitForExistence(timeout: 5.0)
 
         // assert
@@ -56,7 +55,7 @@ final class CityManagementTestsUI: XCTestCase {
         XCTAssertTrue(searchField.exists || addCityDoneButton.exists, "Элементы управления поиском должны отображаться")
 
         addCityDoneButton.tap()
-        let cityDoneButton = app.buttons[AccessibilityIdentifiers.CityList.doneButton]
+        let cityDoneButton = app.buttons["city_list_done_button"]
         if cityDoneButton.exists {
             cityDoneButton.tap()
         }
@@ -67,15 +66,15 @@ final class CityManagementTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let cityListButton = app.buttons[AccessibilityIdentifiers.Main.cityListButton]
+        let cityListButton = app.buttons["main_city_list_button"]
         XCTAssertTrue(cityListButton.waitForExistence(timeout: 5.0), "Кнопка списка городов должна присутствовать")
         cityListButton.tap()
-        let addCityButton = app.buttons[AccessibilityIdentifiers.CityList.addButton]
+        let addCityButton = app.buttons["city_list_add_button"]
         XCTAssertTrue(addCityButton.waitForExistence(timeout: 5.0), "Кнопка добавления города должна присутствовать")
         addCityButton.tap()
 
         let searchField = app.searchFields.firstMatch
-        let addCityDoneButton = app.buttons[AccessibilityIdentifiers.AddCity.doneButton]
+        let addCityDoneButton = app.buttons["add_city_done_button"]
         XCTAssertTrue(addCityDoneButton.waitForExistence(timeout: 5.0), "Кнопка закрытия поиска должна присутствовать")
 
         // act
@@ -83,14 +82,14 @@ final class CityManagementTestsUI: XCTestCase {
             searchField.tap()
             searchField.typeText("Казань")
         }
-        let kazanCard = app.otherElements[AccessibilityIdentifiers.AddCity.resultRow("Казань")]
+        let kazanCard = app.otherElements["add_city_row_Казань"]
         let resultAppeared = kazanCard.waitForExistence(timeout: 5.0)
 
         // assert
         XCTAssertTrue(resultAppeared || addCityDoneButton.exists, "Результаты поиска или экран добавления должны быть доступны")
 
         addCityDoneButton.tap()
-        let cityDoneButton = app.buttons[AccessibilityIdentifiers.CityList.doneButton]
+        let cityDoneButton = app.buttons["city_list_done_button"]
         if cityDoneButton.exists {
             cityDoneButton.tap()
         }

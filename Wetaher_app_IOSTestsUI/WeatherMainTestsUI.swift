@@ -4,7 +4,6 @@
 //
 
 import XCTest
-@testable import Wetaher_app_IOS
 
 final class WeatherMainTestsUI: XCTestCase {
 
@@ -13,10 +12,10 @@ final class WeatherMainTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let cityTitle = app.staticTexts[AccessibilityIdentifiers.Main.cityTitle]
-        let conditionLabel = app.staticTexts[AccessibilityIdentifiers.Main.condition]
-        let temperatureLabel = app.staticTexts[AccessibilityIdentifiers.Main.temperature]
-        let feelsLikeLabel = app.staticTexts[AccessibilityIdentifiers.Main.feelsLike]
+        let cityTitle = app.staticTexts["main_current_city_title"]
+        let conditionLabel = app.staticTexts["main_current_condition"]
+        let temperatureLabel = app.staticTexts["main_current_temperature"]
+        let feelsLikeLabel = app.staticTexts["main_current_feels_like"]
 
         // act
         let loaded = cityTitle.waitForExistence(timeout: 5.0)
@@ -33,11 +32,11 @@ final class WeatherMainTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let cityTitle = app.staticTexts[AccessibilityIdentifiers.Main.cityTitle]
-        let windCard = app.otherElements[AccessibilityIdentifiers.Metrics.wind]
-        let pressureCard = app.otherElements[AccessibilityIdentifiers.Metrics.pressure]
-        let humidityCard = app.otherElements[AccessibilityIdentifiers.Metrics.humidity]
-        let uvCard = app.otherElements[AccessibilityIdentifiers.Metrics.uv]
+        let cityTitle = app.staticTexts["main_current_city_title"]
+        let windCard = app.otherElements["metric_card_wind"]
+        let pressureCard = app.otherElements["metric_card_pressure"]
+        let humidityCard = app.otherElements["metric_card_humidity"]
+        let uvCard = app.otherElements["metric_card_uv"]
 
         // act
         _ = cityTitle.waitForExistence(timeout: 5.0)
@@ -55,9 +54,9 @@ final class WeatherMainTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let cityTitle = app.staticTexts[AccessibilityIdentifiers.Main.cityTitle]
+        let cityTitle = app.staticTexts["main_current_city_title"]
         _ = cityTitle.waitForExistence(timeout: 5.0)
-        let mainScrollView = app.scrollViews[AccessibilityIdentifiers.Main.scrollView]
+        let mainScrollView = app.scrollViews["main_weather_scroll_view"]
 
         // act
         let startCoordinate = mainScrollView.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.2))

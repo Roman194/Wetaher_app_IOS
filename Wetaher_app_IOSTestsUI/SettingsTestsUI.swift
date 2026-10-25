@@ -4,7 +4,6 @@
 //
 
 import XCTest
-@testable import Wetaher_app_IOS
 
 final class SettingsTestsUI: XCTestCase {
 
@@ -13,12 +12,12 @@ final class SettingsTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let settingsButton = app.buttons[AccessibilityIdentifiers.Main.settingsButton]
+        let settingsButton = app.buttons["main_settings_button"]
         XCTAssertTrue(settingsButton.waitForExistence(timeout: 5.0), "Кнопка настроек должна быть доступна на главном экране")
 
         // act
         settingsButton.tap()
-        let doneButton = app.buttons[AccessibilityIdentifiers.Settings.doneButton]
+        let doneButton = app.buttons["settings_done_button"]
         let sheetAppeared = doneButton.waitForExistence(timeout: 5.0)
         doneButton.tap()
 
@@ -32,10 +31,10 @@ final class SettingsTestsUI: XCTestCase {
         // arrange
         let app = XCUIApplication()
         app.launch()
-        let settingsButton = app.buttons[AccessibilityIdentifiers.Main.settingsButton]
+        let settingsButton = app.buttons["main_settings_button"]
         XCTAssertTrue(settingsButton.waitForExistence(timeout: 5.0), "Кнопка настроек должна быть доступна")
         settingsButton.tap()
-        let themePicker = app.segmentedControls[AccessibilityIdentifiers.Settings.themePicker]
+        let themePicker = app.segmentedControls["settings_theme_picker"]
         XCTAssertTrue(themePicker.waitForExistence(timeout: 5.0), "Пикер темы должен появиться на экране настроек")
 
         // act
@@ -44,7 +43,7 @@ final class SettingsTestsUI: XCTestCase {
             darkSegment.tap()
         }
 
-        let doneButton = app.buttons[AccessibilityIdentifiers.Settings.doneButton]
+        let doneButton = app.buttons["settings_done_button"]
         doneButton.tap()
 
         // assert
