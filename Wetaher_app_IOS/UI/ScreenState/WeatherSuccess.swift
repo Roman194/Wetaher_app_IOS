@@ -36,6 +36,7 @@ public struct WeatherSuccess: View {
                         .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
                         .clipShape(Circle())
                 }
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.settingsButton)
 
                 Spacer()
 
@@ -49,6 +50,7 @@ public struct WeatherSuccess: View {
                         .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
                         .clipShape(Circle())
                 }
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.cityListButton)
             }
             .padding(.horizontal, 20)
             .padding(.top, 4)
