@@ -11,7 +11,7 @@ public struct WeatherSuccess: View {
 
     public var currentForecast: ForecastUI
     public let onPullToRefresh: () -> Void
-    
+
     @Binding public var showSettingsSheet: Bool
     @Binding public var showCityListSheet: Bool
 

@@ -7,8 +7,8 @@
 
 import Foundation
 
-public enum CityUIHelper{
-    
+public enum CityUIHelper {
+
     public static func localTime(timeZone: String) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"

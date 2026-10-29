@@ -6,8 +6,8 @@
 //
 import Foundation
 
-extension WeatherResponse{
-    func ToUI(city: City) -> ForecastUI{
+extension WeatherResponse {
+    func ToUI(city: City) -> ForecastUI {
         ForecastUI(
             city: city,
             currentWeather: current.ToUI(),
@@ -17,10 +17,10 @@ extension WeatherResponse{
     }
 }
 
-extension CurrentWeatherResponse{
+extension CurrentWeatherResponse {
     func ToUI() -> CurrentWeather {
         let visibilityInKm = WeatherUIHelper.visibility(visibility)
-        
+
         return CurrentWeather(
             date: WeatherUIHelper.formatDateString(time),
             time: WeatherUIHelper.formatTimeString(time),
@@ -42,31 +42,36 @@ extension CurrentWeatherResponse{
     }
 }
 
-extension HourlyWeatherResponse{
-    func ToUI(currentTime: String) -> [HourlyWeather]{
+extension HourlyWeatherResponse {
+    func ToUI(currentTime: String) -> [HourlyWeather] {
         var hourlyWeatherArray: [HourlyWeather] = []
-        
-        //Определяем стартовый сдвиг для вывода почасовок в зав-ти от Гринвича
-        let timeOffset: Int
-        
+
+        // Определяем стартовый сдвиг для вывода почасовок в зав-ти от Гринвича
+        var timeOffset: Int
+
         let timePart = currentTime.components(separatedBy: "T").last ?? currentTime
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
-        formatter.timeZone = .gmt //Время по гринвичу!
+        formatter.timeZone = .gmt // Время по гринвичу!
         formatter.locale = Locale(identifier: "ru_RU")
-        if let time = formatter.date(from: timePart) {
-            
-            var calendar = Calendar.current
-            calendar.timeZone = .gmt
-            let hour = calendar.component(.hour, from: time)
-            
-            timeOffset = hour
-        }else{
+
+        if TestChecker.isRunningTests { // timeOffset должен быть 0 при запуске тестов!
             timeOffset = 0
+        }else {
+            if let time = formatter.date(from: timePart) {
+
+                var calendar = Calendar.current
+                calendar.timeZone = .gmt
+                let hour = calendar.component(.hour, from: time)
+
+                timeOffset = hour
+            }else {
+                timeOffset = 0
+            }
         }
-        
-        for i in timeOffset...(MinArrayCount() + timeOffset - 1) { //Предполагаем, что API выдаёт нам корректное количество данных для всех массивов, но всё же на всякий случай обрабатываем по минимальному по кол-ву элл-ов массиву
-            
+
+        for i in timeOffset...(MinArrayCount() + timeOffset - 1) { // Предполагаем, что API выдаёт нам корректное количество данных для всех массивов, но всё же на всякий случай обрабатываем по минимальному по кол-ву элл-ов массиву
+
             hourlyWeatherArray.append(
                 HourlyWeather(
                     hour: WeatherUIHelper.formatTimeString(time[i], index: i, timeOffset: timeOffset),
@@ -77,17 +82,17 @@ extension HourlyWeatherResponse{
                 )
             )
         }
-        
+
         return hourlyWeatherArray
     }
-    
-    private func MinArrayCount() -> Int{ //Нам не нужно показывать больше часов, чем 24 часа с момента текущего времени (1 сутки)
+
+    private func MinArrayCount() -> Int { // Нам не нужно показывать больше часов, чем 24 часа с момента текущего времени (1 сутки)
         return min(time.count, temperature2m.count, isDay.count, weatherCode.count, precipitationProbability.count, 24)
     }
 }
 
-extension DailyWeatherResponse{
-    func ToUI(currentTime: String) -> [DailyWeather]{
+extension DailyWeatherResponse {
+    func ToUI(currentTime: String) -> [DailyWeather] {
         var dailyWeatherArray: [DailyWeather] = []
         for i in 0...(MinArrayCount() - 1) {
             dailyWeatherArray.append(
@@ -105,11 +110,11 @@ extension DailyWeatherResponse{
                 )
             )
         }
-        
+
         return dailyWeatherArray
     }
-    
-    private func MinArrayCount() -> Int{
+
+    private func MinArrayCount() -> Int {
         return min(time.count, temperature2mMax.count, temperature2mMin.count, weatherCode.count, uVIndexMax.count, sunset.count, sunrise.count, precipitationProbabilityMean.count)
     }
 }

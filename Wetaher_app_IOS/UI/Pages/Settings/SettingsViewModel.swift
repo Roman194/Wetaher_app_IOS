@@ -10,14 +10,14 @@ import SwiftUI
 
 @MainActor
 @Observable
-public class SettingsViewModel{
+public class SettingsViewModel {
     private let weatherRepository: WeatherRepository
-    
+
     public var appTheme: AppThemeProps
-    
+
     init(weatherRepo: WeatherRepository) {
         self.weatherRepository = weatherRepo
         self.appTheme = .system
     }
-    
+
 }

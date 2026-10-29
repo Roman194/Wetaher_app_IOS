@@ -12,7 +12,7 @@ public struct AddCityView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var searchQuery: String = ""
     @State private var displayedResults: [City] = []
-    //@State private var searchTask: Task<Void, Never>?
+    // @State private var searchTask: Task<Void, Never>?
 
     private var addCityUiState: AddCityUIState
     @State private var errorMessage: String?
@@ -27,7 +27,7 @@ public struct AddCityView: View {
 //        internalState ?? uiState
 //    }
 
-    private var availableCities: [City] { //Это мб не очень хорошо с точки зрения архитектуры что View знает о моках, но как-то менять и прокидывать себе дороже
+    private var availableCities: [City] { // Это мб не очень хорошо с точки зрения архитектуры что View знает о моках, но как-то менять и прокидывать себе дороже
         var seen = Set<Int>()
         return City.avaliableCities.filter { seen.insert($0.id).inserted }
     }
@@ -84,7 +84,7 @@ public struct AddCityView: View {
                 prompt: "Поиск по городам"
             )
             .onChange(of: searchQuery) { _, newValue in
-                //performSearch(query: newValue)
+                // performSearch(query: newValue)
                 onSearch?(newValue)
                 updateDisplayedResults()
             }
@@ -115,7 +115,7 @@ public struct AddCityView: View {
 
     @ViewBuilder
     private var failView: some View {
-        
+
         if !searchQuery.isEmpty {
             VStack(spacing: 16) {
                 ContentUnavailableView(
@@ -125,7 +125,7 @@ public struct AddCityView: View {
                 )
 
                 Button {
-                    //performSearch(query: searchQuery)
+                    // performSearch(query: searchQuery)
                     onSearch?(searchQuery)
                     updateDisplayedResults()
                 } label: {
@@ -139,8 +139,8 @@ public struct AddCityView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        
-        successView //Пусть резервные города выводятся даже если проблемы с сетью
+
+        successView // Пусть резервные города выводятся даже если проблемы с сетью
     }
 
     @ViewBuilder
@@ -248,17 +248,17 @@ public struct AddCityView: View {
         }
         .padding(.vertical, 4)
     }
-    
-    private func updateDisplayedResults(){
-        switch(addCityUiState){
+
+    private func updateDisplayedResults() {
+        switch addCityUiState {
             case .Fail(let cityError):
                 displayedResults = cityError.reserveCities
                 errorMessage = cityError.errorDescription
-                
+
             case .Success(let searchedCities):
                 displayedResults = searchedCities
                 errorMessage = nil
-                
+
             default:
                 errorMessage = nil
         }
