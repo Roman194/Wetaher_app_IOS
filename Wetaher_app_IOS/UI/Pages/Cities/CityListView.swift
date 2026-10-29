@@ -93,6 +93,7 @@ public struct CityListView: View {
                         dismiss()
                     }
                     .fontWeight(.medium)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.CityList.doneButton)
                 }
             }
             .sheet(isPresented: $showAddCitySheet) {
@@ -216,6 +217,7 @@ public struct CityListView: View {
                     let error = savedCitiesWeatherError[city.name]
 
                     CityCard(city: city, forecast: forecast, error: error)
+                        .accessibilityIdentifier(AccessibilityIdentifiers.CityList.cityCard(city.name))
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
@@ -268,6 +270,7 @@ public struct CityListView: View {
                 .clipShape(Circle())
                 .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
         }
+        .accessibilityIdentifier(AccessibilityIdentifiers.CityList.addButton)
         .padding(.bottom, 16)
     }
 }
