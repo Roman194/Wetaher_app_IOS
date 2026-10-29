@@ -5,135 +5,123 @@
 //  Created by Roman Zyuzin on 02.10.2026.
 //
 
-extension City {
+extension CityEntity {
     //Для экономии запросов не будем ходить за городами при первой инциализации (без сохранений) на API: вместо этого я переписал все нужные значения из API сюда. Моковая погода далее использоваться по плану не будет и уже ото всюду отключена
-    public static let moscow = City(
+    public static let moscow = CityEntity(
         id: 524901,
         name: "Москва",
         country: "Россия",
         latitude: 55.75204,
         longitude: 37.61781,
-        timezone: "Europe/Moscow",
-        localTime: CityUIHelper.localTime(timeZone: "Europe/Moscow")
+        timezone: "Europe/Moscow"
     )
 
-    public static let saintPetersburg = City(
+    public static let saintPetersburg = CityEntity(
         id: 498817,
         name: "Санкт-Петербург",
         country: "Россия",
         latitude: 59.93863,
         longitude: 30.31413,
-        timezone: "Europe/Moscow",
-        localTime: CityUIHelper.localTime(timeZone: "Europe/Moscow")
+        timezone: "Europe/Moscow"
     )
 
-    public static let kazan = City(
+    public static let kazan = CityEntity(
         id: 551487,
         name: "Казань",
         country: "Россия",
         latitude: 55.78874,
         longitude: 49.12214,
-        timezone: "Europe/Moscow",
-        localTime: CityUIHelper.localTime(timeZone: "Europe/Moscow")
+        timezone: "Europe/Moscow"
     )
 
-    public static let yekaterinburg = City(
+    public static let yekaterinburg = CityEntity(
         id: 1486209,
         name: "Екатеринбург",
         country: "Россия",
         latitude: 56.85733,
         longitude: 60.61529,
-        timezone: "Asia/Yekaterinburg",
-        localTime: CityUIHelper.localTime(timeZone: "Asia/Yekaterinburg")
+        timezone: "Asia/Yekaterinburg"
     )
 
-    public static let novosibirsk = City(
+    public static let novosibirsk = CityEntity(
         id: 1496747,
         name: "Новосибирск",
         country: "Россия",
         latitude: 55.02259,
         longitude: 82.93175,
-        timezone: "Asia/Novosibirsk",
-        localTime: CityUIHelper.localTime(timeZone: "Asia/Novosibirsk")
+        timezone: "Asia/Novosibirsk"
     )
 
-    public static let nizhnyNovgorod = City(
+    public static let nizhnyNovgorod = CityEntity(
         id: 520555,
         name: "Нижний Новгород",
         country: "Россия",
         latitude: 56.32867,
         longitude: 44.00205,
-        timezone: "Europe/Moscow",
-        localTime: CityUIHelper.localTime(timeZone: "Europe/Moscow")
+        timezone: "Europe/Moscow"
     )
 
-    public static let samara = City(
+    public static let samara = CityEntity(
         id: 499099,
         name: "Самара",
         country: "Россия",
         latitude: 53.20767,
         longitude: 50.13553,
-        timezone: "Europe/Samara",
-        localTime: CityUIHelper.localTime(timeZone: "Europe/Samara")
+        timezone: "Europe/Samara"
     )
 
-    public static let vladivostok = City(
+    public static let vladivostok = CityEntity(
         id: 2013348,
         name: "Владивосток",
         country: "Россия",
         latitude: 43.10562,
         longitude: 131.87354,
-        timezone: "Asia/Vladivostok",
-        localTime: CityUIHelper.localTime(timeZone: "Asia/Vladivostok")
+        timezone: "Asia/Vladivostok"
     )
 
-    public static let kaliningrad = City(
+    public static let kaliningrad = CityEntity(
         id: 554234,
         name: "Калининград",
         country: "Россия",
         latitude: 54.70639,
         longitude: 20.51102,
-        timezone: "Europe/Kaliningrad",
-        localTime: CityUIHelper.localTime(timeZone: "Europe/Kaliningrad")
+        timezone: "Europe/Kaliningrad"
     )
 
-    public static let krasnoyarsk = City(
+    public static let krasnoyarsk = CityEntity(
         id: 1502026,
         name: "Красноярск",
         country: "Россия",
         latitude: 56.03742,
         longitude: 92.93136,
-        timezone: "Asia/Krasnoyarsk",
-        localTime: CityUIHelper.localTime(timeZone: "Asia/Krasnoyarsk")
+        timezone: "Asia/Krasnoyarsk"
     )
-    
-    public static let malmo = City(
+
+    public static let malmo = CityEntity(
         id: 2692969,
         name: "Мальмё",
         country: "Швеция",
         latitude: 55.60587,
         longitude: 13.00073,
-        timezone: "Europe/Stockholm",
-        localTime: CityUIHelper.localTime(timeZone: "Europe/Stockholm")
+        timezone: "Europe/Stockholm"
     )
-    
-    public static let hong_Kong = City(
+
+    public static let hong_Kong = CityEntity(
         id: 1819729,
         name: "Гонконг",
         country: "HK",
         latitude: 22.27832,
         longitude: 114.17469,
-        timezone: "Asia/Hong_Kong",
-        localTime: CityUIHelper.localTime(timeZone: "Asia/Hong_Kong")
+        timezone: "Asia/Hong_Kong"
     )
 
     /// Список городов по умолчанию для избранного
-    public static let defaultFavorites: [City] = [
+    public static let defaultFavorites: [CityEntity] = [
         .moscow,
         .saintPetersburg
     ]
-    
-    public static let avaliableCities: [City] = [
+
+    public static let avaliableCities: [CityEntity] = [
         .moscow,
         .saintPetersburg,
         .hong_Kong,
@@ -148,6 +136,23 @@ extension City {
         .vladivostok,
         .yekaterinburg
     ]
+}
+
+extension City {
+    public static let moscow = CityEntity.moscow.toUI()
+    public static let saintPetersburg = CityEntity.saintPetersburg.toUI()
+    public static let kazan = CityEntity.kazan.toUI()
+    public static let yekaterinburg = CityEntity.yekaterinburg.toUI()
+    public static let novosibirsk = CityEntity.novosibirsk.toUI()
+    public static let nizhnyNovgorod = CityEntity.nizhnyNovgorod.toUI()
+    public static let samara = CityEntity.samara.toUI()
+    public static let vladivostok = CityEntity.vladivostok.toUI()
+    public static let kaliningrad = CityEntity.kaliningrad.toUI()
+    public static let krasnoyarsk = CityEntity.krasnoyarsk.toUI()
+    public static let malmo = CityEntity.malmo.toUI()
+    public static let hong_Kong = CityEntity.hong_Kong.toUI()
+
+    public static let avaliableCities: [City] = CityEntity.avaliableCities.map { $0.toUI() }
 }
 
 extension ForecastUI{
