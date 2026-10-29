@@ -18,10 +18,14 @@ public struct AppNavStack: View {
 
     @State private var currentColorScheme: ColorScheme?
 
+    @MainActor
     public init(
-        weatherRepo: WeatherRepository = WeatherRepositoryImpl(),
-        preferences: UserPreferencesStoring = UserPreferencesStore()
+        weatherRepo: WeatherRepository? = nil,
+        preferences: UserPreferencesStoring? = nil
     ) {
+        let weatherRepo = weatherRepo ?? WeatherRepositoryImpl()
+        let preferences = preferences ?? UserPreferencesStore()
+
         let wVM = WeatherMainViewModel(weatherRepo: weatherRepo, preferences: preferences)
         let cVM = CityListViewModel(weatherRepo: weatherRepo, preferences: preferences)
         let sVM = SettingsViewModel(preferences: preferences)

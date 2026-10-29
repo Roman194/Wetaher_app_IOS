@@ -16,11 +16,11 @@ public class WeatherRepositoryImpl: WeatherRepository {
 
     public init(
         networkClient: NetworkClient = NetworkClient(),
-        weatherStore: WeatherStore = .shared
+        weatherStore: WeatherStore? = nil
     ) { //currentWeather: ForecastUI = .moskowWeather,
         //self.currentForecast = currentWeather
         self.networkClient = networkClient
-        self.weatherStore = weatherStore
+        self.weatherStore = weatherStore ?? .shared
         //checker = true
     }
 
