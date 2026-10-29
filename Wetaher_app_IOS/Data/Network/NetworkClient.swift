@@ -14,7 +14,7 @@ public class NetworkClient{
     
     func getCityWeather(city: City)async -> Result<WeatherResponse, WeatherErrorResponse>{
         
-        guard let url = URL(string: "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&hourly=temperature_2m,weather_code,is_day,precipitation_probability&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m,relative_humidity_2m,dew_point_2m,pressure_msl,visibility&daily=temperature_2m_max,temperature_2m_min,weather_code,uv_index_max,sunrise,sunset,precipitation_probability_mean") else {
+        guard let url = URL(string: "https://api.open-meteo.com/v1/forecast?latitude=\(city.latitude)&longitude=\(city.longitude)&hourly=temperature_2m,weather_code,is_day,precipitation_probability&current=temperature_2m,apparent_temperature,weather_code,is_day,wind_speed_10m,wind_direction_10m,wind_gusts_10m,relative_humidity_2m,dew_point_2m,pressure_msl,visibility&daily=temperature_2m_max,temperature_2m_min,weather_code,uv_index_max,sunrise,sunset,precipitation_probability_mean&timezone=auto") else {
             return .failure(WeatherErrorResponse(errorCode: 13, errorDescription: "Ошибка конвертации URL-запроса"))
         } //"52.52""13.41"
         
