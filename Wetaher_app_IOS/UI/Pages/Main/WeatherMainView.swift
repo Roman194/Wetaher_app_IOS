@@ -3,6 +3,8 @@ import SwiftUI
 /// Главный экран погоды: заголовок, почасовой прогноз, 7-дневный прогноз и сетка метеорологических метрик
 public struct WeatherMainView: View {
     public var currentForecast: ForecastUI
+    public var isFromCache: Bool
+    public var cacheAgeDescription: String?
     public let onPullToRefresh: () -> Void
 
     private let columns = [ //Мб это можно сделать получше?
@@ -10,8 +12,15 @@ public struct WeatherMainView: View {
         GridItem(.flexible(), spacing: 12)
     ]
 
-    public init(currentForecast: ForecastUI, onPullToRefresh: @escaping () -> Void) {
+    public init(
+        currentForecast: ForecastUI,
+        isFromCache: Bool = false,
+        cacheAgeDescription: String? = nil,
+        onPullToRefresh: @escaping () -> Void
+    ) {
         self.currentForecast = currentForecast
+        self.isFromCache = isFromCache
+        self.cacheAgeDescription = cacheAgeDescription
         self.onPullToRefresh = onPullToRefresh
     }
 
@@ -22,31 +31,30 @@ public struct WeatherMainView: View {
 
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
-                
-
                 // Индикатор офлайн-режима с давностью обновления кэша
-//                if weatherVM.isFromCache {
-//                    HStack(spacing: 6) {
-//                        Image(systemName: "wifi.slash")
-//                            .font(.caption2)
-//
-//                        if let age = weatherVM.cacheAgeDescription {
-//                            Text("Офлайн • Обновлено \(age)")
-//                                .font(.caption2)
-//                                .fontWeight(.medium)
-//                        } else {
-//                            Text("Офлайн-режим (сохраненные данные)")
-//                                .font(.caption2)
-//                                .fontWeight(.medium)
-//                        }
-//                    }
-//                    .foregroundStyle(.secondary)
-//                    .padding(.horizontal, 10)
-//                    .padding(.vertical, 4)
-//                    .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
-//                    .clipShape(Capsule())
-//                    .padding(.top, 0)
-//                }
+                if isFromCache {
+                    HStack(spacing: 6) {
+                        Image(systemName: "wifi.slash")
+                            .font(.caption2)
+
+                        if let cacheAgeDescription {
+                            Text("Офлайн • Обновлено \(cacheAgeDescription)")
+                                .font(.caption2)
+                                .fontWeight(.medium)
+                        } else {
+                            Text("Офлайн-режим (сохранённые данные)")
+                                .font(.caption2)
+                                .fontWeight(.medium)
+                        }
+                    }
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
+                    .clipShape(Capsule())
+                    .padding(.top, 0)
+                    .accessibilityIdentifier("weather.offlineBadge")
+                }
 
                 // Главный заголовок
                 CurrentWeatherHeader(forecastData: currentForecast)

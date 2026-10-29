@@ -88,6 +88,13 @@ public struct AddCityView: View {
                 onSearch?(newValue)
                 updateDisplayedResults()
             }
+            .onChange(of: addCityUiState) { _, _ in
+                //Результат поиска приходит из ViewModel уже после смены запроса.
+                updateDisplayedResults()
+            }
+            .onAppear {
+                updateDisplayedResults()
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Готово") {

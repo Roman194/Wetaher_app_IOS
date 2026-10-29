@@ -7,6 +7,8 @@
 import SwiftUI
 
 public struct AppNavStack: View {
+    @Environment(\.scenePhase) private var scenePhase
+
     @State private var weatherVM: WeatherMainViewModel
     @State private var cityListVM: CityListViewModel
     @State private var settingsVM: SettingsViewModel
@@ -16,10 +18,13 @@ public struct AppNavStack: View {
 
     @State private var currentColorScheme: ColorScheme?
 
-    public init(weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
-        let wVM = WeatherMainViewModel(weatherRepo: weatherRepo)
-        let cVM = CityListViewModel(weatherRepo: weatherRepo)
-        let sVM = SettingsViewModel(weatherRepo: weatherRepo)
+    public init(
+        weatherRepo: WeatherRepository = WeatherRepositoryImpl(),
+        preferences: UserPreferencesStoring = UserPreferencesStore()
+    ) {
+        let wVM = WeatherMainViewModel(weatherRepo: weatherRepo, preferences: preferences)
+        let cVM = CityListViewModel(weatherRepo: weatherRepo, preferences: preferences)
+        let sVM = SettingsViewModel(preferences: preferences)
         _weatherVM = State(initialValue: wVM)
         _cityListVM = State(initialValue: cVM)
         _settingsVM = State(initialValue: sVM)
@@ -43,6 +48,8 @@ public struct AppNavStack: View {
                 case .Success(let weatherUI):
                     WeatherSuccess(
                         currentForecast: weatherUI,
+                        isFromCache: weatherVM.isFromCache,
+                        cacheAgeDescription: weatherVM.cacheAgeDescription,
                         showSettingsSheet: $showSettingsSheet,
                         showCityListSheet: $showCityListSheet
                     ) {
@@ -68,7 +75,7 @@ public struct AppNavStack: View {
                     weatherVM.selectCity(newCity: selectedCity)
                 },
                 onDeleteCity: { city in
-                    let potenialNewSelectedCity = cityListVM.deleteCity(city: city)
+                    guard let potenialNewSelectedCity = cityListVM.deleteCity(city: city) else { return }
                     if city.id == weatherVM.selectedCity.id{ //Если был удалён SelectedCity, то меняем его на рандомный сохранённый
                         weatherVM.selectCity(newCity: .CityWithWeather(potenialNewSelectedCity))
                     }
@@ -90,8 +97,8 @@ public struct AppNavStack: View {
             .preferredColorScheme(currentColorScheme)
         }
         .sheet(isPresented: $showSettingsSheet) {
-            SettingsView(currentColorScheme: currentColorScheme) { theme in
-                settingsVM.appTheme = theme
+            SettingsView(settingsVM: settingsVM) { theme in
+                settingsVM.selectTheme(theme)
                 currentColorScheme = theme.colorScheme
             }
             .preferredColorScheme(currentColorScheme)
@@ -102,6 +109,12 @@ public struct AppNavStack: View {
                 if case .Success(let weatherUI) = weatherVM.weatherUIState {
                     cityListVM.loadSavedCitiesWeather(selectedCityForecast: weatherUI)
                 }
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            //Перед уходом в фон обновляем кэш, чтобы офлайн-режим показывал максимально свежие данные.
+            if newPhase == .background {
+                weatherVM.prepareForOffline()
             }
         }
     }

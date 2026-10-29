@@ -60,32 +60,11 @@ public enum WeatherUIHelper {
         return km >= 10.0 ? "Отличная" : "Ограниченная"
     }
 
-    /// Извлечение времени "ЧЧ:мм" из строки формата "YYYY-MM-DDTHH:mm"
-    public static func formatTimeString(_ dateString: String, index: Int = 1, timeOffset: Int = 0) -> String {
-        
-        if(index == timeOffset){
-            return "Сейчас"
-        }
-        
+    /// Извлечение времени "ЧЧ:мм" из строки формата "YYYY-MM-DDTHH:mm".
+    /// Open-Meteo вызывается с `timezone=auto`, поэтому время в ответе уже местное для города.
+    public static func formatTimeString(_ dateString: String) -> String {
         let timePart = dateString.components(separatedBy: "T").last ?? dateString
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = .gmt //Время по гринвичу!
-        formatter.locale = Locale(identifier: "ru_RU")
-        if let time = formatter.date(from: timePart) {
-            let displayFormatter = DateFormatter()
-            displayFormatter.locale = Locale(identifier: "ru_RU")
-            displayFormatter.timeZone = .current //Выводим п-лю его текущее время
-            displayFormatter.dateFormat = "HH:mm"
-            return displayFormatter.string(from: time)
-        }
-        return dateString
-        
-//        if let tIndex = dateString.firstIndex(of: "T") {
-//            let timeSubstring = dateString[dateString.index(after: tIndex)...]
-//            return String(timeSubstring.prefix(5))
-//        }
-//        return dateString
+        return String(timePart.prefix(5))
     }
     
     /// Извлечение даты "YYYY-MM-DD" из строки формата "YYYY-MM-DDTHH:mm"
@@ -101,58 +80,44 @@ public enum WeatherUIHelper {
         let datePart = dateLocalizedString.components(separatedBy: "T").first ?? dateLocalizedString
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = .gmt //Время по гринвичу!
+        formatter.timeZone = .current
         if let date = formatter.date(from: datePart) {
             let displayFormatter = DateFormatter()
             displayFormatter.locale = Locale(identifier: "ru_RU")
-            displayFormatter.timeZone = .gmt
+            displayFormatter.timeZone = .current
             displayFormatter.dateFormat = "d MMM"
             return displayFormatter.string(from: date)
         }
         return dateLocalizedString
     }
     
-    /// Формирование дня недели
+    /// Формирование дня недели.
+    /// Даты приходят уже в часовом поясе города (`timezone=auto`), поэтому сравниваем их как есть.
     public static func formatDayOfWeekString(_ dateString: String, currentDT: String ,index: Int) -> String {
-        
+
+        let datePart = dateString.components(separatedBy: "T").first ?? dateString
+
         if(index == 0){ //Если нам нужно вывести п-лю что-то про сегодня
-            
-            let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
-            formatter.timeZone = .gmt //Время по гринвичу!
-            
-            if let serverDate = formatter.date(from: currentDT) {
-                
-                //Сравниваем текущую дату п-ля с датой по Гринвичу (API) и выводим что выдаёт п-лю сервер согласно его часовому поясу
-                var gmtCalendar = Calendar.current
-                gmtCalendar.timeZone = .gmt
 
-                let localCalendar = Calendar.current // часовой пояс устройства
+            let currentDatePart = currentDT.components(separatedBy: "T").first ?? currentDT
 
-                let gmtDay = gmtCalendar.component(.day, from: serverDate)
-                let localDay = localCalendar.component(.day, from: serverDate)
-
-                if gmtDay == localDay {
-                    return "Сегодня"
-                } else {
-                    if gmtDay > localDay{
-                        return "Завтра"
-                    }else{
-                        return "Вчера"
-                    }
-                }
+            if datePart == currentDatePart {
+                return "Сегодня"
+            } else if datePart > currentDatePart {
+                return "Завтра"
+            } else {
+                return "Вчера"
             }
         }
-        
-        //В противном случае выдаём ему день недели по гринвичу
-        let datePart = dateString.components(separatedBy: "T").first ?? dateString
+
+        //В противном случае выдаём ему день недели
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = .gmt //Время по гринвичу!
+        formatter.timeZone = .current
         if let day = formatter.date(from: datePart) {
             let displayFormatter = DateFormatter()
             displayFormatter.locale = Locale(identifier: "ru_RU")
-            displayFormatter.timeZone = .gmt
+            displayFormatter.timeZone = .current
             displayFormatter.dateFormat = "EEE"
             return displayFormatter.string(from: day).capitalized
         }

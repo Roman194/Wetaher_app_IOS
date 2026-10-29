@@ -6,18 +6,24 @@
 //
 
 import Observation
-import SwiftUI
 
 @MainActor
 @Observable
-public class SettingsViewModel{
-    private let weatherRepository: WeatherRepository
-    
+public class SettingsViewModel {
+    private let preferences: UserPreferencesStoring
+
     public var appTheme: AppThemeProps
-    
-    init(weatherRepo: WeatherRepository) {
-        self.weatherRepository = weatherRepo
-        self.appTheme = .system
+
+    public init(preferences: UserPreferencesStoring) {
+        self.preferences = preferences
+        self.appTheme = AppThemeProps.from(id: preferences.themeID)
     }
-    
+
+    /// Выбирает тему и сразу сохраняет её в `UserDefaults`.
+    public func selectTheme(_ theme: AppThemeProps) {
+        guard appTheme != theme else { return }
+
+        appTheme = theme
+        preferences.themeID = theme.id
+    }
 }

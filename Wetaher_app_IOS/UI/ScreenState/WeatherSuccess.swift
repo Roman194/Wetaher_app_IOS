@@ -10,13 +10,24 @@ import SwiftUI
 public struct WeatherSuccess: View {
 
     public var currentForecast: ForecastUI
+    public var isFromCache: Bool
+    public var cacheAgeDescription: String?
     public let onPullToRefresh: () -> Void
     
     @Binding public var showSettingsSheet: Bool
     @Binding public var showCityListSheet: Bool
 
-    public init(currentForecast: ForecastUI, showSettingsSheet: Binding<Bool>, showCityListSheet: Binding<Bool>, onPullToRefresh: @escaping () -> Void) {
+    public init(
+        currentForecast: ForecastUI,
+        isFromCache: Bool = false,
+        cacheAgeDescription: String? = nil,
+        showSettingsSheet: Binding<Bool>,
+        showCityListSheet: Binding<Bool>,
+        onPullToRefresh: @escaping () -> Void
+    ) {
         self.currentForecast = currentForecast
+        self.isFromCache = isFromCache
+        self.cacheAgeDescription = cacheAgeDescription
         self._showSettingsSheet = showSettingsSheet
         self._showCityListSheet = showCityListSheet
         self.onPullToRefresh = onPullToRefresh
@@ -54,7 +65,11 @@ public struct WeatherSuccess: View {
             .padding(.top, 4)
 
             // Основной контент погоды
-            WeatherMainView(currentForecast: currentForecast) {
+            WeatherMainView(
+                currentForecast: currentForecast,
+                isFromCache: isFromCache,
+                cacheAgeDescription: cacheAgeDescription
+            ) {
                 onPullToRefresh()
             }
         }
