@@ -5,7 +5,7 @@
 //  Created by Roman Zyuzin on 15.10.2026.
 //
 
-public struct CurrentWeatherResponse: Codable{
+public struct CurrentWeatherResponse: Codable {
     public let time: String
     public let temperature2m: Double
     public let apparentTemperature: Double
@@ -18,7 +18,7 @@ public struct CurrentWeatherResponse: Codable{
     public let dewPoint2m: Double
     public let pressureMsl: Double
     public let visibility: Double
-    
+
     enum CodingKeys: String, CodingKey {
             case time
             case temperature2m = "temperature_2m"

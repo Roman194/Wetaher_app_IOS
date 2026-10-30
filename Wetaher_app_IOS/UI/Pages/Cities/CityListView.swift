@@ -17,8 +17,8 @@ public struct CityListView: View {
     public var savedCitiesWeatherError: [String: WeatherErrorUI]
     public var cityListWeatherUIState: CityListUIState
     public var addCityUiState: AddCityUIState
-    //public var searchQuery: String
-    //public var searchResults: [City]
+    // public var searchQuery: String
+    // public var searchResults: [City]
 
     public var onSelectCity: (CityWeatherState) -> Void
     public var onDeleteCity: (City) -> Void
@@ -40,8 +40,8 @@ public struct CityListView: View {
         savedCitiesWeatherError: [String: WeatherErrorUI] = [:],
         cityListWeatherUIState: CityListUIState = .Success,
         addCityUiState: AddCityUIState = .Success([]),
-        //searchQuery: String = "",
-        //searchResults: [City] = [],
+        // searchQuery: String = "",
+        // searchResults: [City] = [],
         onSelectCity: @escaping (CityWeatherState) -> Void,
         onDeleteCity: @escaping (City) -> Void,
         onCityAdd: @escaping (City) -> Void,
@@ -54,8 +54,8 @@ public struct CityListView: View {
         self.savedCitiesWeatherError = savedCitiesWeatherError
         self.cityListWeatherUIState = cityListWeatherUIState
         self.addCityUiState = addCityUiState
-        //self.searchQuery = searchQuery
-        //self.searchResults = searchResults
+        // self.searchQuery = searchQuery
+        // self.searchResults = searchResults
         self.onSelectCity = onSelectCity
         self.onDeleteCity = onDeleteCity
         self.onCityAdd = onCityAdd
@@ -63,7 +63,6 @@ public struct CityListView: View {
         self.onRefresh = onRefresh
         self.onSearch = onSearch
     }
-
 
     public var body: some View {
         NavigationStack {
@@ -167,7 +166,7 @@ public struct CityListView: View {
                     .padding(.vertical, 4)
                 }
 
-                //Оптимизировать!
+                // Оптимизировать!
                 ForEach(citiesToDisplay, id: \.id) { city in
                     let forecast = savedCitiesWeather.first(where: { $0.city.id == city.id || $0.city.name == city.name })
                     let error = savedCitiesWeatherError[city.name]
@@ -178,14 +177,14 @@ public struct CityListView: View {
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            if(forecast != nil){
+                            if forecast != nil {
                                 onSelectCity(.CityWithWeather(forecast!))
                                 dismiss()
                             }
-                            
+
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            if (citiesToDisplay.count > 1){
+                            if citiesToDisplay.count > 1 {
                                 Button(role: .destructive) {
                                     onDeleteCity(city)
                                 } label: {
@@ -204,7 +203,7 @@ public struct CityListView: View {
 
     @ViewBuilder
     private var successView: some View {
-        if citiesToDisplay.isEmpty { //Есть такая заготовка на всякий случай, хотя п-лю запрещено оставаться без избранных городов
+        if citiesToDisplay.isEmpty { // Есть такая заготовка на всякий случай, хотя п-лю запрещено оставаться без избранных городов
             ContentUnavailableView(
                 "Нет избранных городов",
                 systemImage: "star.slash",
@@ -224,13 +223,13 @@ public struct CityListView: View {
                         .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            if(forecast != nil){
+                            if forecast != nil {
                                 onSelectCity(.CityWithWeather(forecast!))
                                 dismiss()
                             }
                         }
                         .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            if (citiesToDisplay.count > 1){
+                            if citiesToDisplay.count > 1 {
                                 Button(role: .destructive) {
                                     onDeleteCity(city)
                                 } label: {

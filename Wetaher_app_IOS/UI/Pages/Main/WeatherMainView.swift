@@ -5,7 +5,7 @@ public struct WeatherMainView: View {
     public var currentForecast: ForecastUI
     public let onPullToRefresh: () -> Void
 
-    private let columns = [ //Мб это можно сделать получше?
+    private let columns = [ // Мб это можно сделать получше?
         GridItem(.flexible(), spacing: 12),
         GridItem(.flexible(), spacing: 12)
     ]
@@ -22,7 +22,6 @@ public struct WeatherMainView: View {
 
         ScrollView(showsIndicators: false) {
             VStack(spacing: 16) {
-                
 
                 // Индикатор офлайн-режима с давностью обновления кэша
 //                if weatherVM.isFromCache {
@@ -52,7 +51,7 @@ public struct WeatherMainView: View {
                 CurrentWeatherHeader(forecastData: currentForecast)
 
                 // Почасовой прогноз
-                //let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
+                // let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
                 HourlyForecast(
                     hourly: currentForecast.hourlyWeather,
                     timeZone: timeZone
@@ -87,7 +86,8 @@ public struct WeatherMainView: View {
 
                     UVMetricCard(
                         uvIndex: todayDaily?.uVIndex ?? 0.0,
-                        uvStatus:  todayDaily?.uvStatus.descripiton ?? ""
+                        uvStatus: todayDaily?.uvStatus.descripiton ?? ""
+
                     )
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.uv)
 
