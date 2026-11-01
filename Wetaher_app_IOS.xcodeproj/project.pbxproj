@@ -18,12 +18,20 @@
 			remoteGlobalIDString = 000000000000000100000000;
 			remoteInfo = Wetaher_app_IOS;
 		};
+		88E9195A3097B7C600D527F7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 000000000000000100000000;
+			remoteInfo = Wetaher_app_IOS;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* Wetaher_app_IOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wetaher_app_IOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8876953B308A6C9A000CA29B /* Wetaher_app_IOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Wetaher_app_IOSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		88C8E7793093B7C500AFC0AD /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		88E919563097B7C600D527F7 /* Wetaher_app_IOSUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Wetaher_app_IOSUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -35,6 +43,11 @@
 		8876953C308A6C9A000CA29B /* Wetaher_app_IOSTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Wetaher_app_IOSTests;
+			sourceTree = "<group>";
+		};
+		88E919573097B7C600D527F7 /* Wetaher_app_IOSUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Wetaher_app_IOSUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -50,6 +63,11 @@
 			files = (
 			);
 		};
+		88E919533097B7C600D527F7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+			);
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -59,6 +77,7 @@
 				88C8E7793093B7C500AFC0AD /* .swiftlint.yml */,
 				000000000000000000000010 /* Wetaher_app_IOS */,
 				8876953C308A6C9A000CA29B /* Wetaher_app_IOSTests */,
+				88E919573097B7C600D527F7 /* Wetaher_app_IOSUITests */,
 				000000000000000000000020 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -68,6 +87,7 @@
 			children = (
 				000000000000000000000120 /* Wetaher_app_IOS.app */,
 				8876953B308A6C9A000CA29B /* Wetaher_app_IOSTests.xctest */,
+				88E919563097B7C600D527F7 /* Wetaher_app_IOSUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -115,6 +135,27 @@
 			productReference = 8876953B308A6C9A000CA29B /* Wetaher_app_IOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		88E919553097B7C600D527F7 /* Wetaher_app_IOSUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 88E9195C3097B7C600D527F7 /* Build configuration list for PBXNativeTarget "Wetaher_app_IOSUITests" */;
+			buildPhases = (
+				88E919523097B7C600D527F7 /* Sources */,
+				88E919533097B7C600D527F7 /* Frameworks */,
+				88E919543097B7C600D527F7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				88E9195B3097B7C600D527F7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				88E919573097B7C600D527F7 /* Wetaher_app_IOSUITests */,
+			);
+			name = Wetaher_app_IOSUITests;
+			productName = Wetaher_app_IOSUITests;
+			productReference = 88E919563097B7C600D527F7 /* Wetaher_app_IOSUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -129,6 +170,10 @@
 						CreatedOnToolsVersion = 26.3;
 					};
 					8876953A308A6C9A000CA29B = {
+						CreatedOnToolsVersion = 27.0;
+						TestTargetID = 000000000000000100000000;
+					};
+					88E919553097B7C600D527F7 = {
 						CreatedOnToolsVersion = 27.0;
 						TestTargetID = 000000000000000100000000;
 					};
@@ -150,6 +195,7 @@
 			targets = (
 				000000000000000100000000 /* Wetaher_app_IOS */,
 				8876953A308A6C9A000CA29B /* Wetaher_app_IOSTests */,
+				88E919553097B7C600D527F7 /* Wetaher_app_IOSUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -162,6 +208,11 @@
 			);
 		};
 		88769539308A6C9A000CA29B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		88E919543097B7C600D527F7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -199,6 +250,11 @@
 			files = (
 			);
 		};
+		88E919523097B7C600D527F7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -206,6 +262,11 @@
 			isa = PBXTargetDependency;
 			target = 000000000000000100000000 /* Wetaher_app_IOS */;
 			targetProxy = 8876953F308A6C9A000CA29B /* PBXContainerItemProxy */;
+		};
+		88E9195B3097B7C600D527F7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 000000000000000100000000 /* Wetaher_app_IOS */;
+			targetProxy = 88E9195A3097B7C600D527F7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -463,6 +524,47 @@
 			};
 			name = Release;
 		};
+		88E9195D3097B7C600D527F7 /* Debug configuration for PBXNativeTarget "Wetaher_app_IOSUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.itmo.Wetaher-app-IOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Wetaher_app_IOS;
+			};
+			name = Debug;
+		};
+		88E9195E3097B7C600D527F7 /* Release configuration for PBXNativeTarget "Wetaher_app_IOSUITests" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.itmo.Wetaher-app-IOSUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Wetaher_app_IOS;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -487,6 +589,14 @@
 			buildConfigurations = (
 				88769542308A6C9A000CA29B /* Debug configuration for PBXNativeTarget "Wetaher_app_IOSTests" */,
 				88769543308A6C9A000CA29B /* Release configuration for PBXNativeTarget "Wetaher_app_IOSTests" */,
+			);
+			defaultConfigurationName = Release;
+		};
+		88E9195C3097B7C600D527F7 /* Build configuration list for PBXNativeTarget "Wetaher_app_IOSUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88E9195D3097B7C600D527F7 /* Debug configuration for PBXNativeTarget "Wetaher_app_IOSUITests" */,
+				88E9195E3097B7C600D527F7 /* Release configuration for PBXNativeTarget "Wetaher_app_IOSUITests" */,
 			);
 			defaultConfigurationName = Release;
 		};
