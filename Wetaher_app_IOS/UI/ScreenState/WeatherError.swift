@@ -8,7 +8,7 @@
 import SwiftUI
 
 public struct WeatherError: View {
-    
+
     public let weatherErrorUI: WeatherErrorUI
     public let onReplayButtonClicked: () -> Void
 

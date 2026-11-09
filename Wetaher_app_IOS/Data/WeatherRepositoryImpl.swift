@@ -85,7 +85,7 @@ public class WeatherRepositoryImpl: WeatherRepository {
             case .success(let possibleCities):
                 return .success(possibleCities.results)
             case .failure(var cityError):
-                if((400...599).contains(cityError.errorId)){
+                if (400...599).contains(cityError.errorId) {
                     cityError.reserveCities = cityError.reserveCities.filter { city in
                         city.name.lowercased().contains(trimmed) ||
                         city.country.lowercased().contains(trimmed)

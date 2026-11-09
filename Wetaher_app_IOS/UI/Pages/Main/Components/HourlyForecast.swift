@@ -35,7 +35,7 @@ public struct HourlyForecast: View {
             // Карусель часов
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 18) {
-                    ForEach(Array(hourly.enumerated()), id: \.offset) { index, item in
+                    ForEach(Array(hourly.enumerated()), id: \.offset) { _, item in
                         let symbolName: String = {
                             switch item.weatherCondition.sfSymbolName {
                             case .same(let name):
@@ -54,7 +54,7 @@ public struct HourlyForecast: View {
                         }()
 
                         VStack(spacing: 8) {
-                            Text(item.hour) //index == 0 ? "Сейчас" :
+                            Text(item.hour) // index == 0 ? "Сейчас" :
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
 

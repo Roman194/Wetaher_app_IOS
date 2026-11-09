@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-//ВЫзывать во ViewModel и пропихнуть в UI-структуру!
+// ВЫзывать во ViewModel и пропихнуть в UI-структуру!
 /// Вспомогательные структуры и утилиты для презентации погоды в UI
 public enum WeatherUIHelper {
     /// Определение текстового направления ветра по градусам (0-360)
@@ -18,7 +18,7 @@ public enum WeatherUIHelper {
     }
 
     /// Описание статуса УФ-индекса
-    public static func uvStatus(for index: Double) -> UVStatus { //Color вообще используется хоть где-то?
+    public static func uvStatus(for index: Double) -> UVStatus { // Color вообще используется хоть где-то?
         switch index {
         case ..<3.0:
             return UVStatus(descripiton: "Низкий", color: .green)
@@ -43,12 +43,12 @@ public enum WeatherUIHelper {
             return "Пониженное"
         }
     }
-    
+
     /// Форматирование давления в миллиметрах ртутного столба (мм рт. ст.)
     public static func pressureMmHg(_ hPa: Double) -> Int {
         return Int(round(hPa * 0.750062))
     }
-    
+
     /// Форматирование видимости в километрах
     public static func visibility(_ metersOrKm: Double) -> Double {
         let km = metersOrKm >= 1000 ? metersOrKm / 1000.0 : metersOrKm
@@ -66,7 +66,7 @@ public enum WeatherUIHelper {
         let timePart = dateString.components(separatedBy: "T").last ?? dateString
         return String(timePart.prefix(5))
     }
-    
+
     /// Извлечение даты "YYYY-MM-DD" из строки формата "YYYY-MM-DDTHH:mm"
     public static func formatDateString(_ dateString: String) -> String {
         if let tIndex = dateString.firstIndex(of: "T") {
@@ -123,6 +123,5 @@ public enum WeatherUIHelper {
         }
         return dateString
     }
-    
-    
+
 }

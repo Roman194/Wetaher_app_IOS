@@ -9,7 +9,7 @@ import Observation
 
 @MainActor
 @Observable
-public class WeatherMainViewModel{
+public class WeatherMainViewModel {
     private let weatherRepository: WeatherRepository
     private let preferences: UserPreferencesStoring
 
@@ -59,9 +59,9 @@ public class WeatherMainViewModel{
 
         guard !isLoadingStarted else { return }
         isCascadeUpdateForbidden =
-            if(addNewCity){
+            if addNewCity {
                 true
-            }else{
+            }else {
                 false
             }
 
@@ -94,10 +94,10 @@ public class WeatherMainViewModel{
 
     public func selectCity(newCity: CityWeatherState){
         var city: City
-        switch(newCity){
+        switch newCity {
         case .CityWithWeather(let cityWeather):
             city = cityWeather.city
-            guard city.id != selectedCity.id else { return } //Не очень понимаю как правильно читать guard
+            guard city.id != selectedCity.id else { return } // Не очень понимаю как правильно читать guard
             self.selectedCity = city
             preferences.activeCityID = city.id
             isFromCache = false
@@ -111,7 +111,8 @@ public class WeatherMainViewModel{
             preferences.activeCityID = city.id
 
             weatherUIState = .Loading
-            loadWeather(addNewCity: true)
+            await loadWeather(addNewCity: true)
+
         }
     }
 

@@ -5,8 +5,8 @@
 //  Created by Roman Zyuzin on 21.10.2026.
 //
 
-extension CityResponseError{
-    func ToUI() -> CityErrorUI{
+extension CityResponseError {
+    func ToUI() -> CityErrorUI {
         CityErrorUI(
             errorId: errorId,
             errorDescription: errorDescription,

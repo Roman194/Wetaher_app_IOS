@@ -12,6 +12,5 @@ public struct CityResponse: Codable {
     public let longitude: Double
     public let country: String
     public let timezone: String
-    
-    
+
 }

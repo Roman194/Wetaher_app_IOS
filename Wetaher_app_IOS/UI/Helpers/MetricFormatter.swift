@@ -18,8 +18,8 @@ public enum MetricFormatter {
             return "\(value)°"
         }
     }
-    
-    public static func dateInDaily( date: String) -> String{
+
+    public static func dateInDaily( date: String) -> String {
         return date.replacingOccurrences(of: "-", with: ".")
     }
 

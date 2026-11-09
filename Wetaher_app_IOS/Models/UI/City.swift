@@ -16,4 +16,3 @@ public struct City: Equatable, Hashable, Sendable, Identifiable {
     public let timezone: String
     public let localTime: String
 }
-

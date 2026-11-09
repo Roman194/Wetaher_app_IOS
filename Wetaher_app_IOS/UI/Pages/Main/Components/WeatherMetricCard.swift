@@ -58,7 +58,7 @@ public struct WindMetricCard: View {
     }
 
     public var body: some View {
-        //let directionName = WeatherUIHelper.degreesToDirection(direction)
+        // let directionName = WeatherUIHelper.degreesToDirection(direction)
 
         WeatherMetricCard(icon: "wind", title: "Ветер") {
             VStack(alignment: .leading, spacing: 4) {

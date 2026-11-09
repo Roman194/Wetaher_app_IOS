@@ -42,6 +42,7 @@ public struct SettingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Settings.themePicker)
                     .onChange(of: selectedTheme) { _, newTheme in
                         onColorThemeChange(newTheme)
                     }
@@ -68,6 +69,7 @@ public struct SettingsView: View {
                         dismiss()
                     }
                     .fontWeight(.medium)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Settings.doneButton)
                 }
             }
         }

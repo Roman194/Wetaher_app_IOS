@@ -57,26 +57,26 @@ public struct AppNavStack: View {
                         showSettingsSheet: $showSettingsSheet,
                         showCityListSheet: $showCityListSheet
                     ) {
-                        weatherVM.refreshWeather()
+                        weatherVM.refeshWeatherWrapper()
                     }
                 case .Fail(let weatherErrorUI):
                     WeatherError(weatherErrorUI: weatherErrorUI) {
-                        weatherVM.refreshWeather()
+                        weatherVM.refeshWeatherWrapper()
                     }
             }
         }
-        .sheet(isPresented: $showCityListSheet) { //Оптимизировать через enum!
+        .sheet(isPresented: $showCityListSheet) { // Оптимизировать через enum!
             CityListView(
                 savedCities: cityListVM.savedCities,
                 savedCitiesWeather: cityListVM.savedCitiesWeather,
                 savedCitiesWeatherError: cityListVM.savedCitiesWeatherError,
                 cityListWeatherUIState: cityListVM.cityListWeatherUIState,
                 addCityUiState: cityListVM.addCityUIState,
-                //searchQuery: cityListVM.searchQuery,
-                //searchResults: cityListVM.searchResults,
+                // searchQuery: cityListVM.searchQuery,
+                // searchResults: cityListVM.searchResults,
                 onSelectCity: { selectedCity in
                     showCityListSheet = false
-                    weatherVM.selectCity(newCity: selectedCity)
+                    weatherVM.selectCityWrapper(newCity: selectedCity)
                 },
                 onDeleteCity: { city in
                     guard let potenialNewSelectedCity = cityListVM.deleteCity(city: city) else { return }
@@ -85,17 +85,17 @@ public struct AppNavStack: View {
                     }
                      },
                 onCityAdd: { city in
-                    cityListVM.addCity(city: city)
+                    cityListVM.addCityWrapper(city: city)
                 },
                 isCitySaved: { city in cityListVM.isCitySaved(city: city) },
                 onRefresh: {
                     if case .Success(let weatherUI) = weatherVM.weatherUIState {
-                        cityListVM.loadSavedCitiesWeather(selectedCityForecast: weatherUI)
+                        cityListVM.loadSavedCitiesWeatherWrapper(selectedCityForecast: weatherUI)
                     }
                 },
                 onSearch: { query in
                     cityListVM.searchCities(query: query)
-                    
+
                 }
             )
             .preferredColorScheme(currentColorScheme)
@@ -109,9 +109,9 @@ public struct AppNavStack: View {
         }
         .preferredColorScheme(currentColorScheme)
         .onChange(of: weatherVM.weatherUIState.kind) {
-            if weatherVM.weatherUIState.kind == .success && !weatherVM.isCascadeUpdateForbidden{
+            if weatherVM.weatherUIState.kind == .success && !weatherVM.isCascadeUpdateForbidden {
                 if case .Success(let weatherUI) = weatherVM.weatherUIState {
-                    cityListVM.loadSavedCitiesWeather(selectedCityForecast: weatherUI)
+                    cityListVM.loadSavedCitiesWeatherWrapper(selectedCityForecast: weatherUI)
                 }
             }
         }

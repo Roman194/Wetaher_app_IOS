@@ -13,7 +13,7 @@ public struct WeatherSuccess: View {
     public var isFromCache: Bool
     public var cacheAgeDescription: String?
     public let onPullToRefresh: () -> Void
-    
+
     @Binding public var showSettingsSheet: Bool
     @Binding public var showCityListSheet: Bool
 
@@ -47,6 +47,7 @@ public struct WeatherSuccess: View {
                         .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
                         .clipShape(Circle())
                 }
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.settingsButton)
 
                 Spacer()
 
@@ -60,6 +61,7 @@ public struct WeatherSuccess: View {
                         .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
                         .clipShape(Circle())
                 }
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.cityListButton)
             }
             .padding(.horizontal, 20)
             .padding(.top, 4)

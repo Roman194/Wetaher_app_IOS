@@ -83,16 +83,25 @@ public class CityListViewModel {
 
             addCityUIState = .Success([])
         }
+
+        self.savedCitiesWeather = updatedList
+        if !updatedList.isEmpty {
+            cityListWeatherUIState = .Success
+        } else {
+            cityListWeatherUIState = .Fail
+        }
+
+        addCityUIState = .Success([])
     }
 
     public func searchCities(query: String) {
-        //Предлагаю разрешать п-лю искать и добавлять новые города только когда у нас менее 9 избранных!
+        // Предлагаю разрешать п-лю искать и добавлять новые города только когда у нас менее 9 избранных!
 
         searchTask?.cancel()
 
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty {
-            //self.searchResults = []
+            // self.searchResults = []
 //            if cityListWeatherUIState == .Search {
 //                cityListWeatherUIState = savedCitiesWeather.isEmpty && !savedCities.isEmpty ? .Fail : .Success
 //            }
