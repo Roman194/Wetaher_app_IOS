@@ -6,21 +6,29 @@
 //
 import Foundation
 
+@MainActor
 public class WeatherRepositoryImpl: WeatherRepository {
 
-    // private var currentForecast: ForecastUI
-    private var networkClient: NetworkClient
-    // private var checker: Bool
+    //private var currentForecast: ForecastUI
+    private let networkClient: NetworkClient
+    private let weatherStore: WeatherStore
+    //private var checker: Bool
 
-    public init(networkClient: NetworkClient = NetworkClient()) { // currentWeather: ForecastUI = .moskowWeather,
-        // self.currentForecast = currentWeather
+    public init(
+        networkClient: NetworkClient = NetworkClient(),
+        weatherStore: WeatherStore? = nil
+    ) { //currentWeather: ForecastUI = .moskowWeather,
+        //self.currentForecast = currentWeather
         self.networkClient = networkClient
-        // checker = true
+        self.weatherStore = weatherStore ?? .shared
+        //checker = true
     }
 
-    public func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherResponse, WeatherErrorResponse> {
+    /// Если сеть недоступна, возвращаем последний сохранённый снимок города.
+    /// Если кэша нет — исходную сетевую ошибку.
+    public func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherSnapshot, WeatherErrorResponse> {
 
-        // Требуется заменить написания городов через тире на пробелы? т.к. API понимает только " " и "_"
+        //Требуется заменить написания городов через тире на пробелы? т.к. API понимает только " " и "_"
         let cityInRightFormat = City(
             id: city.id,
             name: city.name.replacingOccurrences(of: "_", with: " "),
@@ -31,19 +39,29 @@ public class WeatherRepositoryImpl: WeatherRepository {
             localTime: city.localTime
         )
 
-        let response  = await networkClient.getCityWeather(city: cityInRightFormat)
-        switch response {
+        let response = await networkClient.getCityWeather(city: cityInRightFormat)
+        switch(response){
         case .success(let weatherResponse):
-            return .success(weatherResponse)
-            // print(weatherResponse)
+            let entity = weatherResponse.toEntity(city: city)
+            do {
+                try weatherStore.save(entity)
+            } catch {
+                //Неудачная запись кэша не должна ломать показ свежих данных.
+                #if DEBUG
+                print("WeatherStore save error: \(error)")
+                #endif
+            }
+
+            return .success(WeatherSnapshot(entity: entity, source: .network))
+
         case .failure(let weatherErrorResponse):
+            //Сеть недоступна — пробуем показать последний сохранённый снимок.
+            if let cached = try? weatherStore.fetch(cityID: city.id) {
+                return .success(WeatherSnapshot(entity: cached, source: .cache))
+            }
+
             return .failure(weatherErrorResponse)
-
         }
-    }
-
-    public func LoadFavoriteCities() -> [City] {
-        return City.defaultFavorites
     }
 
     public func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError> {
@@ -53,17 +71,17 @@ public class WeatherRepositoryImpl: WeatherRepository {
         let isOnlyLatinCharacters = trimmed.range(of: "\\P{Latin}", options: .regularExpression) == nil
         let isOnlyCyrillicCharacters = trimmed.range(of: "\\P{Cyrillic}", options: .regularExpression) == nil
 
-        if isOnlyLatinCharacters || isOnlyCyrillicCharacters {
-            // Do some stuff
-            if isOnlyCyrillicCharacters {
+        if (isOnlyLatinCharacters || isOnlyCyrillicCharacters){
+            //Do some stuff
+            if(isOnlyCyrillicCharacters){
                 trimmed = trimmed.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
 
                 guard trimmed != "" else {return .failure(CityResponseError(errorId: 11, errorDescription: "Не получается конверитровать символы кириллицы"))}
             }
 
-            let response = await networkClient.getCityLatLongByName(cityName: trimmed, isLatinName: isOnlyLatinCharacters) // "Berlin"
+            let response = await networkClient.getCityLatLongByName(cityName: trimmed, isLatinName: isOnlyLatinCharacters) //"Berlin"
 
-            switch response {
+            switch(response){
             case .success(let possibleCities):
                 return .success(possibleCities.results)
             case .failure(var cityError):
@@ -78,7 +96,8 @@ public class WeatherRepositoryImpl: WeatherRepository {
 
             }
 
-        }else {
+
+        }else{
             return .failure(CityResponseError(errorId: 12, errorDescription: "В строке содержатся недопустимые символы или смешано кириллическое и латинское написания"))
         }
     }
