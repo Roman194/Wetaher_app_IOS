@@ -7,6 +7,8 @@
 import SwiftUI
 
 public struct AppNavStack: View {
+    @Environment(\.colorScheme) private var environmentColorScheme
+
     @State private var weatherVM: WeatherMainViewModel
     @State private var cityListVM: CityListViewModel
     @State private var settingsVM: SettingsViewModel
@@ -14,7 +16,19 @@ public struct AppNavStack: View {
     @State private var showCityListSheet = false
     @State private var showSettingsSheet = false
 
-    @State private var currentColorScheme: ColorScheme?
+    /// Тема приложения: nil означает «как в системе».
+    private var appColorScheme: ColorScheme? {
+        settingsVM.appTheme.colorScheme
+    }
+
+    /// Цветовая схема для sheet'ов.
+    ///
+    /// Сюда нельзя передавать nil: при переключении «тёмная → системная»
+    /// SwiftUI не сбрасывает уже применённый к презентации override,
+    /// поэтому фон листа остаётся тёмным. Подставляем фактическую схему.
+    private var presentedColorScheme: ColorScheme {
+        appColorScheme ?? environmentColorScheme
+    }
 
     public init(weatherRepo: WeatherRepository = WeatherRepositoryImpl()) {
         let wVM = WeatherMainViewModel(weatherRepo: weatherRepo)
@@ -23,7 +37,6 @@ public struct AppNavStack: View {
         _weatherVM = State(initialValue: wVM)
         _cityListVM = State(initialValue: cVM)
         _settingsVM = State(initialValue: sVM)
-        _currentColorScheme = State(initialValue: sVM.appTheme.colorScheme)
     }
 
     public var body: some View {
@@ -87,16 +100,13 @@ public struct AppNavStack: View {
                     
                 }
             )
-            .preferredColorScheme(currentColorScheme)
+            .preferredColorScheme(presentedColorScheme)
         }
         .sheet(isPresented: $showSettingsSheet) {
-            SettingsView(currentColorScheme: currentColorScheme) { theme in
-                settingsVM.appTheme = theme
-                currentColorScheme = theme.colorScheme
-            }
-            .preferredColorScheme(currentColorScheme)
+            SettingsView(settingsVM: settingsVM)
+                .preferredColorScheme(presentedColorScheme)
         }
-        .preferredColorScheme(currentColorScheme)
+        .preferredColorScheme(appColorScheme)
         .onChange(of: weatherVM.weatherUIState.kind) {
             if weatherVM.weatherUIState.kind == .success && !weatherVM.isCascadeUpdateForbidden{
                 if case .Success(let weatherUI) = weatherVM.weatherUIState {
