@@ -12,7 +12,7 @@ public enum Colors {
     // MARK: - Текст
     public static let primaryText = Color.primary
     public static let secondaryText = Color.secondary
-    public static let tertiaryText = Color.tertiary
+    public static let tertiaryText = Color.secondary.opacity(BaseNumeral.tertiaryTextOpacity)
 
     // MARK: - Фоны
     public static let screenBackground = BaseColors.screenBackground

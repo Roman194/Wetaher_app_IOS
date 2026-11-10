@@ -81,6 +81,7 @@ public enum BaseNumeral {
     public static let floatingButtonShadowOpacity: Double = 0.2
 
     // MARK: - Прозрачность
+    public static let tertiaryTextOpacity: Double = 0.35
     public static let cardBackgroundOpacity: Double = 0.8
     public static let cardBackgroundStrongOpacity: Double = 0.85
     public static let dividerOpacity: Double = 0.4
