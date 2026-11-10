@@ -4,112 +4,104 @@
 //
 //  Created by Roman Zyuzin on 18.10.2026.
 //
+
 import Foundation
 
-extension WeatherResponse{
-    func ToUI(city: City) -> ForecastUI{
-        ForecastUI(
-            city: city,
-            currentWeather: current.ToUI(),
-            hourlyWeather: hourly.ToUI(currentTime: current.time),
-            dailyWeather: daily.ToUI(currentTime: current.time)
+extension WeatherResponse {
+    func toEntity(city: City, savedAt: Date = Date()) -> WeatherEntity {
+        WeatherEntity(
+            cityID: city.id,
+            cityName: city.name,
+            country: city.country,
+            latitude: city.latitude,
+            longitude: city.longitude,
+            timezone: city.timezone,
+            savedAt: savedAt,
+            current: current.toEntity(),
+            hourly: hourly.toEntity(currentTime: current.time),
+            daily: daily.toEntity()
         )
     }
 }
 
-extension CurrentWeatherResponse{
-    func ToUI() -> CurrentWeather {
-        let visibilityInKm = WeatherUIHelper.visibility(visibility)
-        
-        return CurrentWeather(
-            date: WeatherUIHelper.formatDateString(time),
-            time: WeatherUIHelper.formatTimeString(time),
+extension CurrentWeatherResponse {
+    func toEntity() -> CurrentWeatherEntity {
+        CurrentWeatherEntity(
+            time: time,
             temperature: temperature2m,
-            apparentTemp: apparentTemperature,
-            weatherCondition: WeatherCondition.weatherConditionsDict[weatherCode] ?? WeatherCondition.defaultWeatherCondition,
-            isDay: Bool(isDay as NSNumber),
+            apparentTemperature: apparentTemperature,
+            weatherCode: weatherCode,
+            isDay: isDay != 0,
             windSpeed: windSpeed10m,
-            windDirection: WeatherUIHelper.degreesToDirection(windDirection10m),
+            windDirection: windDirection10m,
             windGusts: windGusts10m,
             relativeHumidity: relativeHumidity2m,
             dewPoint: dewPoint2m,
-            pressure: pressureMsl,
-            pressureStatus: WeatherUIHelper.pressureStatus(for: pressureMsl),
-            pressureMmHg: WeatherUIHelper.pressureMmHg(pressureMsl),
-            visibility: visibilityInKm,
-            visibilityStatus: WeatherUIHelper.visibilityStatus(for: visibilityInKm)
+            pressureMsl: pressureMsl,
+            visibility: visibility
         )
     }
 }
 
-extension HourlyWeatherResponse{
-    func ToUI(currentTime: String) -> [HourlyWeather]{
-        var hourlyWeatherArray: [HourlyWeather] = []
-        
-        //Определяем стартовый сдвиг для вывода почасовок в зав-ти от Гринвича
-        let timeOffset: Int
-        
-        let timePart = currentTime.components(separatedBy: "T").last ?? currentTime
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.timeZone = .gmt //Время по гринвичу!
-        formatter.locale = Locale(identifier: "ru_RU")
-        if let time = formatter.date(from: timePart) {
-            
-            var calendar = Calendar.current
-            calendar.timeZone = .gmt
-            let hour = calendar.component(.hour, from: time)
-            
-            timeOffset = hour
-        }else{
-            timeOffset = 0
-        }
-        
-        for i in timeOffset...(MinArrayCount() + timeOffset - 1) { //Предполагаем, что API выдаёт нам корректное количество данных для всех массивов, но всё же на всякий случай обрабатываем по минимальному по кол-ву элл-ов массиву
-            
-            hourlyWeatherArray.append(
-                HourlyWeather(
-                    hour: WeatherUIHelper.formatTimeString(time[i], index: i, timeOffset: timeOffset),
-                    temperature: temperature2m[i],
-                    weatherCondition: WeatherCondition.weatherConditionsDict[weatherCode[i]] ?? WeatherCondition.defaultWeatherCondition,
-                    isDay: Bool(isDay[i] as NSNumber),
-                    precipProb: precipitationProbability[i]
-                )
+extension HourlyWeatherResponse {
+    func toEntity(currentTime: String) -> [HourlyWeatherEntity] {
+        let available = min(
+            time.count,
+            temperature2m.count,
+            weatherCode.count,
+            isDay.count,
+            precipitationProbability.count
+        )
+        guard available > 0 else { return [] }
+
+        let start = min(Self.hour(from: currentTime), available)
+        let end = min(start + 24, available)
+        guard start < end else { return [] }
+
+        return (start..<end).map { index in
+            HourlyWeatherEntity(
+                time: time[index],
+                temperature: temperature2m[index],
+                weatherCode: weatherCode[index],
+                isDay: isDay[index] != 0,
+                precipitationProbability: precipitationProbability[index]
             )
         }
-        
-        return hourlyWeatherArray
     }
-    
-    private func MinArrayCount() -> Int{ //Нам не нужно показывать больше часов, чем 24 часа с момента текущего времени (1 сутки)
-        return min(time.count, temperature2m.count, isDay.count, weatherCode.count, precipitationProbability.count, 24)
+
+    /// Час из строки формата `yyyy-MM-dd'T'HH:mm` (при `timezone=auto` время уже местное для города).
+    private static func hour(from dateString: String) -> Int {
+        guard let separator = dateString.firstIndex(of: "T") else { return 0 }
+        let timePart = dateString[dateString.index(after: separator)...]
+        return Int(timePart.prefix(2)) ?? 0
     }
 }
 
-extension DailyWeatherResponse{
-    func ToUI(currentTime: String) -> [DailyWeather]{
-        var dailyWeatherArray: [DailyWeather] = []
-        for i in 0...(MinArrayCount() - 1) {
-            dailyWeatherArray.append(
-                DailyWeather(
-                    date: WeatherUIHelper.formatDateLocalizedString(time[i]),
-                    day: WeatherUIHelper.formatDayOfWeekString(time[i], currentDT: currentTime, index: i),
-                    tempMax: temperature2mMax[i],
-                    tempMin: temperature2mMin[i],
-                    weatherCondition: WeatherCondition.weatherConditionsDict[weatherCode[i]] ?? WeatherCondition.defaultWeatherCondition,
-                    uVIndex: uVIndexMax[i],
-                    uvStatus: WeatherUIHelper.uvStatus(for: uVIndexMax[i]),
-                    sunrise: WeatherUIHelper.formatTimeString(sunrise[i]),
-                    sunset: WeatherUIHelper.formatTimeString(sunset[i]),
-                    precipProbabilityMean: precipitationProbabilityMean[i]
-                )
+extension DailyWeatherResponse {
+    func toEntity() -> [DailyWeatherEntity] {
+        let available = min(
+            time.count,
+            temperature2mMax.count,
+            temperature2mMin.count,
+            weatherCode.count,
+            uVIndexMax.count,
+            sunrise.count,
+            sunset.count,
+            precipitationProbabilityMean.count
+        )
+        guard available > 0 else { return [] }
+
+        return (0..<available).map { index in
+            DailyWeatherEntity(
+                time: time[index],
+                temperatureMax: temperature2mMax[index],
+                temperatureMin: temperature2mMin[index],
+                weatherCode: weatherCode[index],
+                uvIndexMax: uVIndexMax[index],
+                sunrise: sunrise[index],
+                sunset: sunset[index],
+                precipitationProbabilityMean: precipitationProbabilityMean[index]
             )
         }
-        
-        return dailyWeatherArray
-    }
-    
-    private func MinArrayCount() -> Int{
-        return min(time.count, temperature2mMax.count, temperature2mMin.count, weatherCode.count, uVIndexMax.count, sunset.count, sunrise.count, precipitationProbabilityMean.count)
     }
 }

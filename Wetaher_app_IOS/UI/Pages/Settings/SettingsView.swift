@@ -26,6 +26,7 @@ public struct SettingsView: View {
                         }
                     }
                     .pickerStyle(.segmented)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Settings.themePicker)
                 } header: {
                     Text(BaseText.Settings.themeSection)
                 }
@@ -49,6 +50,7 @@ public struct SettingsView: View {
                         dismiss()
                     }
                     .fontWeight(.medium)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Settings.doneButton)
                 }
             }
         }

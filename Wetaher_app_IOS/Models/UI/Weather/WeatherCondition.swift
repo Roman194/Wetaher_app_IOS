@@ -16,7 +16,7 @@ public struct WeatherCondition: Equatable, Hashable {
     let backgroundColorsLightTheme: ColorsDayNNightDiff
 }
 
-enum sfSymbolNameDayNNightDiff: Equatable, Hashable{
+enum sfSymbolNameDayNNightDiff: Equatable, Hashable {
     case same(String)
     case diff(String, String)
 }

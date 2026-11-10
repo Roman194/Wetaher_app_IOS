@@ -6,15 +6,14 @@
 //
 
 extension CityResponse{
-    func toUI() -> City{
-        City(
+    func toEntity() -> CityEntity{
+        CityEntity(
             id: id,
             name: name,
             country: country,
             latitude: latitude,
             longitude: longitude,
-            timezone: timezone,
-            localTime: CityUIHelper.localTime(timeZone: timezone)
+            timezone: timezone
         )
     }
 }

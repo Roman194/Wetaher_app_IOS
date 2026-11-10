@@ -3,15 +3,24 @@ import SwiftUI
 /// Главный экран погоды: заголовок, почасовой прогноз, 7-дневный прогноз и сетка метеорологических метрик
 public struct WeatherMainView: View {
     public var currentForecast: ForecastUI
+    public var isFromCache: Bool
+    public var cacheAgeDescription: String?
     public let onPullToRefresh: () -> Void
 
-    private let columns = Array(
+    private let columns = [ // Мб это можно сделать получше?
         repeating: GridItem(.flexible(), spacing: BaseNumeral.defaultSpacing),
         count: BaseNumeral.gridColumnCount
-    )
+    ]
 
-    public init(currentForecast: ForecastUI, onPullToRefresh: @escaping () -> Void) {
+    public init(
+        currentForecast: ForecastUI,
+        isFromCache: Bool = false,
+        cacheAgeDescription: String? = nil,
+        onPullToRefresh: @escaping () -> Void
+    ) {
         self.currentForecast = currentForecast
+        self.isFromCache = isFromCache
+        self.cacheAgeDescription = cacheAgeDescription
         self.onPullToRefresh = onPullToRefresh
     }
 
@@ -25,34 +34,35 @@ public struct WeatherMainView: View {
                 
 
                 // Индикатор офлайн-режима с давностью обновления кэша
-//                if weatherVM.isFromCache {
-//                    HStack(spacing: 6) {
-//                        Image(systemName: "wifi.slash")
-//                            .font(.caption2)
-//
-//                        if let age = weatherVM.cacheAgeDescription {
-//                            Text("Офлайн • Обновлено \(age)")
-//                                .font(.caption2)
-//                                .fontWeight(.medium)
-//                        } else {
-//                            Text("Офлайн-режим (сохраненные данные)")
-//                                .font(.caption2)
-//                                .fontWeight(.medium)
-//                        }
-//                    }
-//                    .foregroundStyle(.secondary)
-//                    .padding(.horizontal, 10)
-//                    .padding(.vertical, 4)
-//                    .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
-//                    .clipShape(Capsule())
-//                    .padding(.top, 0)
-//                }
+                if isFromCache {
+                    HStack(spacing: 6) {
+                        Image(systemName: "wifi.slash")
+                            .font(.caption2)
+
+                        if let cacheAgeDescription {
+                            Text("Офлайн • Обновлено \(cacheAgeDescription)")
+                                .font(.caption2)
+                                .fontWeight(.medium)
+                        } else {
+                            Text("Офлайн-режим (сохранённые данные)")
+                                .font(.caption2)
+                                .fontWeight(.medium)
+                        }
+                    }
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
+                    .clipShape(Capsule())
+                    .padding(.top, 0)
+                    .accessibilityIdentifier("weather.offlineBadge")
+                }
 
                 // Главный заголовок
                 CurrentWeatherHeader(forecastData: currentForecast)
 
                 // Почасовой прогноз
-                //let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
+                // let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
                 HourlyForecast(
                     hourly: currentForecast.hourlyWeather,
                     timeZone: timeZone
@@ -70,37 +80,44 @@ public struct WeatherMainView: View {
                         directionString: current.windDirection,
                         gustMps: current.windGusts
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.wind)
 
                     PressureMetricCard(
                         pressureHpa: current.pressure,
                         pressureStatus: current.pressureStatus,
                         pressureMmHg: current.pressureMmHg
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.pressure)
 
                     HumidityMetricCard(
                         humidity: current.relativeHumidity,
                         dewPoint: current.dewPoint
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.humidity)
 
                     UVMetricCard(
                         uvIndex: todayDaily?.uVIndex ?? 0.0,
-                        uvStatus:  todayDaily?.uvStatus.descripiton ?? ""
-                        
+                        uvStatus: todayDaily?.uvStatus.descripiton ?? ""
+
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.uv)
 
                     SunTimesMetricCard(
                         sunrise: todayDaily?.sunrise ?? "",
                         sunset: todayDaily?.sunset ?? ""
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.sun)
 
                     VisibilityMetricCard(
                         visibilityMeters: current.visibility
                     )
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.visibility)
                 }
                 .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
                 .padding(.bottom, BaseNumeral.screenBottomPadding)
             }
         }
+        .accessibilityIdentifier(AccessibilityIdentifiers.Main.scrollView)
         .refreshable {//Прокинуть это как событие в НавСтак!
             onPullToRefresh()
         }

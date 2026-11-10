@@ -11,7 +11,7 @@ public struct HourlyWeatherResponse: Codable {
     public let weatherCode: [Int]
     public let isDay: [Int]
     public let precipitationProbability: [Int]
-    
+
     enum CodingKeys: String, CodingKey {
             case time
             case temperature2m = "temperature_2m"

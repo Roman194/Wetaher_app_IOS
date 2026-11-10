@@ -24,18 +24,21 @@ public struct CurrentWeatherHeader: View {
             Text(forecastData.city.name)
                 .font(.system(size: BaseNumeral.cityNameFontSize, weight: .bold, design: .default))
                 .foregroundStyle(Colors.primaryText)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.cityTitle)
 
             // Статус погоды
             Text(forecastData.currentWeather.weatherCondition.description)
                 .font(.headline)
                 .fontWeight(.medium)
                 .foregroundStyle(Colors.secondaryText)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.condition)
 
             // Температура по шкале Цельсия
             Text(MetricFormatter.temperature(forecastData.currentWeather.temperature, showSign: false))
                 .font(.system(size: BaseNumeral.currentTemperatureFontSize, weight: .thin, design: .rounded))
                 .foregroundStyle(Colors.primaryText)
                 .padding(.vertical, BaseNumeral.currentTemperatureVerticalPadding)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Main.temperature)
 
             // Мин / Макс и Ощущается как
             HStack(spacing: BaseNumeral.defaultSpacing) {
@@ -56,6 +59,7 @@ public struct CurrentWeatherHeader: View {
                 ))
                     .font(.subheadline)
                     .foregroundStyle(Colors.secondaryText)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Main.feelsLike)
             }
             .padding(.top, BaseNumeral.textSpacing)
         }

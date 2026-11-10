@@ -14,7 +14,7 @@ public struct DailyWeatherResponse: Codable {
     public let sunrise: [String]
     public let sunset: [String]
     public let precipitationProbabilityMean: [Int]
-    
+
     enum CodingKeys: String, CodingKey {
             case time
             case temperature2mMax = "temperature_2m_max"
