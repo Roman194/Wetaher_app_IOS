@@ -76,12 +76,12 @@ public struct AddCityView: View {
                     successView
                 }
             }
-            .navigationTitle("Добавить город")
+            .navigationTitle(BaseText.Cities.addTitle)
             .navigationBarTitleDisplayMode(.inline)
             .searchable(
                 text: $searchQuery,
                 placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Поиск по городам"
+                prompt: BaseText.Cities.searchPrompt
             )
             .onChange(of: searchQuery) { _, newValue in
                 //performSearch(query: newValue)
@@ -90,7 +90,7 @@ public struct AddCityView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Готово") {
+                    Button(BaseText.Common.done) {
                         dismiss()
                     }
                     .fontWeight(.medium)
@@ -103,12 +103,12 @@ public struct AddCityView: View {
 
     @ViewBuilder
     private var loadingView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: BaseNumeral.sectionSpacing) {
             ProgressView()
                 .controlSize(.large)
-            Text("Загрузка городов...")
+            Text(BaseText.Common.loadingCities)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Colors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -117,11 +117,11 @@ public struct AddCityView: View {
     private var failView: some View {
         
         if !searchQuery.isEmpty {
-            VStack(spacing: 16) {
+            VStack(spacing: BaseNumeral.sectionSpacing) {
                 ContentUnavailableView(
-                    "Ошибка поиска",
+                    BaseText.Cities.searchErrorTitle,
                     systemImage: "exclamationmark.triangle",
-                    description: Text(errorMessage ?? "Не удалось выполнить поиск городов. Попробуйте еще раз.")
+                    description: Text(errorMessage ?? BaseText.Cities.searchErrorMessage)
                 )
 
                 Button {
@@ -129,9 +129,9 @@ public struct AddCityView: View {
                     onSearch?(searchQuery)
                     updateDisplayedResults()
                 } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: BaseNumeral.smallSpacing) {
                         Image(systemName: "arrow.clockwise")
-                        Text("Повторить")
+                        Text(BaseText.Common.retry)
                     }
                     .fontWeight(.medium)
                 }
@@ -145,11 +145,11 @@ public struct AddCityView: View {
 
     @ViewBuilder
     private var searchStateView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: BaseNumeral.defaultSpacing) {
             ProgressView()
-            Text("Поиск городов...")
+            Text(BaseText.Common.searchingCities)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Colors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -174,7 +174,7 @@ public struct AddCityView: View {
             ContentUnavailableView.search(text: searchQuery)
         } else {
             Section(
-                (errorMessage != nil) ? "Результаты предыдущего поиска" : "Результаты поиска"
+                (errorMessage != nil) ? BaseText.Cities.previousResults : BaseText.Cities.searchResults
                 ) {
                 ForEach(displayedResults) { city in
                     cityRow(for: city)
@@ -186,7 +186,7 @@ public struct AddCityView: View {
     // MARK: - Доступные города
 
     private var popularCitiesSection: some View {
-        Section("Популярные города") {
+        Section(BaseText.Cities.popular) {
             ForEach(availableCities) { city in
                 cityRow(for: city)
             }
@@ -200,15 +200,15 @@ public struct AddCityView: View {
 
         return HStack {
             HStack {
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                     Text(city.name)
                         .font(.body)
                         .fontWeight(.medium)
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(Colors.primaryText)
 
                     Text(city.country)
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Colors.secondaryText)
                 }
 
                 Spacer()
@@ -226,12 +226,12 @@ public struct AddCityView: View {
                 Button {
                     onCityDelete?(city)
                 } label: {
-                    HStack(spacing: 4) {
+                    HStack(spacing: BaseNumeral.textSpacing) {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.secondary)
-                        Text("В избранном")
+                            .foregroundStyle(Colors.secondaryText)
+                        Text(BaseText.Cities.saved)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Colors.secondaryText)
                     }
                 }
                 .buttonStyle(.borderless)
@@ -241,12 +241,12 @@ public struct AddCityView: View {
                 } label: {
                     Image(systemName: "plus.circle.fill")
                         .font(.title3)
-                        .foregroundStyle(.blue)
+                        .foregroundStyle(Colors.accent)
                 }
                 .buttonStyle(.borderless)
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, BaseNumeral.textSpacing)
     }
     
     private func updateDisplayedResults(){

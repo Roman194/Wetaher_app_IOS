@@ -18,19 +18,21 @@ public struct WeatherError: View {
     }
 
     public var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: BaseNumeral.defaultSpacing) {
             Image(systemName: "exclamationmark.triangle")
                 .font(.largeTitle)
-                .foregroundStyle(.orange)
+                .foregroundStyle(Colors.errorIndicator)
 
-            VStack(spacing: 6) {
-                Text("Ошибка загрузки погоды")
+            VStack(spacing: BaseNumeral.smallSpacing) {
+                Text(BaseText.WeatherError.title)
                     .font(.headline)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Colors.primaryText)
 
-                Text(weatherErrorUI.errorDescription.isEmpty ? "Код ошибки: \(weatherErrorUI.errorCode)" : "\(weatherErrorUI.errorDescription) (код: \(weatherErrorUI.errorCode))")
+                Text(weatherErrorUI.errorDescription.isEmpty
+                     ? BaseText.WeatherError.errorCode(weatherErrorUI.errorCode)
+                     : BaseText.WeatherError.withCode(weatherErrorUI.errorDescription, code: weatherErrorUI.errorCode))
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
                     .multilineTextAlignment(.center)
             }
             .padding(.horizontal)
@@ -38,18 +40,18 @@ public struct WeatherError: View {
             Button {
                 onReplayButtonClicked()
             } label: {
-                HStack(spacing: 6) {
+                HStack(spacing: BaseNumeral.smallSpacing) {
                     Image(systemName: "arrow.clockwise")
-                    Text("Повторить")
+                    Text(BaseText.Common.retry)
                 }
                 .fontWeight(.medium)
             }
             .buttonStyle(.borderedProminent)
-            .padding(.top, 4)
+            .padding(.top, BaseNumeral.textSpacing)
         }
-        .padding(24)
-        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .padding(.horizontal, 24)
+        .padding(BaseNumeral.errorCardPadding)
+        .background(Colors.cardBackgroundStrong)
+        .clipShape(RoundedRectangle(cornerRadius: BaseNumeral.largeCardCornerRadius, style: .continuous))
+        .padding(.horizontal, BaseNumeral.errorCardPadding)
     }
 }

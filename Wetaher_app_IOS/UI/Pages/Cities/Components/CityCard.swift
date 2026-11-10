@@ -28,15 +28,15 @@ public struct CityCard: View {
     public var body: some View {
         HStack(alignment: .center) {
             // Левая часть: название города, страна, локальное время и погодные условия
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                 Text(city.name)
                     .font(.title3)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Colors.primaryText)
 
-                Text("\(city.country) • \(city.localTime)")
+                Text(BaseText.Cities.countryAndTime(country: city.country, time: city.localTime))
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
 
                 if let forecast {
                     let symbolName: String = {
@@ -56,28 +56,28 @@ public struct CityCard: View {
                         }
                     }()
 
-                    HStack(spacing: 6) {
+                    HStack(spacing: BaseNumeral.smallSpacing) {
                         Image(systemName: symbolName)
                             .applyColors(iconColors)
                             .font(.caption)
 
                         Text(forecast.currentWeather.weatherCondition.description)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Colors.secondaryText)
                     }
-                    .padding(.top, 4)
+                    .padding(.top, BaseNumeral.textSpacing)
                 } else {
                     // Значок ошибки вместо погоды
-                    HStack(spacing: 6) {
+                    HStack(spacing: BaseNumeral.smallSpacing) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
+                            .foregroundStyle(Colors.errorIndicator)
                             .font(.caption)
 
-                        Text(error?.errorDescription ?? "Ошибка загрузки данных")
+                        Text(error?.errorDescription ?? BaseText.Common.errorLoadingData)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Colors.secondaryText)
                     }
-                    .padding(.top, 4)
+                    .padding(.top, BaseNumeral.textSpacing)
                 }
             }
 
@@ -85,32 +85,35 @@ public struct CityCard: View {
 
             // Правая часть: текущая температура или значок ошибки
             if let forecast {
-                VStack(alignment: .trailing, spacing: 3) {
+                VStack(alignment: .trailing, spacing: BaseNumeral.textSpacing) {
                     Text(MetricFormatter.temperature(forecast.currentWeather.temperature, showSign: false))
-                        .font(.system(size: 38, weight: .light, design: .rounded))
-                        .foregroundStyle(.primary)
+                        .font(.system(size: BaseNumeral.cityCardTemperatureFontSize, weight: .light, design: .rounded))
+                        .foregroundStyle(Colors.primaryText)
 
                     if let today = forecast.dailyWeather.first {
-                        Text("\(MetricFormatter.temperature(today.tempMax)) / \(MetricFormatter.temperature(today.tempMin))")
+                        Text(BaseText.Cities.temperatureRange(
+                            max: MetricFormatter.temperature(today.tempMax),
+                            min: MetricFormatter.temperature(today.tempMin)
+                        ))
                             .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Colors.secondaryText)
                     }
                 }
             } else {
-                VStack(alignment: .trailing, spacing: 4) {
+                VStack(alignment: .trailing, spacing: BaseNumeral.textSpacing) {
                     Image(systemName: "exclamationmark.circle.fill")
-                        .font(.system(size: 28))
-                        .foregroundStyle(.orange)
+                        .font(.system(size: BaseNumeral.errorIconFontSize))
+                        .foregroundStyle(Colors.errorIndicator)
 
-                    Text("Ошибка")
+                    Text(BaseText.Common.error)
                         .font(.caption2)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Colors.secondaryText)
                 }
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
+        .padding(.vertical, BaseNumeral.cardPadding)
+        .background(Colors.cardBackgroundStrong)
+        .clipShape(RoundedRectangle(cornerRadius: BaseNumeral.cardCornerRadius, style: .continuous))
     }
 }

@@ -5,10 +5,10 @@ public struct WeatherMainView: View {
     public var currentForecast: ForecastUI
     public let onPullToRefresh: () -> Void
 
-    private let columns = [ //Мб это можно сделать получше?
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
-    ]
+    private let columns = Array(
+        repeating: GridItem(.flexible(), spacing: BaseNumeral.defaultSpacing),
+        count: BaseNumeral.gridColumnCount
+    )
 
     public init(currentForecast: ForecastUI, onPullToRefresh: @escaping () -> Void) {
         self.currentForecast = currentForecast
@@ -21,7 +21,7 @@ public struct WeatherMainView: View {
         let todayDaily = currentForecast.dailyWeather.first
 
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 16) {
+            VStack(spacing: BaseNumeral.sectionSpacing) {
                 
 
                 // Индикатор офлайн-режима с давностью обновления кэша
@@ -64,7 +64,7 @@ public struct WeatherMainView: View {
                 )
 
                 // Сетка метрик в системе
-                LazyVGrid(columns: columns, spacing: 12) {
+                LazyVGrid(columns: columns, spacing: BaseNumeral.defaultSpacing) {
                     WindMetricCard(
                         speedMps: current.windSpeed,
                         directionString: current.windDirection,
@@ -97,8 +97,8 @@ public struct WeatherMainView: View {
                         visibilityMeters: current.visibility
                     )
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
+                .padding(.bottom, BaseNumeral.screenBottomPadding)
             }
         }
         .refreshable {//Прокинуть это как событие в НавСтак!

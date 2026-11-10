@@ -87,7 +87,7 @@ public class CityListViewModel{
         
         addCityUIState = .Search
         searchTask = Task {
-            try? await Task.sleep(nanoseconds: 300_000_000)
+            try? await Task.sleep(nanoseconds: BaseNumeral.searchDebounceDuration)
             guard !Task.isCancelled else { return }
             
             addCityUIState = .Loading

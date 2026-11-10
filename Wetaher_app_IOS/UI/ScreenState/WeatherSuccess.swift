@@ -23,7 +23,7 @@ public struct WeatherSuccess: View {
     }
 
     public var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: BaseNumeral.defaultSpacing) {
             // Верхняя панель управления
             HStack {
                 Button {
@@ -31,9 +31,9 @@ public struct WeatherSuccess: View {
                 } label: {
                     Image(systemName: "gearshape")
                         .font(.body)
-                        .foregroundStyle(.primary)
-                        .padding(8)
-                        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
+                        .foregroundStyle(Colors.primaryText)
+                        .padding(BaseNumeral.iconButtonPadding)
+                        .background(Colors.cardBackground)
                         .clipShape(Circle())
                 }
 
@@ -44,14 +44,14 @@ public struct WeatherSuccess: View {
                 } label: {
                     Image(systemName: "list.bullet")
                         .font(.body)
-                        .foregroundStyle(.primary)
-                        .padding(8)
-                        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
+                        .foregroundStyle(Colors.primaryText)
+                        .padding(BaseNumeral.iconButtonPadding)
+                        .background(Colors.cardBackground)
                         .clipShape(Circle())
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 4)
+            .padding(.horizontal, BaseNumeral.controlPanelHorizontalPadding)
+            .padding(.top, BaseNumeral.textSpacing)
 
             // Основной контент погоды
             WeatherMainView(currentForecast: currentForecast) {
