@@ -31,120 +31,94 @@ enum ColorsDayNNightDiff: Equatable, Hashable {
     case pair([Color], [Color])
 }
 
-extension WeatherCondition {
-    // Я выделил 10 основных состояний погодыю Остальные WeatherCode будем приводить к ним
-
-    public static let defaultWeatherCondition = WeatherCondition( // Clear
-        description: "Ясно",
+extension WeatherCondition{
+    //Я выделил 10 основных состояний погодыю Остальные WeatherCode будем приводить к ним
+    
+    public static let defaultWeatherCondition = WeatherCondition( //Clear
+        description: BaseText.WeatherCondition.clear,
         sfSymbolName: .diff("sun.max.fill", "moon.stars.fill"),
-        iconColor: .diff([.orange], [.indigo, .yellow]),
+        iconColor: .diff([BaseColors.orange], [BaseColors.indigo, BaseColors.yellow]),
         backgroundColorsDarkTheme: .pair(
-            [Color(red: 0.13, green: 0.17, blue: 0.24), Color(red: 0.08, green: 0.10, blue: 0.15)],
-            [Color(red: 0.08, green: 0.10, blue: 0.18), Color(red: 0.05, green: 0.06, blue: 0.11)]),
+            BaseColors.clearSkyDarkDay,
+            BaseColors.clearSkyDarkNight),
         backgroundColorsLightTheme: .pair(
-            [Color(red: 0.88, green: 0.94, blue: 1.0), Color(red: 0.95, green: 0.97, blue: 1.0)],
-            [Color(red: 0.90, green: 0.92, blue: 0.97), Color(red: 0.95, green: 0.95, blue: 0.98)])
+            BaseColors.clearSkyLightDay,
+            BaseColors.clearSkyLightNight)
     )
-
-    public static let weatherConditionsDict: [Int: WeatherCondition] = [
-        0: defaultWeatherCondition,
-
-        2: WeatherCondition( // Partly cloudy
-            description: "Переменная облачность",
+    
+    public static let weatherConditionsDict: [Int : WeatherCondition] = [
+        0 : defaultWeatherCondition,
+        
+        2: WeatherCondition( //Partly cloudy
+            description: BaseText.WeatherCondition.partlyCloudy,
             sfSymbolName: .diff("cloud.sun.fill", "cloud.moon.fill"),
-            iconColor: .diff([.gray, .orange.opacity(0.9)], [.gray, .indigo.opacity(0.9)]),
+            iconColor: .diff(
+                [BaseColors.gray, BaseColors.orange.opacity(BaseNumeral.dimmedIconOpacity)],
+                [BaseColors.gray, BaseColors.indigo.opacity(BaseNumeral.dimmedIconOpacity)]),
             backgroundColorsDarkTheme: .pair(
-                [Color(red: 0.14, green: 0.17, blue: 0.22), Color(red: 0.09, green: 0.11, blue: 0.15)],
-                [Color(red: 0.10, green: 0.11, blue: 0.18), Color(red: 0.06, green: 0.07, blue: 0.12)]),
+                BaseColors.partlyCloudyDarkDay,
+                BaseColors.partlyCloudyDarkNight),
             backgroundColorsLightTheme: .pair(
-                [Color(red: 0.90, green: 0.94, blue: 0.98), Color(red: 0.95, green: 0.97, blue: 0.99)],
-                [Color(red: 0.91, green: 0.92, blue: 0.97), Color(red: 0.95, green: 0.96, blue: 0.98)])),
-
-        3: WeatherCondition( // Overcast
-            description: "Облачно",
+                BaseColors.partlyCloudyLightDay,
+                BaseColors.partlyCloudyLightNight)),
+        
+        3: WeatherCondition( //Overcast
+            description: BaseText.WeatherCondition.overcast,
             sfSymbolName: .same("smoke.fill"),
-            iconColor: .same([.gray]),
-            backgroundColorsDarkTheme: .single(reusableBackgroundColors.overcastColors(for: .dark)),
-            backgroundColorsLightTheme: .single(reusableBackgroundColors.overcastColors(for: .light))),
-
-        45: WeatherCondition( // Fog
-            description: "Туман",
+            iconColor: .same([BaseColors.gray]),
+            backgroundColorsDarkTheme: .single(BaseColors.overcastDark),
+            backgroundColorsLightTheme: .single(BaseColors.overcastLight)),
+        
+        45: WeatherCondition( //Fog
+            description: BaseText.WeatherCondition.fog,
             sfSymbolName: .same("cloud.fog.fill"),
-            iconColor: .same([.gray, .secondary]),
-            backgroundColorsDarkTheme: .single(reusableBackgroundColors.overcastColors(for: .dark)),
-            backgroundColorsLightTheme: .single(reusableBackgroundColors.overcastColors(for: .light))),
-
-        50: WeatherCondition( // Drizzle
-            description: "Моросящий дождь",
+            iconColor: .same([BaseColors.gray, BaseColors.secondary]),
+            backgroundColorsDarkTheme: .single(BaseColors.overcastDark),
+            backgroundColorsLightTheme: .single(BaseColors.overcastLight)),
+        
+        50: WeatherCondition( //Drizzle
+            description: BaseText.WeatherCondition.drizzle,
             sfSymbolName: .same("cloud.drizzle.fill"),
-            iconColor: .same([.gray, .cyan]),
-            backgroundColorsDarkTheme: .single(reusableBackgroundColors.rainColors(for: .dark)),
-            backgroundColorsLightTheme: .single(reusableBackgroundColors.rainColors(for: .light))),
-
-        60: WeatherCondition( // Rain
-            description: "Дождь",
+            iconColor: .same([BaseColors.gray, BaseColors.cyan]),
+            backgroundColorsDarkTheme: .single(BaseColors.rainDark),
+            backgroundColorsLightTheme: .single(BaseColors.rainLight)),
+        
+        60: WeatherCondition( //Rain
+            description: BaseText.WeatherCondition.rain,
             sfSymbolName: .same("cloud.rain.fill"),
-            iconColor: .same([.gray, .blue]),
-            backgroundColorsDarkTheme: .single(reusableBackgroundColors.rainColors(for: .dark)),
-            backgroundColorsLightTheme: .single(reusableBackgroundColors.rainColors(for: .light))),
-
-        65: WeatherCondition( // Heavy Rain
-            description: "Ливень",
+            iconColor: .same([BaseColors.gray, BaseColors.blue]),
+            backgroundColorsDarkTheme: .single(BaseColors.rainDark),
+            backgroundColorsLightTheme: .single(BaseColors.rainLight)),
+        
+        65: WeatherCondition( //Heavy Rain
+            description: BaseText.WeatherCondition.heavyRain,
             sfSymbolName: .same("cloud.heavyrain.fill"),
-            iconColor: .same([.gray, .blue]),
-            backgroundColorsDarkTheme: .single(reusableBackgroundColors.rainColors(for: .dark)),
-            backgroundColorsLightTheme: .single(reusableBackgroundColors.rainColors(for: .light))),
-
-        67: WeatherCondition( // Sleet
-            description: "Мокрый снег",
+            iconColor: .same([BaseColors.gray, BaseColors.blue]),
+            backgroundColorsDarkTheme: .single(BaseColors.rainDark),
+            backgroundColorsLightTheme: .single(BaseColors.rainLight)),
+        
+        67: WeatherCondition( //Sleet
+            description: BaseText.WeatherCondition.sleet,
             sfSymbolName: .same("cloud.sleet.fill"),
-            iconColor: .same([.gray, .teal]),
-            backgroundColorsDarkTheme: .single(reusableBackgroundColors.snowColors(for: .dark)),
-            backgroundColorsLightTheme: .single(reusableBackgroundColors.snowColors(for: .light))),
-
-        70: WeatherCondition( // Snow
-            description: "Снег",
+            iconColor: .same([BaseColors.gray, BaseColors.teal]),
+            backgroundColorsDarkTheme: .single(BaseColors.snowDark),
+            backgroundColorsLightTheme: .single(BaseColors.snowLight)),
+        
+        70: WeatherCondition( //Snow
+            description: BaseText.WeatherCondition.snow,
             sfSymbolName: .same("snowflake"),
-            iconColor: .same([.cyan]),
-            backgroundColorsDarkTheme: .single(reusableBackgroundColors.snowColors(for: .dark)),
-            backgroundColorsLightTheme: .single(reusableBackgroundColors.snowColors(for: .light))),
-
-        95: WeatherCondition( // Thunderstorm
-            description: "Гроза",
+            iconColor: .same([BaseColors.cyan]),
+            backgroundColorsDarkTheme: .single(BaseColors.snowDark),
+            backgroundColorsLightTheme: .single(BaseColors.snowLight)),
+        
+        95: WeatherCondition( //Thunderstorm
+            description: BaseText.WeatherCondition.thunderstorm,
             sfSymbolName: .same("cloud.bolt.rain.fill"),
-            iconColor: .same([.gray, .yellow, .blue]),
-            backgroundColorsDarkTheme: .single(
-                [Color(red: 0.14, green: 0.13, blue: 0.20), Color(red: 0.08, green: 0.07, blue: 0.13)]),
-            backgroundColorsLightTheme: .single(
-                [Color(red: 0.89, green: 0.90, blue: 0.96), Color(red: 0.94, green: 0.95, blue: 0.98)]))
-
+            iconColor: .same([BaseColors.gray, BaseColors.yellow, BaseColors.blue]),
+            backgroundColorsDarkTheme: .single(BaseColors.thunderstormDark),
+            backgroundColorsLightTheme: .single(BaseColors.thunderstormLight))
+    
     ]
-
-    private struct reusableBackgroundColors {
-        public static func overcastColors(for colorScheme: ColorScheme) -> [Color] {
-            if colorScheme == .dark {
-                return [Color(white: 0.16), Color(white: 0.10)]
-            } else {
-                return [Color(red: 0.91, green: 0.93, blue: 0.95), Color(red: 0.95, green: 0.96, blue: 0.98)]
-            }
-        }
-
-        public static func rainColors(for colorScheme: ColorScheme) -> [Color] {
-            if colorScheme == .dark {
-                return [Color(red: 0.11, green: 0.15, blue: 0.22), Color(red: 0.07, green: 0.09, blue: 0.14)]
-            } else {
-                return [Color(red: 0.88, green: 0.92, blue: 0.96), Color(red: 0.94, green: 0.96, blue: 0.98)]
-            }
-        }
-
-        public static func snowColors(for colorScheme: ColorScheme) -> [Color] {
-            if colorScheme == .dark {
-                return [Color(red: 0.13, green: 0.17, blue: 0.21), Color(red: 0.08, green: 0.11, blue: 0.14)]
-            } else {
-                return [Color(red: 0.91, green: 0.95, blue: 0.99), Color(red: 0.96, green: 0.98, blue: 1.0)]
-            }
-        }
-    }
 }
 
 extension Image {

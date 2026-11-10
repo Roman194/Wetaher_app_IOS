@@ -8,8 +8,8 @@ public struct WeatherMainView: View {
     public let onPullToRefresh: () -> Void
 
     private let columns = [ // Мб это можно сделать получше?
-        GridItem(.flexible(), spacing: 12),
-        GridItem(.flexible(), spacing: 12)
+        repeating: GridItem(.flexible(), spacing: BaseNumeral.defaultSpacing),
+        count: BaseNumeral.gridColumnCount
     ]
 
     public init(
@@ -30,7 +30,9 @@ public struct WeatherMainView: View {
         let todayDaily = currentForecast.dailyWeather.first
 
         ScrollView(showsIndicators: false) {
-            VStack(spacing: 16) {
+            VStack(spacing: BaseNumeral.sectionSpacing) {
+                
+
                 // Индикатор офлайн-режима с давностью обновления кэша
                 if isFromCache {
                     HStack(spacing: 6) {
@@ -72,7 +74,7 @@ public struct WeatherMainView: View {
                 )
 
                 // Сетка метрик в системе
-                LazyVGrid(columns: columns, spacing: 12) {
+                LazyVGrid(columns: columns, spacing: BaseNumeral.defaultSpacing) {
                     WindMetricCard(
                         speedMps: current.windSpeed,
                         directionString: current.windDirection,
@@ -111,8 +113,8 @@ public struct WeatherMainView: View {
                     )
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.visibility)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
+                .padding(.bottom, BaseNumeral.screenBottomPadding)
             }
         }
         .accessibilityIdentifier(AccessibilityIdentifiers.Main.scrollView)

@@ -85,11 +85,11 @@ public struct CityListView: View {
                     addCityButton
                 }
             }
-            .navigationTitle("Избранные города")
+            .navigationTitle(BaseText.Cities.listTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Готово") {
+                    Button(BaseText.Common.done) {
                         dismiss()
                     }
                     .fontWeight(.medium)
@@ -117,12 +117,12 @@ public struct CityListView: View {
 
     @ViewBuilder
     private var loadingView: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: BaseNumeral.sectionSpacing) {
             ProgressView()
                 .controlSize(.large)
-            Text("Загрузка данных...")
+            Text(BaseText.Common.loadingData)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Colors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -130,20 +130,20 @@ public struct CityListView: View {
     @ViewBuilder
     private var failView: some View {
         if citiesToDisplay.isEmpty {
-            VStack(spacing: 12) {
+            VStack(spacing: BaseNumeral.defaultSpacing) {
                 ContentUnavailableView(
-                    "Ошибка загрузки",
+                    BaseText.Cities.loadErrorTitle,
                     systemImage: "exclamationmark.triangle",
-                    description: Text("Не удалось загрузить данные о погоде для сохранённых городов.")
+                    description: Text(BaseText.Cities.loadErrorMessage)
                 )
 
                 if !savedCitiesWeatherError.isEmpty {
-                    VStack(spacing: 4) {
+                    VStack(spacing: BaseNumeral.textSpacing) {
                         ForEach(Array(savedCitiesWeatherError.keys.sorted()), id: \.self) { cityName in
                             if let error = savedCitiesWeatherError[cityName] {
-                                Text("\(cityName): \(error.errorDescription)")
+                                Text(BaseText.Cities.error(city: cityName, description: error.errorDescription))
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Colors.secondaryText)
                             }
                         }
                     }
@@ -154,16 +154,16 @@ public struct CityListView: View {
         } else {
             List {
                 Section {
-                    HStack(spacing: 8) {
+                    HStack(spacing: BaseNumeral.smallSpacing) {
                         Image(systemName: "exclamationmark.triangle.fill")
-                            .foregroundStyle(.orange)
-                        Text("Не удалось обновить данные о погоде")
+                            .foregroundStyle(Colors.errorIndicator)
+                        Text(BaseText.Cities.refreshErrorMessage)
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Colors.secondaryText)
                     }
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
-                    .padding(.vertical, 4)
+                    .padding(.vertical, BaseNumeral.textSpacing)
                 }
 
                 // Оптимизировать!
@@ -174,7 +174,12 @@ public struct CityListView: View {
                     CityCard(city: city, forecast: forecast, error: error)
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .listRowInsets(EdgeInsets(
+                            top: BaseNumeral.listRowVerticalInset,
+                            leading: BaseNumeral.screenHorizontalPadding,
+                            bottom: BaseNumeral.listRowVerticalInset,
+                            trailing: BaseNumeral.screenHorizontalPadding
+                        ))
                         .contentShape(Rectangle())
                         .onTapGesture {
                             if forecast != nil {
@@ -188,7 +193,7 @@ public struct CityListView: View {
                                 Button(role: .destructive) {
                                     onDeleteCity(city)
                                 } label: {
-                                    Label("Удалить", systemImage: "trash")
+                                    Label(BaseText.Common.delete, systemImage: "trash")
                                 }
                             }
                         }
@@ -205,9 +210,9 @@ public struct CityListView: View {
     private var successView: some View {
         if citiesToDisplay.isEmpty { // Есть такая заготовка на всякий случай, хотя п-лю запрещено оставаться без избранных городов
             ContentUnavailableView(
-                "Нет избранных городов",
+                BaseText.Cities.emptyTitle,
                 systemImage: "star.slash",
-                description: Text("Нажмите на кнопку «+» внизу, чтобы найти и добавить города.")
+                description: Text(BaseText.Cities.emptyMessage)
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
@@ -220,7 +225,12 @@ public struct CityListView: View {
                         .accessibilityIdentifier(AccessibilityIdentifiers.CityList.cityCard(city.name))
                         .listRowSeparator(.hidden)
                         .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+                        .listRowInsets(EdgeInsets(
+                            top: BaseNumeral.listRowVerticalInset,
+                            leading: BaseNumeral.screenHorizontalPadding,
+                            bottom: BaseNumeral.listRowVerticalInset,
+                            trailing: BaseNumeral.screenHorizontalPadding
+                        ))
                         .contentShape(Rectangle())
                         .onTapGesture {
                             if forecast != nil {
@@ -233,7 +243,7 @@ public struct CityListView: View {
                                 Button(role: .destructive) {
                                     onDeleteCity(city)
                                 } label: {
-                                    Label("Удалить", systemImage: "trash")
+                                    Label(BaseText.Common.delete, systemImage: "trash")
                                 }
                             }
                         }
@@ -248,11 +258,11 @@ public struct CityListView: View {
 
     @ViewBuilder
     private var searchView: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: BaseNumeral.defaultSpacing) {
             ProgressView()
-            Text("Поиск...")
+            Text(BaseText.Common.searching)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(Colors.secondaryText)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -264,13 +274,18 @@ public struct CityListView: View {
             Image(systemName: "plus")
                 .font(.title2)
                 .fontWeight(.semibold)
-                .foregroundStyle(.white)
-                .frame(width: 56, height: 56)
-                .background(Color.blue)
+                .foregroundStyle(Colors.onAccent)
+                .frame(width: BaseNumeral.controlSize, height: BaseNumeral.controlSize)
+                .background(Colors.accent)
                 .clipShape(Circle())
-                .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                .shadow(
+                    color: Colors.shadow,
+                    radius: BaseNumeral.floatingButtonShadowRadius,
+                    x: 0,
+                    y: BaseNumeral.floatingButtonShadowY
+                )
         }
         .accessibilityIdentifier(AccessibilityIdentifiers.CityList.addButton)
-        .padding(.bottom, 16)
+        .padding(.bottom, BaseNumeral.bottomButtonPadding)
     }
 }

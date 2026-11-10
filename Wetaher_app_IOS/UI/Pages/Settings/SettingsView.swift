@@ -9,26 +9,10 @@ import SwiftUI
 
 public struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedTheme: AppThemeProps
-    public let onColorThemeChange: (AppThemeProps) -> Void
+    @Bindable private var settingsVM: SettingsViewModel
 
-    public init(
-        currentColorScheme: ColorScheme? = nil,
-        onColorThemeChange: @escaping (AppThemeProps) -> Void
-    ) {
-        self.onColorThemeChange = onColorThemeChange
-        let initialTheme = AppThemeProps.allCases.first(where: { $0.colorScheme == currentColorScheme }) ?? .system
-        self._selectedTheme = State(initialValue: initialTheme)
-    }
-
-    public init(
-        settingsVM: SettingsViewModel,
-        onColorThemeChange: ((AppThemeProps) -> Void)? = nil
-    ) {
-        self.onColorThemeChange = onColorThemeChange ?? { theme in
-            settingsVM.appTheme = theme
-        }
-        self._selectedTheme = State(initialValue: settingsVM.appTheme)
+    public init(settingsVM: SettingsViewModel) {
+        self.settingsVM = settingsVM
     }
 
     public var body: some View {
@@ -36,36 +20,33 @@ public struct SettingsView: View {
             Form {
                 // Внешний вид
                 Section {
-                    Picker("Тема оформления", selection: $selectedTheme) {
+                    Picker(BaseText.Settings.themePicker, selection: $settingsVM.appTheme) {
                         ForEach(AppThemeProps.allCases, id: \.title) { theme in
                             Text(theme.title).tag(theme)
                         }
                     }
                     .pickerStyle(.segmented)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Settings.themePicker)
-                    .onChange(of: selectedTheme) { _, newTheme in
-                        onColorThemeChange(newTheme)
-                    }
                 } header: {
-                    Text("Тема")
+                    Text(BaseText.Settings.themeSection)
                 }
 
                 // Единицы измерения
                 Section {
-                    LabeledContent("Температура", value: "°C (Цельсий)")
-                    LabeledContent("Скорость ветра", value: "м/с (Метры в секунду)")
-                    LabeledContent("Давление", value: "гПа (Гектопаскали)")
-                    LabeledContent("Видимость", value: "км (Километры)")
+                    LabeledContent(BaseText.Settings.temperature, value: BaseText.Settings.temperatureUnit)
+                    LabeledContent(BaseText.Settings.windSpeed, value: BaseText.Settings.windSpeedUnit)
+                    LabeledContent(BaseText.Settings.pressure, value: BaseText.Settings.pressureUnit)
+                    LabeledContent(BaseText.Settings.visibility, value: BaseText.Settings.visibilityUnit)
                 } header: {
-                    Text("Единицы измерения")
+                    Text(BaseText.Settings.unitsSection)
                 }
 
             }
-            .navigationTitle("Настройки")
+            .navigationTitle(BaseText.Settings.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Готово") {
+                    Button(BaseText.Common.done) {
                         dismiss()
                     }
                     .fontWeight(.medium)
@@ -73,6 +54,5 @@ public struct SettingsView: View {
                 }
             }
         }
-        .preferredColorScheme(selectedTheme.colorScheme)
     }
 }

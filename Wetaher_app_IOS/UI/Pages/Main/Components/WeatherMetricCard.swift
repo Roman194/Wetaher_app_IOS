@@ -24,24 +24,24 @@ public struct WeatherMetricCard<Content: View>: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack(spacing: 5) {
+        VStack(alignment: .leading, spacing: BaseNumeral.smallSpacing) {
+            HStack(spacing: BaseNumeral.textSpacing) {
                 Image(systemName: icon)
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
                 Text(title.uppercased())
                     .font(.caption2)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
             }
 
             content
         }
-        .padding(12)
+        .padding(BaseNumeral.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(minHeight: 110)
-        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .frame(minHeight: BaseNumeral.metricCardMinHeight)
+        .background(Colors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: BaseNumeral.cardCornerRadius, style: .continuous))
     }
 }
 
@@ -60,23 +60,23 @@ public struct WindMetricCard: View {
     public var body: some View {
         // let directionName = WeatherUIHelper.degreesToDirection(direction)
 
-        WeatherMetricCard(icon: "wind", title: "Ветер") {
-            VStack(alignment: .leading, spacing: 4) {
+        WeatherMetricCard(icon: "wind", title: BaseText.Metrics.wind) {
+            VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                 Text(MetricFormatter.windSpeed(speedMps))
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Colors.primaryText)
 
-                Text("Направление: \(direction)")
+                Text(BaseText.Metrics.windDirection(direction))
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
 
-                Spacer(minLength: 2)
+                Spacer(minLength: BaseNumeral.textSpacing)
 
                 if let gust = gustMps {
-                    Text("Порывы до \(MetricFormatter.windSpeed(gust))")
+                    Text(BaseText.Metrics.windGusts(MetricFormatter.windSpeed(gust)))
                         .font(.caption)
-                        .foregroundStyle(.tertiary)
+                        .foregroundStyle(Colors.tertiaryText)
                 }
             }
         }
@@ -96,22 +96,22 @@ public struct PressureMetricCard: View {
     }
 
     public var body: some View {
-        WeatherMetricCard(icon: "gauge.with.dots.needle.bottom.50percent", title: "Давление") {
-            VStack(alignment: .leading, spacing: 4) {
+        WeatherMetricCard(icon: "gauge.with.dots.needle.bottom.50percent", title: BaseText.Metrics.pressure) {
+            VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                 Text(MetricFormatter.pressure(pressureHpa))
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Colors.primaryText)
 
-                Spacer(minLength: 2)
+                Spacer(minLength: BaseNumeral.textSpacing)
 
                 Text(pressureStatus)
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
 
                 Text(MetricFormatter.pressureMmHg(pressureMmHg))
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(Colors.tertiaryText)
             }
         }
     }
@@ -128,18 +128,18 @@ public struct HumidityMetricCard: View {
     }
 
     public var body: some View {
-        WeatherMetricCard(icon: "humidity.fill", title: "Влажность") {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("\(humidity)%")
+        WeatherMetricCard(icon: "humidity.fill", title: BaseText.Metrics.humidity) {
+            VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
+                Text(BaseText.Metrics.percent(humidity))
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Colors.primaryText)
 
-                Spacer(minLength: 2)
+                Spacer(minLength: BaseNumeral.textSpacing)
 
-                Text("Точка росы \(MetricFormatter.temperature(dewPoint, showSign: false))")
+                Text(BaseText.Metrics.dewPoint(MetricFormatter.temperature(dewPoint, showSign: false)))
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
             }
         }
     }
@@ -156,18 +156,18 @@ public struct UVMetricCard: View {
     }
 
     public var body: some View {
-        WeatherMetricCard(icon: "sun.max.fill", title: "УФ-индекс") {
-            VStack(alignment: .leading, spacing: 4) {
+        WeatherMetricCard(icon: "sun.max.fill", title: BaseText.Metrics.uvIndex) {
+            VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                 Text(String(format: "%.1f", uvIndex))
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Colors.primaryText)
 
-                Spacer(minLength: 2)
+                Spacer(minLength: BaseNumeral.textSpacing)
 
                 Text(uvStatus)
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
             }
         }
     }
@@ -184,13 +184,13 @@ public struct SunTimesMetricCard: View {
     }
 
     public var body: some View {
-        WeatherMetricCard(icon: "sunrise.fill", title: "Восход и закат") {
-            VStack(alignment: .leading, spacing: 4) {
+        WeatherMetricCard(icon: "sunrise.fill", title: BaseText.Metrics.sunTimes) {
+            VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                 HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Восход")
+                    VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
+                        Text(BaseText.Metrics.sunrise)
                             .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Colors.secondaryText)
                         Text(sunrise)
                             .font(.subheadline)
                             .fontWeight(.medium)
@@ -198,18 +198,18 @@ public struct SunTimesMetricCard: View {
 
                     Spacer()
 
-                    VStack(alignment: .trailing, spacing: 2) {
-                        Text("Закат")
+                    VStack(alignment: .trailing, spacing: BaseNumeral.textSpacing) {
+                        Text(BaseText.Metrics.sunset)
                             .font(.caption2)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Colors.secondaryText)
                         Text(sunset)
                             .font(.subheadline)
                             .fontWeight(.medium)
                     }
                 }
-                .padding(.top, 4)
+                .padding(.top, BaseNumeral.textSpacing)
 
-                Spacer(minLength: 2)
+                Spacer(minLength: BaseNumeral.textSpacing)
             }
         }
     }
@@ -224,18 +224,18 @@ public struct VisibilityMetricCard: View {
     }
 
     public var body: some View {
-        WeatherMetricCard(icon: "eye.fill", title: "Видимость") {
-            VStack(alignment: .leading, spacing: 4) {
+        WeatherMetricCard(icon: "eye.fill", title: BaseText.Metrics.visibility) {
+            VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                 Text(MetricFormatter.visibility(visibilityMeters))
                     .font(.title2)
                     .fontWeight(.bold)
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(Colors.primaryText)
 
-                Spacer(minLength: 2)
+                Spacer(minLength: BaseNumeral.textSpacing)
 
                 Text(WeatherUIHelper.visibilityStatus(for: visibilityMeters))
                     .font(.footnote)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
             }
         }
     }

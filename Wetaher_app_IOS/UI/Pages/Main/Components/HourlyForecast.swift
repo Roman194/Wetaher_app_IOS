@@ -18,23 +18,23 @@ public struct HourlyForecast: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: BaseNumeral.smallSpacing) {
             // Заголовок
-            HStack(spacing: 6) {
+            HStack(spacing: BaseNumeral.smallSpacing) {
                 Image(systemName: "clock")
                     .font(.caption2)
-                    .foregroundStyle(.secondary)
-                Text("ПОЧАСОВОЙ ПРОГНОЗ")
+                    .foregroundStyle(Colors.secondaryText)
+                Text(BaseText.Main.hourlyTitle)
                     .font(.caption2)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
+            .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
+            .padding(.top, BaseNumeral.cardPadding)
 
             // Карусель часов
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 18) {
+                HStack(spacing: BaseNumeral.wideSpacing) {
                     ForEach(Array(hourly.enumerated()), id: \.offset) { _, item in
                         let symbolName: String = {
                             switch item.weatherCondition.sfSymbolName {
@@ -53,43 +53,43 @@ public struct HourlyForecast: View {
                             }
                         }()
 
-                        VStack(spacing: 8) {
+                        VStack(spacing: BaseNumeral.smallSpacing) {
                             Text(item.hour) // index == 0 ? "Сейчас" :
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Colors.secondaryText)
 
                             Image(systemName: symbolName)
                                 .applyColors(iconColors)
                                 .font(.body)
-                                .frame(height: 22)
+                                .frame(height: BaseNumeral.iconHeight)
 
                             if item.precipProb > 0 {
-                                HStack(spacing: 2) {
+                                HStack(spacing: BaseNumeral.textSpacing) {
                                     Image(systemName: "drop.fill")
-                                        .font(.system(size: 8))
-                                    Text("\(item.precipProb)%")
-                                        .font(.system(size: 10, weight: .bold))
+                                        .font(.system(size: BaseNumeral.precipitationIconFontSize))
+                                    Text(BaseText.Metrics.percent(item.precipProb))
+                                        .font(.system(size: BaseNumeral.captionFontSize, weight: .bold))
                                 }
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(Colors.precipitation)
                             } else {
-                                Text(" ")
-                                    .font(.system(size: 10))
+                                Text(BaseText.Main.hourlyPlaceholder)
+                                    .font(.system(size: BaseNumeral.captionFontSize))
                             }
 
                             Text(MetricFormatter.temperature(item.temperature))
                                 .font(.callout)
                                 .fontWeight(.medium)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Colors.primaryText)
                         }
-                        .frame(minWidth: 48)
+                        .frame(minWidth: BaseNumeral.controlSize)
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 12)
+                .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
+                .padding(.bottom, BaseNumeral.cardPadding)
             }
         }
-        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .padding(.horizontal, 16)
+        .background(Colors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: BaseNumeral.cardCornerRadius, style: .continuous))
+        .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
     }
 }

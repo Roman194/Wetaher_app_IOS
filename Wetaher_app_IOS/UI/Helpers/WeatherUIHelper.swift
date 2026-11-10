@@ -11,7 +11,7 @@ import SwiftUI
 public enum WeatherUIHelper {
     /// Определение текстового направления ветра по градусам (0-360)
     public static func degreesToDirection(_ degrees: Int) -> String {
-        let directions = ["С", "СВ", "В", "ЮВ", "Ю", "ЮЗ", "З", "СЗ"]
+        let directions = BaseText.WindDirection.all
         let normalized = ((degrees % 360) + 360) % 360
         let index = Int(round(Double(normalized) / 45.0)) % 8
         return directions[index]
@@ -21,26 +21,26 @@ public enum WeatherUIHelper {
     public static func uvStatus(for index: Double) -> UVStatus { // Color вообще используется хоть где-то?
         switch index {
         case ..<3.0:
-            return UVStatus(descripiton: "Низкий", color: .green)
+            return UVStatus(descripiton: BaseText.UV.low, color: BaseColors.green)
         case 3.0..<6.0:
-            return UVStatus(descripiton: "Умеренный", color: .yellow)
+            return UVStatus(descripiton: BaseText.UV.moderate, color: BaseColors.yellow)
         case 6.0..<8.0:
-            return UVStatus(descripiton: "Высокий", color: .orange)
+            return UVStatus(descripiton: BaseText.UV.high, color: BaseColors.orange)
         case 8.0..<11.0:
-            return UVStatus(descripiton: "Очень высокий", color: .red)
+            return UVStatus(descripiton: BaseText.UV.veryHigh, color: BaseColors.red)
         default:
-            return UVStatus(descripiton: "Экстремальный", color: .purple)
+            return UVStatus(descripiton: BaseText.UV.extreme, color: BaseColors.purple)
         }
     }
 
     /// Описание статуса атмосферного давления
     public static func pressureStatus(for pressureHpa: Double) -> String {
         if pressureHpa >= 1010 && pressureHpa <= 1018 {
-            return "Нормальное"
+            return BaseText.Pressure.normal
         } else if pressureHpa > 1018 {
-            return "Повышенное"
+            return BaseText.Pressure.high
         } else {
-            return "Пониженное"
+            return BaseText.Pressure.low
         }
     }
 
@@ -57,12 +57,16 @@ public enum WeatherUIHelper {
 
     /// Описание статуса видимости
     public static func visibilityStatus(for km: Double) -> String {
-        return km >= 10.0 ? "Отличная" : "Ограниченная"
+        return km >= 10.0 ? BaseText.Visibility.excellent : BaseText.Visibility.limited
     }
 
-    /// Извлечение времени "ЧЧ:мм" из строки формата "YYYY-MM-DDTHH:mm".
-    /// Open-Meteo вызывается с `timezone=auto`, поэтому время в ответе уже местное для города.
-    public static func formatTimeString(_ dateString: String) -> String {
+    /// Извлечение времени "ЧЧ:мм" из строки формата "YYYY-MM-DDTHH:mm"
+    public static func formatTimeString(_ dateString: String, index: Int = 1, timeOffset: Int = 0) -> String {
+        
+        if(index == timeOffset){
+            return BaseText.Date.now
+        }
+        
         let timePart = dateString.components(separatedBy: "T").last ?? dateString
         return String(timePart.prefix(5))
     }
@@ -101,12 +105,15 @@ public enum WeatherUIHelper {
 
             let currentDatePart = currentDT.components(separatedBy: "T").first ?? currentDT
 
-            if datePart == currentDatePart {
-                return "Сегодня"
-            } else if datePart > currentDatePart {
-                return "Завтра"
-            } else {
-                return "Вчера"
+                if gmtDay == localDay {
+                    return BaseText.Date.today
+                } else {
+                    if gmtDay > localDay{
+                        return BaseText.Date.tomorrow
+                    }else{
+                        return BaseText.Date.yesterday
+                    }
+                }
             }
         }
 

@@ -21,7 +21,7 @@ public struct WeatherBackground: View {
     public var body: some View {
         ZStack {
             // Базовый цвет подложки
-            Color(uiColor: .systemGroupedBackground)
+            Colors.screenBackground
                 .ignoresSafeArea()
 
             // Градиент погодных условий
@@ -42,8 +42,8 @@ public struct WeatherBackground: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.35), value: condition)
-                .animation(.easeInOut(duration: 0.35), value: colorScheme)
+                .animation(.easeInOut(duration: BaseNumeral.backgroundAnimationDuration), value: condition)
+                .animation(.easeInOut(duration: BaseNumeral.backgroundAnimationDuration), value: colorScheme)
             }
         }
     }

@@ -16,19 +16,19 @@ public struct AppThemeProps: Equatable, Hashable {
 extension AppThemeProps {
     public static let system = AppThemeProps(
         id: "system",
-        title: "Системная",
+        title: BaseText.Theme.system,
         colorScheme: nil
     )
 
     public static let light = AppThemeProps(
         id: "light",
-        title: "Светлая",
+        title: BaseText.Theme.light,
         colorScheme: .light
     )
 
     public static let dark = AppThemeProps(
         id: "dark",
-        title: "Тёмная",
+        title: BaseText.Theme.dark,
         colorScheme: .dark
     )
 

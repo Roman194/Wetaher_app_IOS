@@ -16,22 +16,22 @@ public struct DailyForecast: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: BaseNumeral.defaultSpacing) {
             // Заголовок
-            HStack(spacing: 6) {
+            HStack(spacing: BaseNumeral.smallSpacing) {
                 Image(systemName: "calendar")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-                Text("ПРОГНОЗ НА 7 ДНЕЙ")
+                    .foregroundStyle(Colors.secondaryText)
+                Text(BaseText.Main.dailyTitle)
                     .font(.caption)
                     .fontWeight(.semibold)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Colors.secondaryText)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 14)
+            .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
+            .padding(.top, BaseNumeral.cardPadding)
 
             // Список дней
-            VStack(spacing: 10) {
+            VStack(spacing: BaseNumeral.smallSpacing) {
                 ForEach(Array(daily.enumerated()), id: \.offset) { index, item in
                     let symbolName: String = {
                         switch item.weatherCondition.sfSymbolName {
@@ -52,66 +52,66 @@ public struct DailyForecast: View {
 
                     HStack(alignment: .center) {
                         // День недели и дата
-                        VStack(alignment: .leading, spacing: 2) {
+                        VStack(alignment: .leading, spacing: BaseNumeral.textSpacing) {
                             Text(item.day) // index == 0 ? "Сегодня" :
                                 .font(.body)
                                 .fontWeight(index == 0 ? .semibold : .medium)
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(Colors.primaryText)
 
                             Text(item.date)
                                 .font(.caption2)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(Colors.secondaryText)
                         }
-                        .frame(width: 85, alignment: .leading)
+                        .frame(width: BaseNumeral.columnWidth, alignment: .leading)
 
                         Spacer()
 
                         // Иконка погоды и вероятность осадков
-                        HStack(spacing: 6) {
+                        HStack(spacing: BaseNumeral.smallSpacing) {
                             Image(systemName: symbolName)
                                 .applyColors(iconColors)
                                 .font(.title3)
 
                             if item.precipProbabilityMean > 0 {
-                                HStack(spacing: 2) {
+                                HStack(spacing: BaseNumeral.textSpacing) {
                                     Image(systemName: "drop.fill")
-                                        .font(.system(size: 8))
-                                    Text("\(item.precipProbabilityMean)%")
-                                        .font(.system(size: 11, weight: .semibold))
+                                        .font(.system(size: BaseNumeral.precipitationIconFontSize))
+                                    Text(BaseText.Metrics.percent(item.precipProbabilityMean))
+                                        .font(.system(size: BaseNumeral.captionFontSize, weight: .semibold))
                                 }
-                                .foregroundStyle(.blue)
+                                .foregroundStyle(Colors.precipitation)
                             }
                         }
-                        .frame(minWidth: 60, alignment: .center)
+                        .frame(minWidth: BaseNumeral.controlSize, alignment: .center)
 
                         Spacer()
 
                         // Температуры: максимум и минимум
-                        HStack(spacing: 12) {
+                        HStack(spacing: BaseNumeral.defaultSpacing) {
                             Text(MetricFormatter.temperature(item.tempMax))
                                 .font(.system(.body, design: .rounded, weight: .semibold))
-                                .foregroundStyle(.primary)
-                                .frame(width: 44, alignment: .trailing)
+                                .foregroundStyle(Colors.primaryText)
+                                .frame(width: BaseNumeral.columnWidth, alignment: .trailing)
 
                             Text(MetricFormatter.temperature(item.tempMin))
                                 .font(.system(.body, design: .rounded, weight: .regular))
-                                .foregroundStyle(.secondary)
-                                .frame(width: 44, alignment: .trailing)
+                                .foregroundStyle(Colors.secondaryText)
+                                .frame(width: BaseNumeral.columnWidth, alignment: .trailing)
                         }
                     }
-                    .padding(.vertical, 2)
+                    .padding(.vertical, BaseNumeral.textSpacing)
 
                     if index < daily.count - 1 {
                         Divider()
-                            .opacity(0.4)
+                            .opacity(BaseNumeral.dividerOpacity)
                     }
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 14)
+            .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
+            .padding(.bottom, BaseNumeral.cardPadding)
         }
-        .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.8))
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .padding(.horizontal, 16)
+        .background(Colors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: BaseNumeral.largeCardCornerRadius, style: .continuous))
+        .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
     }
 }
