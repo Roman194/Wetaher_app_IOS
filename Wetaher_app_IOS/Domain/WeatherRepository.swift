@@ -9,6 +9,8 @@
 public protocol WeatherRepository {
     /// Возвращает актуальные данные из сети или последний сохранённый снимок из БД.
     func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherSnapshot, WeatherErrorResponse>
+    
+    func LoadFavoriteCities() -> [CityEntity]
 
     func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError>
 }

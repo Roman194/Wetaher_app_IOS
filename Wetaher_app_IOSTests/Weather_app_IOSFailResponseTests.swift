@@ -15,12 +15,14 @@ final class Wetaher_app_IOSFailResponseTests: XCTestCase {
     var weatherVM: WeatherMainViewModel!
     var cityListVM: CityListViewModel!
     var weatherRep: WeatherRepository!
+    var preferences: UserPreferencesStoring!
     
     override func setUp() {
         super.setUp()
+        preferences = UserPreferencesStore()
         weatherRep = MockRepositoryFailResponseImpl()
-        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep)
-        cityListVM = CityListViewModel(weatherRepo: weatherRep)
+        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep, preferences: preferences)
+        cityListVM = CityListViewModel(weatherRepo: weatherRep, preferences: preferences)
         
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -55,7 +57,8 @@ final class Wetaher_app_IOSFailResponseTests: XCTestCase {
         XCTAssertEqual(cityListVM.cityListWeatherUIState, .Success)
         XCTAssertEqual(cityListVM.addCityUIState, .Success([]))
         XCTAssertEqual(cityListVM.savedCitiesWeather.first?.city, .moscow)
-        XCTAssertEqual(cityListVM.savedCitiesWeatherError.count, 1)
+        //cityListVM.savedCitiesWeatherError.map{ print($0.key)}
+        XCTAssertEqual(cityListVM.savedCitiesWeatherError.count, cityListVM.savedCities.count - 1)
     }
     
     @MainActor

@@ -16,7 +16,7 @@ public class MockRepositoryImpl: WeatherRepository {
             self.currentForecast = currentWeather
         }
 
-    public func GetWeatherForSelectedCity(for city: Wetaher_app_IOS.City) async -> Result<Wetaher_app_IOS.WeatherResponse, Wetaher_app_IOS.WeatherErrorResponse> {
+    public func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherSnapshot, WeatherErrorResponse> {
 
         try? await Task.sleep(nanoseconds: 100_000)
 
@@ -37,14 +37,14 @@ public class MockRepositoryImpl: WeatherRepository {
             default: .moscowWeatherResp
             }
 
-        return .success(currentForecast)
+        return .success(WeatherSnapshot(entity: currentForecast.toEntity(city: city), source: .cache))
     }
 
-    public func LoadFavoriteCities() -> [Wetaher_app_IOS.City] {
-        return City.defaultFavorites
+    public func LoadFavoriteCities() -> [CityEntity] {
+        return CityEntity.defaultFavorites
     }
 
-    public func SearchCities(query: String) async -> Result<[Wetaher_app_IOS.CityResponse], Wetaher_app_IOS.CityResponseError> {
+    public func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError> {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if trimmed.isEmpty { return .failure(CityResponseError(errorId: 50, errorDescription: "Wrong city")) }
 
@@ -55,7 +55,7 @@ public class MockRepositoryImpl: WeatherRepository {
 
         return .success(
             avaliableCities.map({city
-                    in city.ToResponse()
+                in city.ToEntity().ToResponse()
                 }
             )
         )

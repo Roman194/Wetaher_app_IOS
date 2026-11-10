@@ -162,7 +162,19 @@ extension City {
     public static let malmo = CityEntity.malmo.toUI()
     public static let hong_Kong = CityEntity.hong_Kong.toUI()
 
+    public static let defaultFavorites: [City] = CityEntity.defaultFavorites.map{ $0.toUI() }
     public static let avaliableCities: [City] = CityEntity.avaliableCities.map { $0.toUI() }
+    
+    func ToEntity() -> CityEntity{
+        CityEntity(
+            id: id,
+            name: name,
+            country: country,
+            latitude: latitude,
+            longitude: longitude,
+            timezone: timezone
+        )
+    }
 }
 
 extension ForecastUI{

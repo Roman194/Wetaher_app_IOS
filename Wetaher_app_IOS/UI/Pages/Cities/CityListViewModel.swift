@@ -18,14 +18,7 @@ public class CityListViewModel {
     }
     public var savedCitiesWeather: [ForecastUI] = []
     public var savedCitiesWeatherError: [String: WeatherErrorUI] = [:]
-
-//    public var searchQuery: String = "" {
-//        didSet {
-//            searchCities()
-//        }
-//    }
-    //public var searchResults: [City] = []
-    private var searchTask: Task<Void, Never>?
+    public var searchTask: Task<Void, Never>?
     /// Последние результаты поиска в виде сущностей: из них берём город при добавлении.
     private var searchResults: [CityEntity] = []
 
@@ -42,8 +35,9 @@ public class CityListViewModel {
         let storedCities = preferences.favoriteCities
         if storedCities.isEmpty {
             // Первый запуск: приложение не должно остаться без избранных городов.
-            self.savedCityEntities = CityEntity.defaultFavorites
-            preferences.favoriteCities = CityEntity.defaultFavorites
+            var defaultFavorites = weatherRepository.LoadFavoriteCities()
+            self.savedCityEntities = defaultFavorites
+            preferences.favoriteCities = defaultFavorites
         } else {
             self.savedCityEntities = storedCities
         }
@@ -52,36 +46,25 @@ public class CityListViewModel {
         addCityUIState = .Loading
     }
 
-    public func loadSavedCitiesWeather(selectedCityForecast: ForecastUI) {
+    public func loadSavedCitiesWeather(selectedCityForecast: ForecastUI) async {
         let selectedCity = selectedCityForecast.city
 
         var updatedList: [ForecastUI] = []
         savedCitiesWeatherError = [:]
 
-        Task {
-            for city in savedCities { //Cюда прокидывается selectedCity, чтобы лишний раз не запрашивать уже запрошенный город
-                if city.id == selectedCity.id {
-                    updatedList.append(selectedCityForecast)
-                } else {
-                    let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
+        for city in savedCities { //Cюда прокидывается selectedCity, чтобы лишний раз не запрашивать уже запрошенный город
+            if city.id == selectedCity.id {
+                updatedList.append(selectedCityForecast)
+            } else {
+                let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
 
-                    switch weather {
-                    case .success(let snapshot):
-                        updatedList.append(snapshot.entity.toUI())
-                    case .failure(let forecastError):
-                        savedCitiesWeatherError[city.name] = forecastError.toEntity().ToUI()
-                    }
+                switch weather {
+                case .success(let snapshot):
+                    updatedList.append(snapshot.entity.toUI())
+                case .failure(let forecastError):
+                    savedCitiesWeatherError[city.name] = forecastError.toEntity().ToUI()
                 }
             }
-
-            self.savedCitiesWeather = updatedList
-            if !updatedList.isEmpty {
-                cityListWeatherUIState = .Success
-            } else {
-                cityListWeatherUIState = .Fail
-            }
-
-            addCityUIState = .Success([])
         }
 
         self.savedCitiesWeather = updatedList
@@ -92,6 +75,12 @@ public class CityListViewModel {
         }
 
         addCityUIState = .Success([])
+    }
+    
+    public func loadSavedCitiesWeatherWrapper(selectedCityForecast: ForecastUI) {
+        Task {
+            await loadSavedCitiesWeather(selectedCityForecast: selectedCityForecast)
+        }
     }
 
     public func searchCities(query: String) {
@@ -138,22 +127,26 @@ public class CityListViewModel {
     }
 
     /// Добавление города в избранное
-    public func addCity(city: City) {
+    public func addCity(city: City) async {
         guard !isCitySaved(city: city) else { return }
         guard let entity = cityEntity(for: city) else { return }
 
         savedCityEntities.append(entity)
         preferences.favoriteCities = savedCityEntities
 
+        // Подгружаем сводку погоды для добавленного города
+        let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
+        switch weather {
+        case .success(let snapshot):
+            savedCitiesWeather.append(snapshot.entity.toUI())
+        case .failure(let forecastError):
+            savedCitiesWeatherError[city.name] = forecastError.toEntity().ToUI()
+        }
+    }
+    
+    public func addCityWrapper(city: City) {
         Task {
-            // Подгружаем сводку погоды для добавленного города
-            let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
-            switch weather {
-            case .success(let snapshot):
-                savedCitiesWeather.append(snapshot.entity.toUI())
-            case .failure(let forecastError):
-                savedCitiesWeatherError[city.name] = forecastError.toEntity().ToUI()
-            }
+            await addCity(city: city)
         }
     }
 

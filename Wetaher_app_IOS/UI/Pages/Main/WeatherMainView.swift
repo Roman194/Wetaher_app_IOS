@@ -7,9 +7,9 @@ public struct WeatherMainView: View {
     public var cacheAgeDescription: String?
     public let onPullToRefresh: () -> Void
 
-    private let columns = [ // Мб это можно сделать получше?
-        repeating: GridItem(.flexible(), spacing: BaseNumeral.defaultSpacing),
-        count: BaseNumeral.gridColumnCount
+    private let columns = [
+        GridItem(.flexible(), spacing: BaseNumeral.defaultSpacing),
+        GridItem(.flexible(), spacing: BaseNumeral.defaultSpacing)
     ]
 
     public init(

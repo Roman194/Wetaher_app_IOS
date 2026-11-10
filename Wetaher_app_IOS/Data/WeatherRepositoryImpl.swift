@@ -63,6 +63,10 @@ public class WeatherRepositoryImpl: WeatherRepository {
             return .failure(weatherErrorResponse)
         }
     }
+    
+    public func LoadFavoriteCities() -> [CityEntity] {
+        return CityEntity.defaultFavorites
+    }
 
     public func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError> {
         var trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()

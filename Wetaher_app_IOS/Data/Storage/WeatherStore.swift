@@ -33,7 +33,12 @@ public final class WeatherStore {
             print("Не удалось открыть хранилище погоды: \(error)")
             #endif
             let fallback = ModelConfiguration(isStoredInMemoryOnly: true)
-            return try! ModelContainer(for: WeatherRecord.self, configurations: fallback)
+            do{
+                return try ModelContainer(for: WeatherRecord.self, configurations: fallback)
+            } catch{
+                fatalError("Не удалось создать даже in-memory ModelContainer: \(error)")
+            }
+            
         }
     }
 

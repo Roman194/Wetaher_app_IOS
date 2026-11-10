@@ -72,7 +72,7 @@ public enum BaseText {
         public static let emptyMessage = "Нажмите на кнопку «+» внизу, чтобы найти и добавить города."
         public static let searchErrorTitle = "Ошибка поиска"
         public static let searchErrorMessage = "Не удалось выполнить поиск городов. Попробуйте еще раз."
-        public static let previousResults = "Результаты предыдущего поиска"
+        public static let previousResults = "Результаты предыдущего поиска" //Не удалять строку! Будут использоваться в дальнейшем
         public static let searchResults = "Результаты поиска"
         public static let popular = "Популярные города"
         public static let saved = "В избранном"

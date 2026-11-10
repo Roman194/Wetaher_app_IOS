@@ -7,6 +7,7 @@
 import SwiftUI
 
 public struct AppNavStack: View {
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) private var environmentColorScheme
 
     @State private var weatherVM: WeatherMainViewModel
@@ -40,7 +41,7 @@ public struct AppNavStack: View {
 
         let wVM = WeatherMainViewModel(weatherRepo: weatherRepo, preferences: preferences)
         let cVM = CityListViewModel(weatherRepo: weatherRepo, preferences: preferences)
-        let sVM = SettingsViewModel(preferences: preferences)
+        let sVM = SettingsViewModel(weatherRepo: weatherRepo,preferences: preferences)
         _weatherVM = State(initialValue: wVM)
         _cityListVM = State(initialValue: cVM)
         _settingsVM = State(initialValue: sVM)
@@ -92,7 +93,7 @@ public struct AppNavStack: View {
                 onDeleteCity: { city in
                     guard let potenialNewSelectedCity = cityListVM.deleteCity(city: city) else { return }
                     if city.id == weatherVM.selectedCity.id{ //Если был удалён SelectedCity, то меняем его на рандомный сохранённый
-                        weatherVM.selectCity(newCity: .CityWithWeather(potenialNewSelectedCity))
+                        weatherVM.selectCityWrapper(newCity: .CityWithWeather(potenialNewSelectedCity))
                     }
                      },
                 onCityAdd: { city in

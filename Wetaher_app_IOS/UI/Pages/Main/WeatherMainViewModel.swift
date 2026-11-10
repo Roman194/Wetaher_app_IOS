@@ -39,8 +39,10 @@ public class WeatherMainViewModel {
 
         preferences.activeCityID = selectedCity.id
 
-        Task{
-            await loadWeather()
+        if !TestChecker.isRunningTests {
+            Task {// Убирать можно только в случае, если хотите дудосить API
+                await loadWeather()
+            }
         }
 
     }
@@ -55,7 +57,7 @@ public class WeatherMainViewModel {
         return formatter.localizedString(for: cacheUpdatedAt, relativeTo: Date())
     }
 
-    private func loadWeather(addNewCity: Bool = false) {
+    public func loadWeather(addNewCity: Bool = false) async {
 
         guard !isLoadingStarted else { return }
         isCascadeUpdateForbidden =
@@ -66,38 +68,41 @@ public class WeatherMainViewModel {
             }
 
         isLoadingStarted = true
-        Task{
 
-            let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
+        let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
 
-            switch weather{
-                case .success(let snapshot) :
-                isFromCache = snapshot.isFromCache
-                cacheUpdatedAt = snapshot.savedAt
-                weatherUIState = .Success(snapshot.entity.toUI())
-                case .failure(let forecastError) :
-                isFromCache = false
-                cacheUpdatedAt = nil
-                weatherUIState = .Fail(forecastError.toEntity().ToUI())
-            }
-
-            isLoadingStarted = false
+        switch weather{
+            case .success(let snapshot) :
+            isFromCache = snapshot.isFromCache
+            cacheUpdatedAt = snapshot.savedAt
+            weatherUIState = .Success(snapshot.entity.toUI())
+            case .failure(let forecastError) :
+            isFromCache = false
+            cacheUpdatedAt = nil
+            weatherUIState = .Fail(forecastError.toEntity().ToUI())
         }
 
+        isLoadingStarted = false
     }
 
-    public func refreshWeather(){
+    public func refeshWeatherWrapper() {
+        Task {
+            await refreshWeather()
+        }
+    }
+    
+    public func refreshWeather() async {
         weatherUIState = .Loading
 
-        loadWeather()
+        await loadWeather()
     }
 
-    public func selectCity(newCity: CityWeatherState){
+    public func selectCity(newCity: CityWeatherState) async {
         var city: City
         switch newCity {
         case .CityWithWeather(let cityWeather):
             city = cityWeather.city
-            guard city.id != selectedCity.id else { return } // Не очень понимаю как правильно читать guard
+            guard city.id != selectedCity.id else { return }
             self.selectedCity = city
             preferences.activeCityID = city.id
             isFromCache = false
@@ -113,6 +118,12 @@ public class WeatherMainViewModel {
             weatherUIState = .Loading
             await loadWeather(addNewCity: true)
 
+        }
+    }
+    
+    public func selectCityWrapper(newCity: CityWeatherState) {
+        Task {
+            await selectCity(newCity: newCity)
         }
     }
 

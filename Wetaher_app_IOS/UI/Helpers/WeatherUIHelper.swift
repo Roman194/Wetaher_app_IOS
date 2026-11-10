@@ -105,14 +105,13 @@ public enum WeatherUIHelper {
 
             let currentDatePart = currentDT.components(separatedBy: "T").first ?? currentDT
 
-                if gmtDay == localDay {
-                    return BaseText.Date.today
-                } else {
-                    if gmtDay > localDay{
-                        return BaseText.Date.tomorrow
-                    }else{
-                        return BaseText.Date.yesterday
-                    }
+            if datePart == currentDatePart {
+                return BaseText.Date.today
+            } else {
+                if datePart > currentDatePart{
+                    return BaseText.Date.tomorrow
+                }else{
+                    return BaseText.Date.yesterday
                 }
             }
         }

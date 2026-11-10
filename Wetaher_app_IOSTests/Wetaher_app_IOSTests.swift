@@ -16,13 +16,15 @@ final class Wetaher_app_IOSTests: XCTestCase {
     var weatherVM: WeatherMainViewModel!
     var cityListVM: CityListViewModel!
     var weatherRep: WeatherRepository!
+    var preferences: UserPreferencesStoring!
 
     override func setUp() {
         super.setUp()
+        preferences = UserPreferencesStore()
         weatherRep = MockRepositoryImpl()
-        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep)
-        cityListVM = CityListViewModel(weatherRepo: weatherRep)
-        settingsVM = SettingsViewModel(weatherRepo: weatherRep)
+        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep, preferences: preferences)
+        cityListVM = CityListViewModel(weatherRepo: weatherRep, preferences: preferences)
+        settingsVM = SettingsViewModel(weatherRepo: weatherRep, preferences: preferences)
 
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -71,7 +73,7 @@ final class Wetaher_app_IOSTests: XCTestCase {
     @MainActor
     func test_initialLoad_success_setsWeatherState() async {
         // Arrange
-        let expectedForecast = WeatherResponse.moscowWeatherResp
+        let expectedForecast = WeatherResponse.moscowWeatherResp.toEntity(city: .moscow)
 
         // Act
         await weatherVM.loadWeather()
@@ -80,9 +82,9 @@ final class Wetaher_app_IOSTests: XCTestCase {
         guard case .Success(let cityWeather) = weatherVM.weatherUIState else {
             return XCTFail("Ожидалось состояние .Success, получено: \(weatherVM.weatherUIState)")
         }
-
+        
         XCTAssertEqual(cityWeather.city.id, City.moscow.id)
-        XCTAssertEqual(cityWeather, expectedForecast.ToUI(city: .moscow))
+        XCTAssertEqual(cityWeather, expectedForecast.toUI())
         XCTAssertFalse(weatherVM.isLoadingStarted)
         XCTAssertFalse(weatherVM.isCascadeUpdateForbidden)
     }
@@ -90,8 +92,8 @@ final class Wetaher_app_IOSTests: XCTestCase {
     @MainActor
     func test_initialLoad_success_SavedCitiesWeatherState() async {
 
-        let spbWeather: WeatherResponse = .saintPetersburgWeatherResp
-        let expectedForecast: [ForecastUI] = [.moskowWeather, spbWeather.ToUI(city: .saintPetersburg)]
+        let spbWeather = WeatherResponse.saintPetersburgWeatherResp.toEntity(city: .saintPetersburg)
+        let expectedForecast: [ForecastUI] = [.moskowWeather, spbWeather.toUI()]
 
         await cityListVM.loadSavedCitiesWeather(selectedCityForecast: .moskowWeather)
 
@@ -105,7 +107,7 @@ final class Wetaher_app_IOSTests: XCTestCase {
     @MainActor
     func test_refreshLoad_WeatherState() async {
 
-        let expectedForecast = WeatherResponse.moscowWeatherResp
+        let expectedForecast = WeatherResponse.moscowWeatherResp.toEntity(city: .moscow)
 
         await weatherVM.refreshWeather()
 
@@ -114,7 +116,7 @@ final class Wetaher_app_IOSTests: XCTestCase {
         }
 
         XCTAssertEqual(cityWeather.city.id, City.moscow.id)
-        XCTAssertEqual(cityWeather, expectedForecast.ToUI(city: .moscow))
+        XCTAssertEqual(cityWeather, expectedForecast.toUI())
         XCTAssertFalse(weatherVM.isLoadingStarted)
         XCTAssertFalse(weatherVM.isCascadeUpdateForbidden)
     }
@@ -138,7 +140,7 @@ final class Wetaher_app_IOSTests: XCTestCase {
 
     @MainActor
     func test_selectNewCity() async {
-        let expectedForecast = WeatherResponse.kazanWeatherResp
+        let expectedForecast = WeatherResponse.kazanWeatherResp.toEntity(city: .kazan)
 
         await weatherVM.selectCity(newCity: .NewCity(.kazan))
 
@@ -147,7 +149,7 @@ final class Wetaher_app_IOSTests: XCTestCase {
         }
 
         XCTAssertEqual(cityWeather.city.id, City.kazan.id)
-        XCTAssertEqual(cityWeather, expectedForecast.ToUI(city: .kazan))
+        XCTAssertEqual(cityWeather, expectedForecast.toUI())
         XCTAssertFalse(weatherVM.isLoadingStarted)
         XCTAssertTrue(weatherVM.isCascadeUpdateForbidden)
 
@@ -182,7 +184,7 @@ final class Wetaher_app_IOSTests: XCTestCase {
 
     @MainActor
     func test_AddCity() async {
-        let expectedWeather: WeatherResponse = .novosibirskWeatherResp
+        let expectedWeather = WeatherResponse.novosibirskWeatherResp.toEntity(city: .novosibirsk)
         let expectedCity: City = .novosibirsk
 
         await cityListVM.addCity(city: .novosibirsk)
@@ -201,13 +203,13 @@ final class Wetaher_app_IOSTests: XCTestCase {
             XCTFail("У добавленного города ложно добавилась ForecastError")
         }
 
-        XCTAssertEqual(addedCityWeather, expectedWeather.ToUI(city: .novosibirsk))
+        XCTAssertEqual(addedCityWeather, expectedWeather.toUI())
     }
     
     @MainActor
     func test_DeleteCity(){
         
-        let returnedSelectedCity = cityListVM.deleteCity(city: .saintPetersburg)
+        let returnedSelectedCity = cityListVM.deleteCity(city: .saintPetersburg) ?? .moskowWeather
         
         if cityListVM.savedCities.contains(.saintPetersburg) {
             XCTFail("В списке сохранённых городов не удалился удалённый город")

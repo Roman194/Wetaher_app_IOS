@@ -12,9 +12,11 @@ import Observation
 public class SettingsViewModel {
     private let preferences: UserPreferencesStoring
 
+    private let weatherRepository: WeatherRepository
     public var appTheme: AppThemeProps
 
-    public init(preferences: UserPreferencesStoring) {
+    public init(weatherRepo: WeatherRepository, preferences: UserPreferencesStoring) {
+        self.weatherRepository = weatherRepo
         self.preferences = preferences
         self.appTheme = AppThemeProps.from(id: preferences.themeID)
     }

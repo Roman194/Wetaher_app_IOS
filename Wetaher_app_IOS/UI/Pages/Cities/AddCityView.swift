@@ -182,7 +182,7 @@ public struct AddCityView: View {
             ContentUnavailableView.search(text: searchQuery)
         } else {
             Section(
-                (errorMessage != nil) ? BaseText.Cities.previousResults : BaseText.Cities.searchResults
+                (errorMessage != nil) ? BaseText.Cities.popular : BaseText.Cities.searchResults
                 ) {
                 ForEach(displayedResults) { city in
                     cityRow(for: city)
