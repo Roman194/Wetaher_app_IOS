@@ -6,7 +6,7 @@
 //
 
 extension CityResponseError {
-    func ToUI() -> CityErrorUI {
+    func toUI() -> CityErrorUI {
         CityErrorUI(
             errorId: errorId,
             errorDescription: errorDescription,

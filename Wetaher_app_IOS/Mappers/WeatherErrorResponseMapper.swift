@@ -6,8 +6,8 @@
 //
 
 extension WeatherErrorResponse{
-    func toEntity() -> WeatherErrorEntity{
-        WeatherErrorEntity(
+    func toUI() -> WeatherErrorUI{
+        WeatherErrorUI(
             errorCode: errorCode,
             errorDescription: errorDescription
         )
