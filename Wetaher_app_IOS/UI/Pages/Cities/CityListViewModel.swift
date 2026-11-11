@@ -26,21 +26,10 @@ public class CityListViewModel {
     public var addCityUIState: AddCityUIState
 
     private let weatherRepository: WeatherRepository
-    private let preferences: UserPreferencesStoring
 
-    public init(weatherRepo: WeatherRepository, preferences: UserPreferencesStoring) {
+    public init(weatherRepo: WeatherRepository) {
         self.weatherRepository = weatherRepo
-        self.preferences = preferences
-
-        let storedCities = preferences.favoriteCities
-        if storedCities.isEmpty {
-            // Первый запуск: приложение не должно остаться без избранных городов.
-            var defaultFavorites = weatherRepository.LoadFavoriteCities()
-            self.savedCityEntities = defaultFavorites
-            preferences.favoriteCities = defaultFavorites
-        } else {
-            self.savedCityEntities = storedCities
-        }
+        self.savedCityEntities = weatherRepo.LoadSavedCities()
 
         cityListWeatherUIState = .Loading
         addCityUIState = .Loading
@@ -62,7 +51,7 @@ public class CityListViewModel {
                 case .success(let snapshot):
                     updatedList.append(snapshot.entity.toUI())
                 case .failure(let forecastError):
-                    savedCitiesWeatherError[city.name] = forecastError.toEntity().ToUI()
+                    savedCitiesWeatherError[city.name] = forecastError.toUI()
                 }
             }
         }
@@ -119,7 +108,7 @@ public class CityListViewModel {
 
             case .failure(let cityError): //Ошибка поиска прокидывается в AddCityView
                     //self.searchResults = cityError.reserveCities
-                addCityUIState = .Fail(cityError.ToUI())
+                addCityUIState = .Fail(cityError.toUI())
             }
         }
 
@@ -129,10 +118,9 @@ public class CityListViewModel {
     /// Добавление города в избранное
     public func addCity(city: City) async {
         guard !isCitySaved(city: city) else { return }
-        guard let entity = cityEntity(for: city) else { return }
 
-        savedCityEntities.append(entity)
-        preferences.favoriteCities = savedCityEntities
+        weatherRepository.AddFavoriteCity(city)
+        savedCityEntities = weatherRepository.LoadSavedCities()
 
         // Подгружаем сводку погоды для добавленного города
         let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
@@ -140,7 +128,7 @@ public class CityListViewModel {
         case .success(let snapshot):
             savedCitiesWeather.append(snapshot.entity.toUI())
         case .failure(let forecastError):
-            savedCitiesWeatherError[city.name] = forecastError.toEntity().ToUI()
+            savedCitiesWeatherError[city.name] = forecastError.toUI()
         }
     }
     
@@ -152,20 +140,16 @@ public class CityListViewModel {
 
     /// Удаление города из избранного
     public func deleteCity(city: City) -> ForecastUI? {
-        if savedCityEntities.count > 1 { //Должен быть хотя бы 1 сохранённый город!
-            savedCityEntities.removeAll { $0.id == city.id || ($0.name == city.name && $0.country == city.country) }
+        let storedCount = savedCityEntities.count
+        weatherRepository.RemoveFavoriteCity(cityID: city.id)
+
+        savedCityEntities = weatherRepository.LoadSavedCities()
+        if savedCityEntities.count != storedCount { //Должен быть хотя бы 1 сохранённый город!
             savedCitiesWeather.removeAll { $0.city.id == city.id || ($0.city.name == city.name && $0.city.country == city.country) }
             savedCitiesWeatherError.removeValue(forKey: city.name)
-            preferences.favoriteCities = savedCityEntities
         }
         //Возвращаем п-лю рандомный сохранённый город на случай, если был удалён SelectedCity
         return savedCitiesWeather.randomElement()
-    }
-
-    /// Ищет сущность города среди последних результатов поиска или встроенного списка.
-    private func cityEntity(for city: City) -> CityEntity? {
-        searchResults.first { $0.id == city.id } ??
-            CityEntity.avaliableCities.first { $0.id == city.id }
     }
 
     /// Проверка, добавлен ли уже город в список избранных

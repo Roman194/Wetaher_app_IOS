@@ -10,15 +10,14 @@ import Observation
 @MainActor
 @Observable
 public class SettingsViewModel {
-    private let preferences: UserPreferencesStoring
+    private let settingsRepository: SettingsRepository
 
-    private let weatherRepository: WeatherRepository
-    public var appTheme: AppThemeProps
+    /// Тема приложения. Записывается только через `selectTheme`, чтобы выбор всегда сохранялся.
+    public private(set) var appTheme: AppThemeProps
 
-    public init(weatherRepo: WeatherRepository, preferences: UserPreferencesStoring) {
-        self.weatherRepository = weatherRepo
-        self.preferences = preferences
-        self.appTheme = AppThemeProps.from(id: preferences.themeID)
+    public init(settingsRepo: SettingsRepository) {
+        self.settingsRepository = settingsRepo
+        self.appTheme = AppThemeProps.from(id: settingsRepo.LoadThemeID())
     }
 
     /// Выбирает тему и сразу сохраняет её в `UserDefaults`.
@@ -26,6 +25,6 @@ public class SettingsViewModel {
         guard appTheme != theme else { return }
 
         appTheme = theme
-        preferences.themeID = theme.id
+        settingsRepository.SetTheme(id: theme.id)
     }
 }

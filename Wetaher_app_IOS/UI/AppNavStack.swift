@@ -34,14 +34,14 @@ public struct AppNavStack: View {
     @MainActor
     public init(
         weatherRepo: WeatherRepository? = nil,
-        preferences: UserPreferencesStoring? = nil
+        settingsRepo: SettingsRepository? = nil
     ) {
         let weatherRepo = weatherRepo ?? WeatherRepositoryImpl()
-        let preferences = preferences ?? UserPreferencesStore()
+        let settingsRepo = settingsRepo ?? SettingsRepositoryImpl()
 
-        let wVM = WeatherMainViewModel(weatherRepo: weatherRepo, preferences: preferences)
-        let cVM = CityListViewModel(weatherRepo: weatherRepo, preferences: preferences)
-        let sVM = SettingsViewModel(weatherRepo: weatherRepo,preferences: preferences)
+        let wVM = WeatherMainViewModel(weatherRepo: weatherRepo)
+        let cVM = CityListViewModel(weatherRepo: weatherRepo)
+        let sVM = SettingsViewModel(settingsRepo: settingsRepo)
         _weatherVM = State(initialValue: wVM)
         _cityListVM = State(initialValue: cVM)
         _settingsVM = State(initialValue: sVM)
