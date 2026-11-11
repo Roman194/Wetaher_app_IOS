@@ -8,14 +8,55 @@
 import Foundation
 import SwiftData
 
-/// SwiftData-модель, в которой лежит сериализованный снимок погоды.
+/// Таблица `weather`: сохранённый прогноз города.
+///
+/// Связана с городом (N:1), текущей погодой (1:1), почасовым и дневным прогнозом (1:N).
 @Model
 final class WeatherRecord {
-    @Attribute(.unique) var cityID: Int
-    var payload: Data
+    var cityID: Int
+    var savedAt: Date
 
-    init(cityID: Int, payload: Data) {
+    var city: CityRecord?
+
+    @Relationship(deleteRule: .cascade, inverse: \CurrentWeatherRecord.weather)
+    var current: CurrentWeatherRecord?
+
+    @Relationship(deleteRule: .cascade, inverse: \HourlyWeatherRecord.weather)
+    var hourly: [HourlyWeatherRecord] = []
+
+    @Relationship(deleteRule: .cascade, inverse: \DailyWeatherRecord.weather)
+    var daily: [DailyWeatherRecord] = []
+
+    init(cityID: Int, savedAt: Date = Date()) {
         self.cityID = cityID
-        self.payload = payload
+        self.savedAt = savedAt
+    }
+
+    /// Создаёт прогноз и вложенные записи. Город передаётся явно: связь
+    /// выставляется до вставки в контекст.
+    convenience init(entity: WeatherEntity, city: CityRecord) {
+        self.init(cityID: entity.cityID, savedAt: entity.savedAt)
+
+        self.city = city
+        current = CurrentWeatherRecord(entity: entity.current)
+        hourly = entity.hourly.enumerated().map { index, item in
+            HourlyWeatherRecord(entity: item, sortIndex: index)
+        }
+        daily = entity.daily.enumerated().map { index, item in
+            DailyWeatherRecord(entity: item, sortIndex: index)
+        }
+    }
+
+    /// Заполняет связи готовыми записями.
+    /// `WeatherRecord` и его дочерние записи должны принадлежать одному `ModelContext`.
+    func apply(_ entity: WeatherEntity) {
+        savedAt = entity.savedAt
+        current = CurrentWeatherRecord(entity: entity.current)
+        hourly = entity.hourly.enumerated().map { index, item in
+            HourlyWeatherRecord(entity: item, sortIndex: index)
+        }
+        daily = entity.daily.enumerated().map { index, item in
+            DailyWeatherRecord(entity: item, sortIndex: index)
+        }
     }
 }
