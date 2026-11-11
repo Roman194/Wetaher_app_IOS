@@ -213,6 +213,7 @@ public struct AddCityView: View {
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundStyle(Colors.primaryText)
+                        .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.resultRow(city.name))
 
                     Text(city.country)
                         .font(.caption)
@@ -256,7 +257,6 @@ public struct AddCityView: View {
                 .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.toggleButton(city.name))
             }
         }
-        .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.resultRow(city.name))
         .padding(.vertical, BaseNumeral.textSpacing)
     }
 

@@ -33,6 +33,7 @@ final class WeatherMainTestsUI: XCTestCase {
         let app = XCUIApplication()
         app.launch()
         let cityTitle = app.staticTexts["main_current_city_title"]
+        let scrollView = app.scrollViews["main_weather_scroll_view"]
         let windCard = app.otherElements["metric_card_wind"]
         let pressureCard = app.otherElements["metric_card_pressure"]
         let humidityCard = app.otherElements["metric_card_humidity"]
@@ -40,7 +41,21 @@ final class WeatherMainTestsUI: XCTestCase {
 
         // act
         _ = cityTitle.waitForExistence(timeout: 5.0)
-        app.swipeUp()
+        XCTAssertTrue(scrollView.waitForExistence(timeout: 5.0), "Основной экран должен быть доступен для прокрутки")
+
+        // Сетка метрик стоит после заголовка, почасового и 7-дневного прогноза,
+        // а LazyVGrid создаёт ячейки только при появлении на экране.
+        // Поэтому одного свайпа недостаточно — прокручиваем до появления карточек.
+        var scrollAttempts = 0
+        while !windCard.exists && scrollAttempts < 6 {
+            scrollView.swipeUp()
+            scrollAttempts += 1
+        }
+        scrollAttempts = 0
+        while !uvCard.exists && scrollAttempts < 2 {
+            scrollView.swipeUp()
+            scrollAttempts += 1
+        }
 
         // assert
         XCTAssertTrue(windCard.waitForExistence(timeout: 5.0), "Карточка ветра должна отображаться в сетке")

@@ -46,13 +46,14 @@ final class CityManagementTestsUI: XCTestCase {
 
         // act
         addCityButton.tap()
-        let searchField = app.searchFields["add_city_search_field"]
+        // У `.searchable` нет собственного accessibility identifier — берём первый search field.
+        let searchField = app.searchFields.firstMatch
         let addCityDoneButton = app.buttons["add_city_done_button"]
         let searchScreenOpened = addCityDoneButton.waitForExistence(timeout: 5.0)
 
         // assert
         XCTAssertTrue(searchScreenOpened, "Экран добавления города должен открыться")
-        XCTAssertTrue(searchField.exists || addCityDoneButton.exists, "Элементы управления поиском должны отображаться")
+        XCTAssertTrue(searchField.waitForExistence(timeout: 5.0), "Поле поиска должно отображаться")
 
         addCityDoneButton.tap()
         let cityDoneButton = app.buttons["city_list_done_button"]
@@ -74,24 +75,26 @@ final class CityManagementTestsUI: XCTestCase {
         addCityButton.tap()
 
         let searchField = app.searchFields.firstMatch
-        let addCityDoneButton = app.buttons["add_city_done_button"]
-        XCTAssertTrue(addCityDoneButton.waitForExistence(timeout: 5.0), "Кнопка закрытия поиска должна присутствовать")
+        XCTAssertTrue(searchField.waitForExistence(timeout: 5.0), "Поле поиска должно присутствовать")
 
         // act
-        if searchField.exists {
-            searchField.tap()
-            searchField.typeText("Казань")
-        }
-        let kazanCard = app.otherElements["add_city_row_Казань"]
-        let resultAppeared = kazanCard.waitForExistence(timeout: 5.0)
+        searchField.tap()
+        searchField.typeText("Казань")
+
+        // Поиск идёт в сеть с дебаунсом.
+        // Кнопка-toggle появляется только вместе со строкой результата, поэтому
+        // по ней проверяем и сам результат поиска.
+        let toggleButton = app.buttons["add_city_toggle_Казань"].firstMatch
 
         // assert
-        XCTAssertTrue(resultAppeared || addCityDoneButton.exists, "Результаты поиска или экран добавления должны быть доступны")
+        XCTAssertTrue(toggleButton.waitForExistence(timeout: 10.0), "Результат поиска должен появиться")
 
-        addCityDoneButton.tap()
-        let cityDoneButton = app.buttons["city_list_done_button"]
-        if cityDoneButton.exists {
-            cityDoneButton.tap()
-        }
+        let labelBeforeTap = toggleButton.label
+        toggleButton.tap()
+
+        // Состояние избранного переключается: подпись кнопки должна измениться.
+        let predicate = NSPredicate(format: "label != %@", labelBeforeTap)
+        expectation(for: predicate, evaluatedWith: toggleButton)
+        waitForExpectations(timeout: 5.0)
     }
 }

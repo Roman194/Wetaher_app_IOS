@@ -80,6 +80,7 @@ public struct WeatherMainView: View {
                         directionString: current.windDirection,
                         gustMps: current.windGusts
                     )
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.wind)
 
                     PressureMetricCard(
@@ -87,12 +88,14 @@ public struct WeatherMainView: View {
                         pressureStatus: current.pressureStatus,
                         pressureMmHg: current.pressureMmHg
                     )
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.pressure)
 
                     HumidityMetricCard(
                         humidity: current.relativeHumidity,
                         dewPoint: current.dewPoint
                     )
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.humidity)
 
                     UVMetricCard(
@@ -100,17 +103,20 @@ public struct WeatherMainView: View {
                         uvStatus: todayDaily?.uvStatus.descripiton ?? ""
 
                     )
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.uv)
 
                     SunTimesMetricCard(
                         sunrise: todayDaily?.sunrise ?? "",
                         sunset: todayDaily?.sunset ?? ""
                     )
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.sun)
 
                     VisibilityMetricCard(
                         visibilityMeters: current.visibility
                     )
+                    .accessibilityElement(children: .contain)
                     .accessibilityIdentifier(AccessibilityIdentifiers.Metrics.visibility)
                 }
                 .padding(.horizontal, BaseNumeral.screenHorizontalPadding)
