@@ -1,15 +1,15 @@
 //
-//  MockRepositoryFailImpl.swift
+//  MockCityRepositoryFailResponseImpl.swift
 //  Wetaher_app_IOS
 //
-//  Created by Roman Zyuzin on 29.10.2026.
+//  Created by Roman Zyuzin on 11.11.2026.
 //
 
 import Foundation
 @testable import Wetaher_app_IOS
 import XCTest
 
-public class MockRepositoryFailResponseImpl: WeatherRepository {
+public class MockCityRepositoryFailResponseImpl: CityRepository {
     private var currentForecast: WeatherResponse
     private let preferences: UserPreferencesStoring
 
@@ -21,17 +21,6 @@ public class MockRepositoryFailResponseImpl: WeatherRepository {
             self.preferences = preferences
         }
 
-    public func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherSnapshot, WeatherErrorResponse> {
-        
-        try? await Task.sleep(nanoseconds: 100_000)
-
-        return .failure(WeatherErrorResponse(errorCode: 67, errorDescription: "Trial error exception"))
-    }
-
-    public func LoadFavoriteCities() -> [CityEntity] {
-        return CityEntity.defaultFavorites
-    }
-
     public func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError> {
         
         try? await Task.sleep(nanoseconds: 100_000)
@@ -42,13 +31,11 @@ public class MockRepositoryFailResponseImpl: WeatherRepository {
 
     }
 
-    // MARK: - Избранное и настройки
-
     public func LoadSavedCities() -> [CityEntity] {
         let storedCities = preferences.favoriteCities
         guard storedCities.isEmpty else { return storedCities }
 
-        let defaultFavorites = LoadFavoriteCities()
+        let defaultFavorites = CityEntity.defaultFavorites
         preferences.favoriteCities = defaultFavorites
         return defaultFavorites
     }

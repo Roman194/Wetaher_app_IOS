@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-/// Таблица `current_weather`: текущая погода для записи прогноза (1:1 от `weather`).
+// Таблица `current_weather`: текущая погода для записи прогноза (1:1 от `weather`)
 @Model
 final class CurrentWeatherRecord {
     var time: String

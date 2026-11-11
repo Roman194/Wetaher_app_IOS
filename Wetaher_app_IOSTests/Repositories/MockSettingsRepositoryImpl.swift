@@ -1,14 +1,15 @@
 //
-//  MockSettingsRepository.swift
-//  Wetaher_app_IOSTests
+//  MockSettingRepositoryImpl.swift
+//  Wetaher_app_IOS
 //
-//  Created by Sergeev Sergey on 27.10.2026.
+//  Created by Roman Zyuzin on 11.11.2026.
 //
+
 
 @testable import Wetaher_app_IOS
 
-/// Настройки в памяти: тема хранится в переданном хранилище и не трогает `UserDefaults`.
-public final class MockSettingsRepository: SettingsRepository {
+// Настройки в памяти: тема хранится в переданном хранилище и не трогает `UserDefaults`
+public final class MockSettingsRepositoryImpl: SettingsRepository {
     private let preferences: UserPreferencesStoring
 
     public init(preferences: UserPreferencesStoring = MockUserPreferencesStore()) {

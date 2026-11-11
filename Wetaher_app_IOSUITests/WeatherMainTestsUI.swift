@@ -43,8 +43,7 @@ final class WeatherMainTestsUI: XCTestCase {
         _ = cityTitle.waitForExistence(timeout: 5.0)
         XCTAssertTrue(scrollView.waitForExistence(timeout: 5.0), "Основной экран должен быть доступен для прокрутки")
 
-        // Сетка метрик стоит после заголовка, почасового и 7-дневного прогноза,
-        // а LazyVGrid создаёт ячейки только при появлении на экране.
+        // Сетка метрик стоит после заголовка, почасового и 7-дневного прогноза, а LazyVGrid создаёт ячейки только при появлении на экране.
         // Поэтому одного свайпа недостаточно — прокручиваем до появления карточек.
         var scrollAttempts = 0
         while !windCard.exists && scrollAttempts < 6 {

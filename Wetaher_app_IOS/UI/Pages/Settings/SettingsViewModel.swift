@@ -13,11 +13,9 @@ import SwiftUI
 public class SettingsViewModel {
     private let settingsRepository: SettingsRepository
 
-    /// Тема приложения. Меняется только через `themeSelection`, чтобы выбор всегда сохранялся.
+    // Тема приложения. Меняется только через `themeSelection`, чтобы выбор всегда сохранялся
     public private(set) var appTheme: AppThemeProps
 
-    /// Привязка для `Picker`. Запись идёт через неё, поэтому View не знает,
-    /// как именно тема сохраняется: это ответственность ViewModel.
     public var themeSelection: Binding<AppThemeProps> {
         Binding(
             get: { self.appTheme },
@@ -30,7 +28,7 @@ public class SettingsViewModel {
         self.appTheme = AppThemeProps.from(id: settingsRepo.LoadThemeID())
     }
 
-    /// Выбирает тему и сразу сохраняет её в `UserDefaults`.
+    // Выбирает тему и сразу сохраняет её в `UserDefaults`
     public func selectTheme(_ theme: AppThemeProps) {
         guard appTheme != theme else { return }
 

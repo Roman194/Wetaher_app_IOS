@@ -69,7 +69,7 @@ extension HourlyWeatherResponse {
         }
     }
 
-    /// Час из строки формата `yyyy-MM-dd'T'HH:mm` (при `timezone=auto` время уже местное для города).
+    // Час из строки формата `yyyy-MM-dd'T'HH:mm` (при `timezone=auto` время уже местное для города)
     private static func hour(from dateString: String) -> Int {
         guard let separator = dateString.firstIndex(of: "T") else { return 0 }
         let timePart = dateString[dateString.index(after: separator)...]

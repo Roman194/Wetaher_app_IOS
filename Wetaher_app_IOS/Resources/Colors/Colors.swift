@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// Семантические цвета интерфейса.
+// Семантические цвета интерфейса
 public enum Colors {
     // MARK: - Текст
     public static let primaryText = Color.primary

@@ -5,7 +5,7 @@
 //  Created by Sergeev Sergey on 27.10.2026.
 //
 
-/// Строковые константы и статический текст интерфейса.
+// Строковые константы и статический текст интерфейса
 public enum BaseText {
     public enum Common {
         public static let done = "Готово"
@@ -17,6 +17,11 @@ public enum BaseText {
         public static let loadingCities = "Загрузка городов..."
         public static let searching = "Поиск..."
         public static let searchingCities = "Поиск городов..."
+    }
+    
+    public enum Cache {
+        public static let withDescription = "Офлайн • Обновлено "
+        public static let withoutDescription = "Офлайн-режим (сохранённые данные)"
     }
 
     public enum Main {
@@ -32,6 +37,8 @@ public enum BaseText {
         public static func feelsLike(_ temperature: String) -> String {
             "Ощущается как \(temperature)"
         }
+        
+        public static let nowWeather = "Сейчас"
     }
 
     public enum Metrics {
@@ -43,6 +50,7 @@ public enum BaseText {
         public static let sunrise = "Восход"
         public static let sunset = "Закат"
         public static let visibility = "Видимость"
+        public static let defaultDirection = "C"
 
         public static func windDirection(_ direction: String) -> String {
             "Направление: \(direction)"

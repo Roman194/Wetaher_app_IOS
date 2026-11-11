@@ -17,16 +17,10 @@ public struct AppNavStack: View {
     @State private var showCityListSheet = false
     @State private var showSettingsSheet = false
 
-    /// Тема приложения: nil означает «как в системе».
+    // Цветовая тема приложения
     private var appColorScheme: ColorScheme? {
         settingsVM.appTheme.colorScheme
     }
-
-    /// Цветовая схема для sheet'ов.
-    ///
-    /// Сюда нельзя передавать nil: при переключении «тёмная → системная»
-    /// SwiftUI не сбрасывает уже применённый к презентации override,
-    /// поэтому фон листа остаётся тёмным. Подставляем фактическую схему.
     private var presentedColorScheme: ColorScheme {
         appColorScheme ?? environmentColorScheme
     }
@@ -34,13 +28,15 @@ public struct AppNavStack: View {
     @MainActor
     public init(
         weatherRepo: WeatherRepository? = nil,
+        cityRepo: CityRepository? = nil,
         settingsRepo: SettingsRepository? = nil
     ) {
-        let weatherRepo = weatherRepo ?? WeatherRepositoryImpl()
-        let settingsRepo = settingsRepo ?? SettingsRepositoryImpl()
+        let weatherRepo = WeatherRepositoryImpl()
+        let cityRepo = CityRepositoryImpl()
+        let settingsRepo = SettingsRepositoryImpl()
 
-        let wVM = WeatherMainViewModel(weatherRepo: weatherRepo)
-        let cVM = CityListViewModel(weatherRepo: weatherRepo)
+        let wVM = WeatherMainViewModel(weatherRepo: weatherRepo, cityRepo: cityRepo)
+        let cVM = CityListViewModel(weatherRepo: weatherRepo, cityRepo: cityRepo)
         let sVM = SettingsViewModel(settingsRepo: settingsRepo)
         _weatherVM = State(initialValue: wVM)
         _cityListVM = State(initialValue: cVM)
@@ -59,33 +55,31 @@ public struct AppNavStack: View {
             }
 
             switch weatherVM.weatherUIState {
-                case .Loading:
-                    ProgressView()
-                case .Success(let weatherUI):
-                    WeatherSuccess(
-                        currentForecast: weatherUI,
-                        isFromCache: weatherVM.isFromCache,
-                        cacheAgeDescription: weatherVM.cacheAgeDescription,
-                        showSettingsSheet: $showSettingsSheet,
-                        showCityListSheet: $showCityListSheet
-                    ) {
-                        weatherVM.refeshWeatherWrapper()
-                    }
-                case .Fail(let weatherErrorUI):
-                    WeatherError(weatherErrorUI: weatherErrorUI) {
-                        weatherVM.refeshWeatherWrapper()
-                    }
+            case .Loading:
+                ProgressView()
+            case .Success(let weatherUI):
+                WeatherSuccess(
+                    currentForecast: weatherUI,
+                    isFromCache: weatherVM.isFromCache, //Мог бы быть cache через enum
+                    cacheAgeDescription: weatherVM.cacheAgeDescription,
+                    showSettingsSheet: $showSettingsSheet,
+                    showCityListSheet: $showCityListSheet
+                ) {
+                    weatherVM.refeshWeatherWrapper()
+                }
+            case .Fail(let weatherErrorUI):
+                WeatherError(weatherErrorUI: weatherErrorUI) {
+                    weatherVM.refeshWeatherWrapper()
+                }
             }
         }
-        .sheet(isPresented: $showCityListSheet) { // Оптимизировать через enum!
+        .sheet(isPresented: $showCityListSheet) {
             CityListView(
                 savedCities: cityListVM.savedCities,
                 savedCitiesWeather: cityListVM.savedCitiesWeather,
                 savedCitiesWeatherError: cityListVM.savedCitiesWeatherError,
                 cityListWeatherUIState: cityListVM.cityListWeatherUIState,
                 addCityUiState: cityListVM.addCityUIState,
-                // searchQuery: cityListVM.searchQuery,
-                // searchResults: cityListVM.searchResults,
                 onSelectCity: { selectedCity in
                     showCityListSheet = false
                     weatherVM.selectCityWrapper(newCity: selectedCity)
@@ -95,7 +89,7 @@ public struct AppNavStack: View {
                     if city.id == weatherVM.selectedCity.id{ //Если был удалён SelectedCity, то меняем его на рандомный сохранённый
                         weatherVM.selectCityWrapper(newCity: .CityWithWeather(potenialNewSelectedCity))
                     }
-                     },
+                },
                 onCityAdd: { city in
                     cityListVM.addCityWrapper(city: city)
                 },
@@ -125,7 +119,7 @@ public struct AppNavStack: View {
             }
         }
         .onChange(of: scenePhase) { _, newPhase in
-            //Перед уходом в фон обновляем кэш, чтобы офлайн-режим показывал максимально свежие данные.
+            // Перед уходом в фон обновляем кэш, чтобы офлайн-режим показывал максимально свежие данные
             if newPhase == .background {
                 weatherVM.prepareForOffline()
             }

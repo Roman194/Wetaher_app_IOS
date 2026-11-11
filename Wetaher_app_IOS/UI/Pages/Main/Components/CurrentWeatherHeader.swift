@@ -40,7 +40,7 @@ public struct CurrentWeatherHeader: View {
                 .padding(.vertical, BaseNumeral.currentTemperatureVerticalPadding)
                 .accessibilityIdentifier(AccessibilityIdentifiers.Main.temperature)
 
-            // Мин / Макс и Ощущается как
+            // Мин - Макс и Ощущается как
             HStack(spacing: BaseNumeral.defaultSpacing) {
                 if let today = todayDaily {
                     Text(BaseText.Main.maxMin(

@@ -8,7 +8,6 @@
 import Foundation
 
 extension WeatherEntity {
-    /// Entity → UI.
     func toUI() -> ForecastUI {
         let currentTime = current.time
 
@@ -61,7 +60,7 @@ extension CurrentWeatherEntity {
 extension HourlyWeatherEntity {
     func toUI(isCurrentHour: Bool) -> HourlyWeather {
         HourlyWeather(
-            hour: isCurrentHour ? "Сейчас" : WeatherUIHelper.formatTimeString(time),
+            hour: isCurrentHour ? BaseText.Main.nowWeather : WeatherUIHelper.formatTimeString(time),
             temperature: temperature,
             weatherCondition: WeatherCondition.condition(for: weatherCode),
             isDay: isDay,

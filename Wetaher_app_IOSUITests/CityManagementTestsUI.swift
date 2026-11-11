@@ -46,7 +46,7 @@ final class CityManagementTestsUI: XCTestCase {
 
         // act
         addCityButton.tap()
-        // У `.searchable` нет собственного accessibility identifier — берём первый search field.
+        // У `.searchable` нет собственного accessibility identifier — берём первый search field
         let searchField = app.searchFields.firstMatch
         let addCityDoneButton = app.buttons["add_city_done_button"]
         let searchScreenOpened = addCityDoneButton.waitForExistence(timeout: 5.0)
@@ -82,8 +82,7 @@ final class CityManagementTestsUI: XCTestCase {
         searchField.typeText("Казань")
 
         // Поиск идёт в сеть с дебаунсом.
-        // Кнопка-toggle появляется только вместе со строкой результата, поэтому
-        // по ней проверяем и сам результат поиска.
+        // Кнопка-toggle появляется только вместе со строкой результата, поэтому по ней проверяем и сам результат поиска
         let toggleButton = app.buttons["add_city_toggle_Казань"].firstMatch
 
         // assert
@@ -92,7 +91,7 @@ final class CityManagementTestsUI: XCTestCase {
         let labelBeforeTap = toggleButton.label
         toggleButton.tap()
 
-        // Состояние избранного переключается: подпись кнопки должна измениться.
+        // Состояние избранного переключается: подпись кнопки должна измениться
         let predicate = NSPredicate(format: "label != %@", labelBeforeTap)
         expectation(for: predicate, evaluatedWith: toggleButton)
         waitForExpectations(timeout: 5.0)

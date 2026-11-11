@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Главный экран погоды: заголовок, почасовой прогноз, 7-дневный прогноз и сетка метеорологических метрик
+// Главный экран погоды: заголовок, почасовой прогноз, 7-дневный прогноз и сетка метеорологических метрик
 public struct WeatherMainView: View {
     public var currentForecast: ForecastUI
     public var isFromCache: Bool
@@ -31,8 +31,6 @@ public struct WeatherMainView: View {
 
         ScrollView(showsIndicators: false) {
             VStack(spacing: BaseNumeral.sectionSpacing) {
-                
-
                 // Индикатор офлайн-режима с давностью обновления кэша
                 if isFromCache {
                     HStack(spacing: 6) {
@@ -40,11 +38,11 @@ public struct WeatherMainView: View {
                             .font(.caption2)
 
                         if let cacheAgeDescription {
-                            Text("Офлайн • Обновлено \(cacheAgeDescription)")
+                            Text(BaseText.Cache.withDescription + "\(cacheAgeDescription)")
                                 .font(.caption2)
                                 .fontWeight(.medium)
                         } else {
-                            Text("Офлайн-режим (сохранённые данные)")
+                            Text(BaseText.Cache.withoutDescription)
                                 .font(.caption2)
                                 .fontWeight(.medium)
                         }
@@ -55,14 +53,13 @@ public struct WeatherMainView: View {
                     .background(Color(uiColor: .secondarySystemGroupedBackground).opacity(0.85))
                     .clipShape(Capsule())
                     .padding(.top, 0)
-                    .accessibilityIdentifier("weather.offlineBadge")
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Main.offlineBadge)
                 }
 
                 // Главный заголовок
                 CurrentWeatherHeader(forecastData: currentForecast)
 
                 // Почасовой прогноз
-                // let timeZone = TimeZone(identifier: currentForecast.city.timeZoneID) ?? .current
                 HourlyForecast(
                     hourly: currentForecast.hourlyWeather,
                     timeZone: timeZone
@@ -124,7 +121,7 @@ public struct WeatherMainView: View {
             }
         }
         .accessibilityIdentifier(AccessibilityIdentifiers.Main.scrollView)
-        .refreshable {//Прокинуть это как событие в НавСтак!
+        .refreshable {
             onPullToRefresh()
         }
     }

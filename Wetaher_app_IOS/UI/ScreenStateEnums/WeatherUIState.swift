@@ -10,7 +10,7 @@ public enum WeatherUIState: Equatable, Hashable {
     case Success(ForecastUI)
     case Fail(WeatherErrorUI)
 
-    // Вложенный enum только для случаев
+    // Вложенный enum только для случаев сравнения состояний
         enum Kind {
             case loading
             case success

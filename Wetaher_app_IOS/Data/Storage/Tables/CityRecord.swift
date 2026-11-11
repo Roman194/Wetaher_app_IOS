@@ -8,9 +8,9 @@
 import Foundation
 import SwiftData
 
-/// Таблица `city`: город, для которого сохраняются прогнозы.
+/// Таблица `city`: город, для которого сохраняются прогнозы
 @Model
-final class CityRecord {
+public final class CityRecord {
     @Attribute(.unique) var cityID: Int
     var name: String
     var country: String
@@ -18,7 +18,7 @@ final class CityRecord {
     var longitude: Double
     var timezone: String
 
-    /// Прогнозы этого города (1:N). При удалении города прогнозы удаляются каскадно.
+    // Прогнозы этого города (1:N). При удалении города прогнозы удаляются каскадно
     @Relationship(deleteRule: .cascade, inverse: \WeatherRecord.city)
     var weathers: [WeatherRecord] = []
 
@@ -47,5 +47,15 @@ final class CityRecord {
             longitude: entity.longitude,
             timezone: entity.timezone
         )
+    }
+}
+
+public extension CityRecord {
+    func apply(_ entity: WeatherEntity) {
+        name = entity.cityName
+        country = entity.country
+        latitude = entity.latitude
+        longitude = entity.longitude
+        timezone = entity.timezone
     }
 }

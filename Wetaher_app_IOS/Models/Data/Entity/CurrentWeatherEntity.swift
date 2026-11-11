@@ -21,3 +21,21 @@ public struct CurrentWeatherEntity: Codable, Hashable, Sendable {
     public let pressureMsl: Double
     public let visibility: Double
 }
+
+public extension CurrentWeatherEntity {
+    // Пустая текущая погода — на случай повреждённой записи
+    static let empty = CurrentWeatherEntity(
+        time: "",
+        temperature: 0,
+        apparentTemperature: 0,
+        weatherCode: 0,
+        isDay: true,
+        windSpeed: 0,
+        windDirection: 0,
+        windGusts: 0,
+        relativeHumidity: 0,
+        dewPoint: 0,
+        pressureMsl: 0,
+        visibility: 0
+    )
+}

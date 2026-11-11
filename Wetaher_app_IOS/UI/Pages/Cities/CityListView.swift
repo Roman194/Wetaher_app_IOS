@@ -17,8 +17,6 @@ public struct CityListView: View {
     public var savedCitiesWeatherError: [String: WeatherErrorUI]
     public var cityListWeatherUIState: CityListUIState
     public var addCityUiState: AddCityUIState
-    // public var searchQuery: String
-    // public var searchResults: [City]
 
     public var onSelectCity: (CityWeatherState) -> Void
     public var onDeleteCity: (City) -> Void
@@ -40,8 +38,6 @@ public struct CityListView: View {
         savedCitiesWeatherError: [String: WeatherErrorUI] = [:],
         cityListWeatherUIState: CityListUIState = .Success,
         addCityUiState: AddCityUIState = .Success([]),
-        // searchQuery: String = "",
-        // searchResults: [City] = [],
         onSelectCity: @escaping (CityWeatherState) -> Void,
         onDeleteCity: @escaping (City) -> Void,
         onCityAdd: @escaping (City) -> Void,
@@ -54,8 +50,6 @@ public struct CityListView: View {
         self.savedCitiesWeatherError = savedCitiesWeatherError
         self.cityListWeatherUIState = cityListWeatherUIState
         self.addCityUiState = addCityUiState
-        // self.searchQuery = searchQuery
-        // self.searchResults = searchResults
         self.onSelectCity = onSelectCity
         self.onDeleteCity = onDeleteCity
         self.onCityAdd = onCityAdd
@@ -70,13 +64,10 @@ public struct CityListView: View {
                 switch cityListWeatherUIState {
                 case .Loading:
                     loadingView
-
                 case .Fail:
                     failView
-
                 case .Success:
                     successView
-
                 case .Search:
                     searchView
                 }
@@ -113,8 +104,7 @@ public struct CityListView: View {
         }
     }
 
-    // MARK: - State Subviews
-
+    // Состояния экрана
     @ViewBuilder
     private var loadingView: some View {
         VStack(spacing: BaseNumeral.sectionSpacing) {
@@ -165,44 +155,47 @@ public struct CityListView: View {
                     .listRowBackground(Color.clear)
                     .padding(.vertical, BaseNumeral.textSpacing)
                 }
-
-                // Оптимизировать!
-                ForEach(citiesToDisplay, id: \.id) { city in
-                    let forecast = savedCitiesWeather.first(where: { $0.city.id == city.id || $0.city.name == city.name })
-                    let error = savedCitiesWeatherError[city.name]
-
-                    CityCard(city: city, forecast: forecast, error: error)
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(
-                            top: BaseNumeral.listRowVerticalInset,
-                            leading: BaseNumeral.screenHorizontalPadding,
-                            bottom: BaseNumeral.listRowVerticalInset,
-                            trailing: BaseNumeral.screenHorizontalPadding
-                        ))
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if forecast != nil {
-                                onSelectCity(.CityWithWeather(forecast!))
-                                dismiss()
-                            }
-
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            if citiesToDisplay.count > 1 {
-                                Button(role: .destructive) {
-                                    onDeleteCity(city)
-                                } label: {
-                                    Label(BaseText.Common.delete, systemImage: "trash")
-                                }
-                            }
-                        }
-                }
+                cityCards
             }
             .listStyle(.plain)
             .refreshable {
                 await onRefresh?()
             }
+        }
+    }
+    
+    private var cityCards: some View{
+        ForEach(citiesToDisplay, id: \.id) { city in
+            let forecast = savedCitiesWeather.first(where: { $0.city.id == city.id || $0.city.name == city.name })
+            let error = savedCitiesWeatherError[city.name]
+            
+            CityCard(city: city, forecast: forecast, error: error)
+                .accessibilityIdentifier(AccessibilityIdentifiers.CityList.cityCard(city.name))
+                .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
+                .listRowInsets(EdgeInsets(
+                    top: BaseNumeral.listRowVerticalInset,
+                    leading: BaseNumeral.screenHorizontalPadding,
+                    bottom: BaseNumeral.listRowVerticalInset,
+                    trailing: BaseNumeral.screenHorizontalPadding
+                ))
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if forecast != nil {
+                        onSelectCity(.CityWithWeather(forecast!))
+                        dismiss()
+                    }
+                    
+                }
+                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                    if citiesToDisplay.count > 1 {
+                        Button(role: .destructive) {
+                            onDeleteCity(city)
+                        } label: {
+                            Label(BaseText.Common.delete, systemImage: "trash")
+                        }
+                    }
+                }
         }
     }
 
@@ -217,37 +210,7 @@ public struct CityListView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             List {
-                ForEach(citiesToDisplay, id: \.id) { city in
-                    let forecast = savedCitiesWeather.first(where: { $0.city.id == city.id || $0.city.name == city.name })
-                    let error = savedCitiesWeatherError[city.name]
-
-                    CityCard(city: city, forecast: forecast, error: error)
-                        .accessibilityIdentifier(AccessibilityIdentifiers.CityList.cityCard(city.name))
-                        .listRowSeparator(.hidden)
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets(
-                            top: BaseNumeral.listRowVerticalInset,
-                            leading: BaseNumeral.screenHorizontalPadding,
-                            bottom: BaseNumeral.listRowVerticalInset,
-                            trailing: BaseNumeral.screenHorizontalPadding
-                        ))
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            if forecast != nil {
-                                onSelectCity(.CityWithWeather(forecast!))
-                                dismiss()
-                            }
-                        }
-                        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                            if citiesToDisplay.count > 1 {
-                                Button(role: .destructive) {
-                                    onDeleteCity(city)
-                                } label: {
-                                    Label(BaseText.Common.delete, systemImage: "trash")
-                                }
-                            }
-                        }
-                }
+                cityCards
             }
             .listStyle(.plain)
             .refreshable {

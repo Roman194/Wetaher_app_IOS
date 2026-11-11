@@ -8,11 +8,10 @@
 import Foundation
 import SwiftData
 
-/// Таблица `weather`: сохранённый прогноз города.
-///
-/// Связана с городом (N:1), текущей погодой (1:1), почасовым и дневным прогнозом (1:N).
+// Таблица `weather`: сохранённый прогноз города
+// Связана с городом (N:1), текущей погодой (1:1), почасовым и дневным прогнозом (1:N)
 @Model
-final class WeatherRecord {
+public final class WeatherRecord {
     var cityID: Int
     var savedAt: Date
 
@@ -32,8 +31,8 @@ final class WeatherRecord {
         self.savedAt = savedAt
     }
 
-    /// Создаёт прогноз и вложенные записи. Город передаётся явно: связь
-    /// выставляется до вставки в контекст.
+    // Создаёт прогноз и вложенные записи. Город передаётся явно: связь
+    // выставляется до вставки в контекст.
     convenience init(entity: WeatherEntity, city: CityRecord) {
         self.init(cityID: entity.cityID, savedAt: entity.savedAt)
 
@@ -47,8 +46,8 @@ final class WeatherRecord {
         }
     }
 
-    /// Заполняет связи готовыми записями.
-    /// `WeatherRecord` и его дочерние записи должны принадлежать одному `ModelContext`.
+    // Заполняет связи готовыми записями
+    // `WeatherRecord` и его дочерние записи должны принадлежать одному `ModelContext`
     func apply(_ entity: WeatherEntity) {
         savedAt = entity.savedAt
         current = CurrentWeatherRecord(entity: entity.current)
@@ -58,5 +57,27 @@ final class WeatherRecord {
         daily = entity.daily.enumerated().map { index, item in
             DailyWeatherRecord(entity: item, sortIndex: index)
         }
+    }
+}
+
+public extension WeatherRecord {
+    // Record → Entity. Дочерние таблицы разворачиваются в массивы по `sortIndex`
+    var weatherEntity: WeatherEntity {
+        WeatherEntity(
+            cityID: cityID,
+            cityName: city?.name ?? "",
+            country: city?.country ?? "",
+            latitude: city?.latitude ?? 0,
+            longitude: city?.longitude ?? 0,
+            timezone: city?.timezone ?? "",
+            savedAt: savedAt,
+            current: current?.currentWeatherEntity ?? .empty,
+            hourly: hourly
+                .sorted { $0.sortIndex < $1.sortIndex }
+                .map(\.hourlyWeatherEntity),
+            daily: daily
+                .sorted { $0.sortIndex < $1.sortIndex }
+                .map(\.dailyWeatherEntity)
+        )
     }
 }

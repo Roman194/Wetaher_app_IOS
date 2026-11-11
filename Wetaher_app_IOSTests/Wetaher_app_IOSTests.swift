@@ -16,16 +16,18 @@ final class Wetaher_app_IOSTests: XCTestCase {
     var weatherVM: WeatherMainViewModel!
     var cityListVM: CityListViewModel!
     var weatherRep: WeatherRepository!
+    var cityRep: CityRepository!
     var settingsRep: SettingsRepository!
     var preferences: MockUserPreferencesStore!
 
     override func setUp() {
         super.setUp()
         preferences = MockUserPreferencesStore()
-        weatherRep = MockRepositoryImpl(preferences: preferences)
-        settingsRep = MockSettingsRepository(preferences: preferences)
-        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep)
-        cityListVM = CityListViewModel(weatherRepo: weatherRep)
+        weatherRep = MockWeatherRepositoryImpl(preferences: preferences)
+        cityRep = MockCityRepositoryImpl(preferences: preferences)
+        settingsRep = MockSettingsRepositoryImpl(preferences: preferences)
+        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep, cityRepo: cityRep)
+        cityListVM = CityListViewModel(weatherRepo: weatherRep, cityRepo: cityRep)
         settingsVM = SettingsViewModel(settingsRepo: settingsRep)
 
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -41,7 +43,6 @@ final class Wetaher_app_IOSTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    //Важно: тесты независимы друг от друга, поэтому изменения от init, инициированные одним тестом в другом не видны!
     /// Initial tests
     @MainActor
     func test_init_setsSystemTheme() {

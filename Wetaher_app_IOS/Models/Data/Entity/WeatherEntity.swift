@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Последний успешный ответ сети по городу.
+// Последний успешный ответ сети по городу
 public struct WeatherEntity: Codable, Sendable {
     public let cityID: Int
     public let cityName: String

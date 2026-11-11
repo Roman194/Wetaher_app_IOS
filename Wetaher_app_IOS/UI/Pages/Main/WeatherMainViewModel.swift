@@ -11,31 +11,31 @@ import Observation
 @Observable
 public class WeatherMainViewModel {
     private let weatherRepository: WeatherRepository
+    private let cityRepository: CityRepository
 
     public var selectedCity: City
     public var weatherUIState: WeatherUIState
     public var isLoadingStarted: Bool = false
     public var isCascadeUpdateForbidden = false
 
-    /// Данные взяты из БД, потому что сеть недоступна.
     public var isFromCache = false
-
-    /// Время сохранения снимка, который сейчас показан.
     public var cacheUpdatedAt: Date?
 
     public init(
         weatherRepo: WeatherRepository,
+        cityRepo: CityRepository,
         initalValue: City? = nil
     ){
         weatherRepository = weatherRepo
+        cityRepository = cityRepo
 
-        let favorites = weatherRepo.LoadSavedCities()
-        let activeCityID = weatherRepo.LoadActiveCityID()
+        let favorites = cityRepository.LoadSavedCities()
+        let activeCityID = cityRepository.LoadActiveCityID()
         let storedCity = favorites.first { $0.id == activeCityID }
         selectedCity = initalValue ?? storedCity?.toUI() ?? favorites.first?.toUI() ?? .moscow
         weatherUIState = .Loading
 
-        weatherRepo.SetActiveCity(selectedCity.id)
+        cityRepository.SetActiveCity(selectedCity.id)
 
         if !TestChecker.isRunningTests {
             Task {// Убирать можно только в случае, если хотите дудосить API
@@ -45,7 +45,6 @@ public class WeatherMainViewModel {
 
     }
 
-    /// Человекочитаемая давность сохранения кэша: «2 часа назад».
     public var cacheAgeDescription: String? {
         guard let cacheUpdatedAt else { return nil }
 
@@ -68,13 +67,12 @@ public class WeatherMainViewModel {
         isLoadingStarted = true
 
         let weather = await weatherRepository.GetWeatherForSelectedCity(for: selectedCity)
-
         switch weather{
-            case .success(let snapshot) :
+        case .success(let snapshot) :
             isFromCache = snapshot.isFromCache
             cacheUpdatedAt = snapshot.savedAt
             weatherUIState = .Success(snapshot.entity.toUI())
-            case .failure(let forecastError) :
+        case .failure(let forecastError) :
             isFromCache = false
             cacheUpdatedAt = nil
             weatherUIState = .Fail(forecastError.toUI())
@@ -102,7 +100,7 @@ public class WeatherMainViewModel {
             city = cityWeather.city
             guard city.id != selectedCity.id else { return }
             self.selectedCity = city
-            weatherRepository.SetActiveCity(city.id)
+            cityRepository.SetActiveCity(city.id)
             isFromCache = false
             cacheUpdatedAt = nil
             weatherUIState = .Success(cityWeather)
@@ -111,7 +109,7 @@ public class WeatherMainViewModel {
             city = addedCity
             guard city.id != selectedCity.id else { return }
             self.selectedCity = city
-            weatherRepository.SetActiveCity(city.id)
+            cityRepository.SetActiveCity(city.id)
 
             weatherUIState = .Loading
             await loadWeather(addNewCity: true)
@@ -125,10 +123,7 @@ public class WeatherMainViewModel {
         }
     }
 
-    /// Обновляет кэш перед уходом приложения в фон.
-    ///
-    /// Результат намеренно не трогает UI: если сеть недоступна, остаётся
-    /// последний сохранённый снимок.
+    // Обновление кэша перед уходом приложения в фон
     public func prepareForOffline() {
         let city = selectedCity
 

@@ -54,7 +54,7 @@ public struct HourlyForecast: View {
                         }()
 
                         VStack(spacing: BaseNumeral.smallSpacing) {
-                            Text(item.hour) // index == 0 ? "Сейчас" :
+                            Text(item.hour)
                                 .font(.caption)
                                 .foregroundStyle(Colors.secondaryText)
 

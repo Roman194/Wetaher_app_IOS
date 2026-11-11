@@ -14,6 +14,8 @@ public enum AccessibilityIdentifiers {
         public static let condition = "main_current_condition"
         public static let feelsLike = "main_current_feels_like"
         public static let scrollView = "main_weather_scroll_view"
+        public static let wifiSlash = "wifi.slash"
+        public static let offlineBadge = "weather.offlineBadge"
     }
 
     public enum Metrics {

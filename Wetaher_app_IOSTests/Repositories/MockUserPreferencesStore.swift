@@ -7,7 +7,7 @@
 
 @testable import Wetaher_app_IOS
 
-/// Хранилище настроек в памяти: тесты не пишут в `UserDefaults` и не влияют друг на друга.
+// Хранилище настроек в памяти: тесты не пишут в `UserDefaults` и не влияют друг на друга
 public final class MockUserPreferencesStore: UserPreferencesStoring {
     public var activeCityID: Int?
     public var favoriteCities: [CityEntity]

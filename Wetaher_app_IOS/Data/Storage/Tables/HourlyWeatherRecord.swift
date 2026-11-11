@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-/// Таблица `hourly_weather`: один час прогноза (1:N от `weather`).
+// Таблица `hourly_weather`: один час прогноза (1:N от `weather`)
 @Model
 final class HourlyWeatherRecord {
     var sortIndex: Int

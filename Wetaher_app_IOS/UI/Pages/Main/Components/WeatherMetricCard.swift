@@ -51,7 +51,7 @@ public struct WindMetricCard: View {
     public let direction: String
     public let gustMps: Double?
 
-    public init(speedMps: Double = 0.0, directionString: String = "C", gustMps: Double? = nil) {
+    public init(speedMps: Double = 0.0, directionString: String = BaseText.Metrics.defaultDirection, gustMps: Double? = nil) {
         self.speedMps = speedMps
         self.direction = directionString
         self.gustMps = gustMps

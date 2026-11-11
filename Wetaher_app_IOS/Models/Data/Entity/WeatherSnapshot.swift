@@ -7,13 +7,13 @@
 
 import Foundation
 
-/// Откуда взяты данные, которые показывает приложение.
+// Откуда взяты данные, которые показывает приложение
 public enum WeatherDataSource: String, Sendable {
     case network
     case cache
 }
 
-/// Результат загрузки погоды: сущность для отображения + источник данных.
+// Результат загрузки погоды: сущность для отображения + источник данных
 public struct WeatherSnapshot {
     public let entity: WeatherEntity
     public let source: WeatherDataSource

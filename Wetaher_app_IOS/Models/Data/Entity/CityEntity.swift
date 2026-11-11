@@ -7,7 +7,7 @@
 
 import Foundation
 
-/// Город в том виде, в котором он приходит из сети, до преобразования в UI-модель.
+// Город в том виде, в котором он приходит из сети, до преобразования в UI-модель
 public struct CityEntity: Codable, Hashable, Sendable {
     public let id: Int
     public let name: String

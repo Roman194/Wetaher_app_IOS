@@ -5,9 +5,8 @@
 //  Created by Sergeev Sergey on 27.10.2026.
 //
 
-extension CityEntity{
-    /// Entity → UI.
-    func toUI() -> City{
+extension CityEntity {
+    func toUI() -> City {
         City(
             id: id,
             name: name,

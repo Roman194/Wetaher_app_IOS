@@ -32,9 +32,9 @@ enum ColorsDayNNightDiff: Equatable, Hashable {
 }
 
 extension WeatherCondition{
-    //Я выделил 10 основных состояний погодыю Остальные WeatherCode будем приводить к ним
+    // Я выделил 10 основных состояний погодыю Остальные WeatherCode будем приводить к ним
     
-    public static let defaultWeatherCondition = WeatherCondition( //Clear
+    public static let defaultWeatherCondition = WeatherCondition( // Clear
         description: BaseText.WeatherCondition.clear,
         sfSymbolName: .diff("sun.max.fill", "moon.stars.fill"),
         iconColor: .diff([BaseColors.orange], [BaseColors.indigo, BaseColors.yellow]),

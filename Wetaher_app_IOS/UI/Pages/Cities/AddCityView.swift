@@ -7,12 +7,11 @@
 
 import SwiftUI
 
-/// Экран поиска и добавления новых городов в избранное
+// Экран поиска и добавления новых городов в избранное
 public struct AddCityView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var searchQuery: String = ""
     @State private var displayedResults: [City] = []
-    // @State private var searchTask: Task<Void, Never>?
 
     private var addCityUiState: AddCityUIState
     @State private var errorMessage: String?
@@ -23,25 +22,10 @@ public struct AddCityView: View {
     public var isCitySaved: ((City) -> Bool)?
     public var onSearch: ((String) -> Void)?
 
-//    private var effectiveUIState: CityListUIState {
-//        internalState ?? uiState
-//    }
-
-    private var availableCities: [City] { // Это мб не очень хорошо с точки зрения архитектуры что View знает о моках, но как-то менять и прокидывать себе дороже
+    private var availableCities: [City] {
         var seen = Set<Int>()
         return City.availableCities.filter { seen.insert($0.id).inserted }
     }
-
-//    private var displayedResults: [City] {
-//        if internalSearchResults.isEmpty && !searchQuery.isEmpty {
-//            let trimmed = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-//            return availableCities.filter { city in
-//                city.name.lowercased().contains(trimmed) ||
-//                city.country.lowercased().contains(trimmed)
-//            }
-//        }
-//        return internalSearchResults
-//    }
 
     public init(
         uiState: AddCityUIState = .Success([]),
@@ -65,13 +49,10 @@ public struct AddCityView: View {
                 switch addCityUiState {
                 case .Loading:
                     loadingView
-
                 case .Fail:
                     failView
-
                 case .Search:
                     searchStateView
-
                 case .Success:
                     successView
                 }
@@ -84,12 +65,11 @@ public struct AddCityView: View {
                 prompt: BaseText.Cities.searchPrompt
             )
             .onChange(of: searchQuery) { _, newValue in
-                // performSearch(query: newValue)
                 onSearch?(newValue)
                 updateDisplayedResults()
             }
             .onChange(of: addCityUiState) { _, _ in
-                //Результат поиска приходит из ViewModel уже после смены запроса.
+                //Результат поиска приходит из ViewModel уже после смены запроса
                 updateDisplayedResults()
             }
             .onAppear {
@@ -107,8 +87,7 @@ public struct AddCityView: View {
         }
     }
 
-    // MARK: - State Subviews
-
+    // Состояния экрана
     @ViewBuilder
     private var loadingView: some View {
         VStack(spacing: BaseNumeral.sectionSpacing) {
@@ -123,7 +102,6 @@ public struct AddCityView: View {
 
     @ViewBuilder
     private var failView: some View {
-
         if !searchQuery.isEmpty {
             VStack(spacing: BaseNumeral.sectionSpacing) {
                 ContentUnavailableView(
@@ -174,8 +152,6 @@ public struct AddCityView: View {
         .listStyle(.insetGrouped)
     }
 
-    // MARK: - Результаты поиска
-
     @ViewBuilder
     private var searchResultsSection: some View {
         if displayedResults.isEmpty {
@@ -191,8 +167,6 @@ public struct AddCityView: View {
         }
     }
 
-    // MARK: - Доступные города
-
     private var popularCitiesSection: some View {
         Section(BaseText.Cities.popular) {
             ForEach(availableCities) { city in
@@ -200,8 +174,6 @@ public struct AddCityView: View {
             }
         }
     }
-
-    // MARK: - Строка города
 
     private func cityRow(for city: City) -> some View {
         let saved = isCitySaved?(city) ?? false
@@ -274,40 +246,4 @@ public struct AddCityView: View {
                 errorMessage = nil
         }
     }
-
-    // MARK: - Логика поиска
-
-//    private func performSearch(query: String) { //!!!!
-//        searchTask?.cancel()
-//
-//        let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
-//        if trimmed.isEmpty {
-//            self.internalSearchResults = []
-//            self.internalState = .Success
-//            return
-//        }
-//
-//        self.internalState = .Search
-//
-//        searchTask = Task {
-//            try? await Task.sleep(nanoseconds: 300_000_000)
-//            guard !Task.isCancelled else { return }
-//
-//            if let onSearch = onSearch {
-//                let results = await onSearch(trimmed)
-//                guard !Task.isCancelled else { return }
-//                self.internalSearchResults = results
-//                self.internalState = .Success
-//            } else {
-//                let lowercased = trimmed.lowercased()
-//                let results = availableCities.filter { city in
-//                    city.name.lowercased().contains(lowercased) ||
-//                    city.country.lowercased().contains(lowercased)
-//                }
-//                guard !Task.isCancelled else { return }
-//                self.internalSearchResults = results
-//                self.internalState = .Success
-//            }
-//        }
-//    }
 }

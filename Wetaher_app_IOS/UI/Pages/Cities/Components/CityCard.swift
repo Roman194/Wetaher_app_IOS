@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// Карточка города для списка избранного
+// Карточка города для списка избранного
 public struct CityCard: View {
     public let city: City
     public let forecast: ForecastUI?

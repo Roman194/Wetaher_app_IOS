@@ -7,19 +7,17 @@
 
 import Foundation
 
-/// Пользовательские настройки
+// Пользовательские настройки
 public protocol UserPreferencesStoring: AnyObject {
-    /// Идентификатор последнего просмотренного города.
+    // Идентификатор последнего просмотренного города
     var activeCityID: Int? { get set }
-
-    /// Список избранных городов.
+    // Список избранных городов
     var favoriteCities: [CityEntity] { get set }
-
-    /// Идентификатор выбранной темы оформления (`AppThemeProps.id`).
+    // Идентификатор выбранной темы оформления (`AppThemeProps.id`)
     var themeID: String? { get set }
 }
 
-/// Реализация поверх `UserDefaults`.
+// Реализация поверх `UserDefaults`
 public final class UserPreferencesStore: UserPreferencesStoring {
     private enum Keys {
         static let activeCityID = "weather.preferences.activeCityID"

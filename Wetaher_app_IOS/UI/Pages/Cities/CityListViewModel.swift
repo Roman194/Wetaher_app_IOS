@@ -11,7 +11,7 @@ import Foundation
 @MainActor
 @Observable
 public class CityListViewModel {
-    /// Избранные города храним как сущности, а в UI отдаём готовую проекцию.
+    // Избранные города храним как сущности, а в UI отдаём готовую проекцию
     private var savedCityEntities: [CityEntity] = []
     public var savedCities: [City] {
         savedCityEntities.map { $0.toUI() }
@@ -19,17 +19,19 @@ public class CityListViewModel {
     public var savedCitiesWeather: [ForecastUI] = []
     public var savedCitiesWeatherError: [String: WeatherErrorUI] = [:]
     public var searchTask: Task<Void, Never>?
-    /// Последние результаты поиска в виде сущностей: из них берём город при добавлении.
+    // Последние результаты поиска в виде сущностей
     private var searchResults: [CityEntity] = []
 
     public var cityListWeatherUIState: CityListUIState
     public var addCityUIState: AddCityUIState
 
     private let weatherRepository: WeatherRepository
+    private let cityRepository: CityRepository
 
-    public init(weatherRepo: WeatherRepository) {
+    public init(weatherRepo: WeatherRepository, cityRepo: CityRepository) {
         self.weatherRepository = weatherRepo
-        self.savedCityEntities = weatherRepo.LoadSavedCities()
+        self.cityRepository = cityRepo
+        self.savedCityEntities = cityRepo.LoadSavedCities()
 
         cityListWeatherUIState = .Loading
         addCityUIState = .Loading
@@ -41,7 +43,7 @@ public class CityListViewModel {
         var updatedList: [ForecastUI] = []
         savedCitiesWeatherError = [:]
 
-        for city in savedCities { //Cюда прокидывается selectedCity, чтобы лишний раз не запрашивать уже запрошенный город
+        for city in savedCities { // Cюда прокидывается selectedCity, чтобы лишний раз не запрашивать уже запрошенный город
             if city.id == selectedCity.id {
                 updatedList.append(selectedCityForecast)
             } else {
@@ -79,12 +81,7 @@ public class CityListViewModel {
 
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
         if trimmed.isEmpty {
-            // self.searchResults = []
-//            if cityListWeatherUIState == .Search {
-//                cityListWeatherUIState = savedCitiesWeather.isEmpty && !savedCities.isEmpty ? .Fail : .Success
-//            }
             addCityUIState = .Success([])
-            //return searchResults
             return
         }
 
@@ -95,32 +92,25 @@ public class CityListViewModel {
 
             addCityUIState = .Loading
 
-            let results = await weatherRepository.SearchCities(query: trimmed)
-            //guard !Task.isCancelled else { return }
+            let results = await cityRepository.SearchCities(query: trimmed)
             switch(results){
             case .success(let possibleCities):
-//                    self.searchResults = possibleCities.map({ cities in
-//                        cities.toUI()
-//                    })
                 let entities = possibleCities.map { $0.toEntity() }
                 searchResults = entities
                 addCityUIState = .Success(entities.map { $0.toUI() })
 
             case .failure(let cityError): //Ошибка поиска прокидывается в AddCityView
-                    //self.searchResults = cityError.reserveCities
                 addCityUIState = .Fail(cityError.toUI())
             }
         }
-
-        //return searchResults
     }
 
-    /// Добавление города в избранное
+    // Добавление города в избранное
     public func addCity(city: City) async {
         guard !isCitySaved(city: city) else { return }
 
-        weatherRepository.AddFavoriteCity(city)
-        savedCityEntities = weatherRepository.LoadSavedCities()
+        cityRepository.AddFavoriteCity(city)
+        savedCityEntities = cityRepository.LoadSavedCities()
 
         // Подгружаем сводку погоды для добавленного города
         let weather = await weatherRepository.GetWeatherForSelectedCity(for: city)
@@ -138,12 +128,13 @@ public class CityListViewModel {
         }
     }
 
-    /// Удаление города из избранного
+    // Удаление города из избранного
     public func deleteCity(city: City) -> ForecastUI? {
         let storedCount = savedCityEntities.count
-        weatherRepository.RemoveFavoriteCity(cityID: city.id)
+        cityRepository.RemoveFavoriteCity(cityID: city.id)
+        weatherRepository.DeleteWeatherForDeletedCity(cityID: city.id)
 
-        savedCityEntities = weatherRepository.LoadSavedCities()
+        savedCityEntities = cityRepository.LoadSavedCities()
         if savedCityEntities.count != storedCount { //Должен быть хотя бы 1 сохранённый город!
             savedCitiesWeather.removeAll { $0.city.id == city.id || ($0.city.name == city.name && $0.city.country == city.country) }
             savedCitiesWeatherError.removeValue(forKey: city.name)

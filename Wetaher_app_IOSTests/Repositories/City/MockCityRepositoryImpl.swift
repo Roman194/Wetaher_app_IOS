@@ -1,15 +1,15 @@
 //
-//  MockRepositoryImpl.swift
+//  MockCityRepositoryImpl.swift
 //  Wetaher_app_IOS
 //
-//  Created by Roman Zyuzin on 22.10.2026.
+//  Created by Roman Zyuzin on 11.11.2026.
 //
 
 import Foundation
 @testable import Wetaher_app_IOS
 import XCTest
 
-public class MockRepositoryImpl: WeatherRepository {
+public class MockCityRepositoryImpl: CityRepository {
     private var currentForecast: WeatherResponse
     private let preferences: UserPreferencesStoring
 
@@ -19,34 +19,6 @@ public class MockRepositoryImpl: WeatherRepository {
     ) {
             self.currentForecast = currentWeather
             self.preferences = preferences
-        }
-
-    public func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherSnapshot, WeatherErrorResponse> {
-
-        try? await Task.sleep(nanoseconds: 100_000)
-
-        currentForecast =
-            switch city {
-            case .moscow: .moscowWeatherResp
-                case .saintPetersburg: .saintPetersburgWeatherResp
-                case .kazan: .kazanWeatherResp
-                case .krasnoyarsk: .krasnoyarskWeatherResp
-                case .nizhnyNovgorod: .nizhnyNovgorodWeatherResp
-                case .novosibirsk: .novosibirskWeatherResp
-                case .kaliningrad: .kaliningradWeatherResp
-                case .samara: .samaraWeatherResp
-                case .vladivostok: .vladivostokWeatherResp
-                case .yekaterinburg: .yekaterinburgWeatherResp
-                case .malmo: .malmoWeatherResp
-                case .hong_Kong: .hongKongWeatherResp
-            default: .moscowWeatherResp
-            }
-
-        return .success(WeatherSnapshot(entity: currentForecast.toEntity(city: city), source: .cache))
-    }
-
-    public func LoadFavoriteCities() -> [CityEntity] {
-        return CityEntity.defaultFavorites
     }
 
     public func SearchCities(query: String) async -> Result<[CityResponse], CityResponseError> {
@@ -66,14 +38,12 @@ public class MockRepositoryImpl: WeatherRepository {
         )
 
     }
-
-    // MARK: - Избранное и настройки
-
+    
     public func LoadSavedCities() -> [CityEntity] {
         let storedCities = preferences.favoriteCities
         guard storedCities.isEmpty else { return storedCities }
 
-        let defaultFavorites = LoadFavoriteCities()
+        let defaultFavorites = CityEntity.defaultFavorites
         preferences.favoriteCities = defaultFavorites
         return defaultFavorites
     }
