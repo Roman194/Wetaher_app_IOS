@@ -8,5 +8,5 @@
 public struct CityResponseError: Error {
     public let errorId: Int
     public let errorDescription: String
-    public var reserveCities: [City] = City.avaliableCities
+    public var reserveCities: [City] = City.availableCities
 }

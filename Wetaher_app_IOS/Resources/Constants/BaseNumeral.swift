@@ -49,7 +49,6 @@ public enum BaseNumeral {
     public static let largeCardCornerRadius: CGFloat = 16
 
     // MARK: - Размеры
-    public static let gridColumnCount = 2
     public static let metricCardMinHeight: CGFloat = 110
     /// Ширина текстовой колонки: день недели, температура.
     public static let columnWidth: CGFloat = 72

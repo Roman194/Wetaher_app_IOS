@@ -29,7 +29,7 @@ public struct AddCityView: View {
 
     private var availableCities: [City] { // Это мб не очень хорошо с точки зрения архитектуры что View знает о моках, но как-то менять и прокидывать себе дороже
         var seen = Set<Int>()
-        return City.avaliableCities.filter { seen.insert($0.id).inserted }
+        return City.availableCities.filter { seen.insert($0.id).inserted }
     }
 
 //    private var displayedResults: [City] {

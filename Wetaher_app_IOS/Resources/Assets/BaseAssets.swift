@@ -121,7 +121,7 @@ extension CityEntity {
         .saintPetersburg
     ]
 
-    public static let avaliableCities: [CityEntity] = [
+    public static let availableCities: [CityEntity] = [
         .moscow,
         .saintPetersburg,
         .hong_Kong,
@@ -136,7 +136,7 @@ extension CityEntity {
         .yekaterinburg
     ]
 
-    func ToResponse() -> CityResponse {
+    func toResponse() -> CityResponse {
         CityResponse(
             id: id,
             name: name,
@@ -163,9 +163,9 @@ extension City {
     public static let hong_Kong = CityEntity.hong_Kong.toUI()
 
     public static let defaultFavorites: [City] = CityEntity.defaultFavorites.map{ $0.toUI() }
-    public static let avaliableCities: [City] = CityEntity.avaliableCities.map { $0.toUI() }
+    public static let availableCities: [City] = CityEntity.availableCities.map { $0.toUI() }
     
-    func ToEntity() -> CityEntity{
+    func toEntity() -> CityEntity{
         CityEntity(
             id: id,
             name: name,
