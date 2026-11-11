@@ -11,7 +11,6 @@ import Observation
 @Observable
 public class WeatherMainViewModel {
     private let weatherRepository: WeatherRepository
-    private let preferences: UserPreferencesStoring
 
     public var selectedCity: City
     public var weatherUIState: WeatherUIState
@@ -26,18 +25,17 @@ public class WeatherMainViewModel {
 
     public init(
         weatherRepo: WeatherRepository,
-        preferences: UserPreferencesStoring,
         initalValue: City? = nil
     ){
         weatherRepository = weatherRepo
-        self.preferences = preferences
 
-        let favorites = preferences.favoriteCities
-        let storedCity = favorites.first { $0.id == preferences.activeCityID }
+        let favorites = weatherRepo.LoadSavedCities()
+        let activeCityID = weatherRepo.LoadActiveCityID()
+        let storedCity = favorites.first { $0.id == activeCityID }
         selectedCity = initalValue ?? storedCity?.toUI() ?? favorites.first?.toUI() ?? .moscow
         weatherUIState = .Loading
 
-        preferences.activeCityID = selectedCity.id
+        weatherRepo.SetActiveCity(selectedCity.id)
 
         if !TestChecker.isRunningTests {
             Task {// Убирать можно только в случае, если хотите дудосить API
@@ -79,7 +77,7 @@ public class WeatherMainViewModel {
             case .failure(let forecastError) :
             isFromCache = false
             cacheUpdatedAt = nil
-            weatherUIState = .Fail(forecastError.toEntity().ToUI())
+            weatherUIState = .Fail(forecastError.toUI())
         }
 
         isLoadingStarted = false
@@ -104,7 +102,7 @@ public class WeatherMainViewModel {
             city = cityWeather.city
             guard city.id != selectedCity.id else { return }
             self.selectedCity = city
-            preferences.activeCityID = city.id
+            weatherRepository.SetActiveCity(city.id)
             isFromCache = false
             cacheUpdatedAt = nil
             weatherUIState = .Success(cityWeather)
@@ -113,7 +111,7 @@ public class WeatherMainViewModel {
             city = addedCity
             guard city.id != selectedCity.id else { return }
             self.selectedCity = city
-            preferences.activeCityID = city.id
+            weatherRepository.SetActiveCity(city.id)
 
             weatherUIState = .Loading
             await loadWeather(addNewCity: true)

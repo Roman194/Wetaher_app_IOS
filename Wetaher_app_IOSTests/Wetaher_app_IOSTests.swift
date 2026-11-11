@@ -16,24 +16,28 @@ final class Wetaher_app_IOSTests: XCTestCase {
     var weatherVM: WeatherMainViewModel!
     var cityListVM: CityListViewModel!
     var weatherRep: WeatherRepository!
-    var preferences: UserPreferencesStoring!
+    var settingsRep: SettingsRepository!
+    var preferences: MockUserPreferencesStore!
 
     override func setUp() {
         super.setUp()
-        preferences = UserPreferencesStore()
-        weatherRep = MockRepositoryImpl()
-        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep, preferences: preferences)
-        cityListVM = CityListViewModel(weatherRepo: weatherRep, preferences: preferences)
-        settingsVM = SettingsViewModel(weatherRepo: weatherRep, preferences: preferences)
+        preferences = MockUserPreferencesStore()
+        weatherRep = MockRepositoryImpl(preferences: preferences)
+        settingsRep = MockSettingsRepository(preferences: preferences)
+        weatherVM = WeatherMainViewModel(weatherRepo: weatherRep)
+        cityListVM = CityListViewModel(weatherRepo: weatherRep)
+        settingsVM = SettingsViewModel(settingsRepo: settingsRep)
 
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
 
     override func tearDown() {
         weatherRep = nil
+        settingsRep = nil
         settingsVM = nil
         weatherVM = nil
-        settingsVM = nil
+        cityListVM = nil
+        preferences = nil
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 

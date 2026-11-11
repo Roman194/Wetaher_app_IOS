@@ -15,3 +15,11 @@ public struct WeatherStorageError: Error, Equatable {
     public let errorCode: Int
     public let errorDescription: String
 }
+
+/// Ошибки создания контейнера SwiftData.
+public enum WeatherStoreError: Error, Equatable {
+    /// Файл хранилища не открылся (например, миграция схемы не удалась).
+    case containerUnavailable(underlying: String)
+    /// Не удалось создать даже хранилище в памяти.
+    case inMemoryContainerUnavailable(underlying: String)
+}

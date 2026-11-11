@@ -29,7 +29,7 @@ public struct AddCityView: View {
 
     private var availableCities: [City] { // Это мб не очень хорошо с точки зрения архитектуры что View знает о моках, но как-то менять и прокидывать себе дороже
         var seen = Set<Int>()
-        return City.avaliableCities.filter { seen.insert($0.id).inserted }
+        return City.availableCities.filter { seen.insert($0.id).inserted }
     }
 
 //    private var displayedResults: [City] {
@@ -213,6 +213,7 @@ public struct AddCityView: View {
                         .font(.body)
                         .fontWeight(.medium)
                         .foregroundStyle(Colors.primaryText)
+                        .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.resultRow(city.name))
 
                     Text(city.country)
                         .font(.caption)
@@ -256,7 +257,6 @@ public struct AddCityView: View {
                 .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.toggleButton(city.name))
             }
         }
-        .accessibilityIdentifier(AccessibilityIdentifiers.AddCity.resultRow(city.name))
         .padding(.vertical, BaseNumeral.textSpacing)
     }
 

@@ -11,9 +11,14 @@ import XCTest
 
 public class MockRepositoryImpl: WeatherRepository {
     private var currentForecast: WeatherResponse
+    private let preferences: UserPreferencesStoring
 
-    public init(currentWeather: WeatherResponse = .moscowWeatherResp) {
+    public init(
+        currentWeather: WeatherResponse = .moscowWeatherResp,
+        preferences: UserPreferencesStoring = MockUserPreferencesStore()
+    ) {
             self.currentForecast = currentWeather
+            self.preferences = preferences
         }
 
     public func GetWeatherForSelectedCity(for city: City) async -> Result<WeatherSnapshot, WeatherErrorResponse> {
@@ -48,18 +53,57 @@ public class MockRepositoryImpl: WeatherRepository {
         let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         if trimmed.isEmpty { return .failure(CityResponseError(errorId: 50, errorDescription: "Wrong city")) }
 
-        let avaliableCities = City.avaliableCities.filter { city in
+        let availableCities = City.availableCities.filter { city in
             city.name.lowercased().contains(trimmed) ||
             city.country.lowercased().contains(trimmed)
         }
 
         return .success(
-            avaliableCities.map({city
-                in city.ToEntity().ToResponse()
+            availableCities.map({city
+                in city.toEntity().toResponse()
                 }
             )
         )
 
+    }
+
+    // MARK: - Избранное и настройки
+
+    public func LoadSavedCities() -> [CityEntity] {
+        let storedCities = preferences.favoriteCities
+        guard storedCities.isEmpty else { return storedCities }
+
+        let defaultFavorites = LoadFavoriteCities()
+        preferences.favoriteCities = defaultFavorites
+        return defaultFavorites
+    }
+
+    public func AddFavoriteCity(_ city: City) {
+        var favorites = LoadSavedCities()
+        guard !favorites.contains(where: { $0.id == city.id }) else { return }
+
+        favorites.append(city.toEntity())
+        preferences.favoriteCities = favorites
+    }
+
+    public func RemoveFavoriteCity(cityID: Int) {
+        var favorites = LoadSavedCities()
+        guard favorites.count > 1 else { return }
+
+        favorites.removeAll { $0.id == cityID }
+        preferences.favoriteCities = favorites
+
+        if preferences.activeCityID == cityID {
+            preferences.activeCityID = favorites.first?.id
+        }
+    }
+
+    public func LoadActiveCityID() -> Int? {
+        preferences.activeCityID
+    }
+
+    public func SetActiveCity(_ cityID: Int) {
+        preferences.activeCityID = cityID
     }
 
 }
