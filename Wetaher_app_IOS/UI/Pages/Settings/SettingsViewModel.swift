@@ -6,14 +6,24 @@
 //
 
 import Observation
+import SwiftUI
 
 @MainActor
 @Observable
 public class SettingsViewModel {
     private let settingsRepository: SettingsRepository
 
-    /// Тема приложения. Записывается только через `selectTheme`, чтобы выбор всегда сохранялся.
+    /// Тема приложения. Меняется только через `themeSelection`, чтобы выбор всегда сохранялся.
     public private(set) var appTheme: AppThemeProps
+
+    /// Привязка для `Picker`. Запись идёт через неё, поэтому View не знает,
+    /// как именно тема сохраняется: это ответственность ViewModel.
+    public var themeSelection: Binding<AppThemeProps> {
+        Binding(
+            get: { self.appTheme },
+            set: { self.selectTheme($0) }
+        )
+    }
 
     public init(settingsRepo: SettingsRepository) {
         self.settingsRepository = settingsRepo

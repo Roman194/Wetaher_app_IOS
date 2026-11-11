@@ -9,10 +9,10 @@ import SwiftUI
 
 public struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Bindable private var settingsVM: SettingsViewModel
+    @Binding private var appTheme: AppThemeProps
 
-    public init(settingsVM: SettingsViewModel) {
-        self.settingsVM = settingsVM
+    public init(appTheme: Binding<AppThemeProps>) {
+        self._appTheme = appTheme
     }
 
     public var body: some View {
@@ -20,7 +20,7 @@ public struct SettingsView: View {
             Form {
                 // Внешний вид
                 Section {
-                    Picker(BaseText.Settings.themePicker, selection: $settingsVM.appTheme) {
+                    Picker(BaseText.Settings.themePicker, selection: $appTheme) {
                         ForEach(AppThemeProps.allCases, id: \.title) { theme in
                             Text(theme.title).tag(theme)
                         }

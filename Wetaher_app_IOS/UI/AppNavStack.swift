@@ -113,7 +113,7 @@ public struct AppNavStack: View {
             .preferredColorScheme(presentedColorScheme)
         }
         .sheet(isPresented: $showSettingsSheet) {
-            SettingsView(settingsVM: settingsVM)
+            SettingsView(appTheme: settingsVM.themeSelection)
                 .preferredColorScheme(presentedColorScheme)
         }
         .preferredColorScheme(appColorScheme)
